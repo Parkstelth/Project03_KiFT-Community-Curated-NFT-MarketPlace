@@ -1,26 +1,25 @@
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 import "./frontpage.css";
 import { useEffect } from 'react';
 
 const FrontStart = styled.div`
-    margin-top:80px;
+    margin-top: 80px;
 `;
 
 const FrontStartWrap = styled.div`
-    display:flex;
+    display: flex;
     justify-content: center;
 `;
 
 const LeftSource = styled.div`
-    display:flex;
+    display: flex;
     flex-direction: column;
-    padding-left:11vw;
-
+    padding-left: 11vw;
 `;
 
 const RightSource = styled.div`
-    display:flex;
+    display: flex;
     flex-direction: column;
     max-width:412px;
     max-height:517px;
