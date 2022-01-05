@@ -1,14 +1,14 @@
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 
 function FrontPage() {
     return (
         <div>
-            <div>front page</div>
+            <div> </div>
             <Link to="posting">
-                <button>posting</button>
+                <button></button>
             </Link>
             <Link to="signup">
-                <button>signup</button>
+                <button></button>
             </Link>
         </div>
     );
