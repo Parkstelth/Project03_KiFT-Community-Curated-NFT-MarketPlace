@@ -16,7 +16,7 @@ const TopHeaderWrap = styled.div`
 const TopHeaderLogo = styled.h1``;
 const Input = styled.input``;
 const TopHeaderNav = styled.ul`
-    display: flex;
+    /* display: flex; */
 `;
 const TopHeaderNavList = styled.li``;
 function Nav() {
