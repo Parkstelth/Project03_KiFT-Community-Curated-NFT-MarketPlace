@@ -1,47 +1,19 @@
-import styled from "styled-components";
-const TopHeader = styled.header`
-    position: relative;
-    left: 0px;
-    width: 100%;
-    height: 80px;
-`;
-const TopHeaderWrap = styled.div`
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
+import "./Nav.css";
 
-    height: 100%;
-    max-width: 75vw;
-    margin: 0 auto;
-`;
-const TopHeaderLogo = styled.h1`
-    flex: 1 1 auto;
-    border: 1px solid black;
-`;
-const Input = styled.input`
-    flex: 1 1 auto;
-`;
-const TopHeaderNav = styled.div`
-    display: flex;
-    border: 1px solid black;
-    flex: 3 1 auto;
-`;
-const TopHeaderNavList = styled.div``;
 function Nav() {
     return (
-        <TopHeader>
-            <TopHeaderWrap>
-                <TopHeaderLogo>Kift</TopHeaderLogo>
-                <Input type="text" placesholder="Search.."></Input>
-
-                <TopHeaderNav>
-                    <TopHeaderNavList>Market</TopHeaderNavList>
-                    <TopHeaderNavList>Features</TopHeaderNavList>
-                    <TopHeaderNavList>sign in</TopHeaderNavList>
-                </TopHeaderNav>
-            </TopHeaderWrap>
-        </TopHeader>
+        <div className="NavBar">
+            <div className="NavBarInisde">
+                <div className="NavBarInisdeContainer">
+                    <div className="homeNav">KiFT</div>
+                    <div className="nav">market</div>
+                    <div className="nav">Features</div>
+                    <div className="nav">Community</div>
+                    <div className="nav">Search</div>
+                    <div className="nav">Sign in</div>
+                </div>
+            </div>
+        </div>
     );
 }
 export default Nav;
