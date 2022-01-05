@@ -18,7 +18,7 @@ function App() {
                 <Route path="/posting" element={<Posting />} />
                 <Route path="/*" element={<NotFound />} />
             </Routes>
-            <Footer />
+            {/* <Footer /> */}
         </BrowserRouter>
     );
 }
