@@ -1,10 +1,60 @@
-.mainart{
+.title{
+    padding-bottom: 7px;
+    font-weight: bold;
+}
+.mainstart{
+    padding-top: 15px;
+}
+.introImg{
     max-width: 412px;
     max-height: 412px;
-   
 }
 
 .h1{
     font-size: 4rem;
+    line-height: 100%;
+}
 
+.h2{
+    font-size: 1.5rem;
+    line-height: 50%;
+}
+
+.startbutton{
+    margin-top: 82px;
+    width: 200px;
+    padding: 15px;
+    background-color: black;
+    color:white;
+    box-sizing: content-box;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+/* .startbutton:hover{
+    color: black;
+    background-color: white;
+
+} */
+
+.description{
+    display: flex;
+    margin-top:20px;
+}
+
+.artist{
+    padding-right: 65px;
+    font-size: 0.7rem;
+}
+.artist_data{
+    margin-top:3px;
+
+}
+.date_title{
+    font-size: 0.7rem;
+}
+
+.date{
+    font-size: 0.9rem;
 }
