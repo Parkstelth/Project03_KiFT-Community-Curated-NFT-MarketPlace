@@ -12,7 +12,7 @@ const TopHeaderWrap = styled.div`
     justify-content: space-between;
 
     height: 100%;
-    max-width: 1000px;
+    max-width: 75vw;
     margin: 0 auto;
 `;
 const TopHeaderLogo = styled.h1`
