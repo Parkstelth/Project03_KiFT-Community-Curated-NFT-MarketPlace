@@ -1,6 +1,7 @@
 import "./Footer.css";
 
 function Footer() {
+    if(window.location.pathname === '/signin') return null;
     return (
         <footer className="footerBlock">
             <div className="footerContainer">
@@ -36,5 +37,6 @@ function Footer() {
             </div>
         </footer>
     );
+    
 }
 export default Footer;

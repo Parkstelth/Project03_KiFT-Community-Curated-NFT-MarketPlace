@@ -1,31 +1,31 @@
-.title{
+.title {
     padding-bottom: 7px;
     font-weight: bold;
 }
-.mainstart{
+.mainstart {
     padding-top: 15px;
 }
-.introImg{
+.introImg {
     max-width: 412px;
     max-height: 412px;
 }
 
-.h1{
+.h1 {
     font-size: 4rem;
     line-height: 100%;
 }
 
-.h2{
+.h2 {
     font-size: 1.5rem;
     line-height: 50%;
 }
 
-.startbutton{
+.startbutton {
     margin-top: 82px;
     width: 200px;
     padding: 15px;
     background-color: black;
-    color:white;
+    color: white;
     box-sizing: content-box;
     border: none;
     border-radius: 8px;
@@ -38,23 +38,32 @@
 
 } */
 
-.description{
+.description {
     display: flex;
-    margin-top:20px;
+    margin-top: 20px;
 }
 
-.artist{
+.artist {
     padding-right: 65px;
     font-size: 0.7rem;
 }
-.artist_data{
-    margin-top:3px;
-
+.artist_data {
+    margin-top: 3px;
 }
-.date_title{
+.date_title {
     font-size: 0.7rem;
 }
 
-.date{
+.date {
     font-size: 0.9rem;
+}
+
+.slick-slide {
+    height: 650px;
+}
+
+.slick-slide img {
+    height: 650px;
+    width: 100%;
+    object-fit: cover;
 }

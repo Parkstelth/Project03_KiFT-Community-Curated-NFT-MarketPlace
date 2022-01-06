@@ -1,13 +1,15 @@
 import { Link } from "react-router-dom";
-import styled from "styled-components";
+import { useRef } from "react";
 import "./frontpage.css";
-import 'bootstrap/dist/css/bootstrap.css'
-import { Carousel } from "react-bootstrap";
-import {useState } from "react";
-import main_image_01 from "../image/main.jpg"
+import { useEffect } from "react";
+import React, { Component } from "react";
+import styled, { keyframes, css } from "styled-components";
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 const FrontStart = styled.div`
-    margin-top: 80px;
+    margin-top: 10px;
 `;
 
 const FrontStartWrap = styled.div`
@@ -24,86 +26,101 @@ const LeftSource = styled.div`
 const RightSource = styled.div`
     display: flex;
     flex-direction: column;
-    max-width:412px;
-    max-height:517px;
-    padding:35px 1em 0px 4%;
-    
+    max-width: 412px;
+    max-height: 517px;
+    padding: 35px 1em 0px 4%;
 `;
-
-
-
-
+const settings = {
+    dots: true,
+    infinite: true,
+    arrows: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+};
 
 function FrontPage() {
-const [index, setIndex] = useState(0);
+    //creating the ref
+    const customeSlider = useRef();
 
-  const handleSelect = (selectedIndex, e) => {
-    setIndex(selectedIndex);
-  };
+    // setting slider configurations
+    var settings = {
+        dots: true,
+        infinite: true,
+        speed: 500,
+        autoplay: true,
+        autoplaySpeed: 3000,
+        slidesToShow: 1,
+        slidesToScroll: 1,
+        initialSlide: 0,
+        arrows: false,
+    };
 
-  return (
-    <div>
-    <Carousel activeIndex={index} onSelect={handleSelect}>
-      <Carousel.Item >
-        <img
-          className="d-block w-100"
-          src={main_image_01}
-          alt="First slide"
-        />
-        <Carousel.Caption>
-        </Carousel.Caption>
-      </Carousel.Item>
-      <Carousel.Item >
-        <img
-          className="d-block w-100"
-          src={main_image_01}
-          alt="Second slide"
-        />
-        <Carousel.Caption>
-        </Carousel.Caption>
-      </Carousel.Item>
-      <Carousel.Item >
-        <img
-          className="d-block w-100"
-          src={main_image_01}
-          alt="Third slide"
-        />
-        <Carousel.Caption>
-        </Carousel.Caption>
-      </Carousel.Item>
-    </Carousel>
-     <FrontStart >
-            
-     <FrontStartWrap>
-     <LeftSource >
-     <div className="title">CURATOR ART</div>
-     <img className="introImg" src="https://ipfs.pixura.io/ipfs/QmPVXTbzi83fDYHU6MNcHTJC3aYnkME5AZBvBDjeCUNnEg/Somber.jpg"></img>
-     <div className="description">
-      
-             <div className="artist">
-                 <div>ARTIST</div>
-                 <div className="artist_data">{'@park-son'}</div>
-             </div>
-             <div className="release_date">
-                 <div className="date_title">RELEASE DATE</div>
-                 <div className="date"> {'Dec22,2021,12pm'}</div>
-             </div>
-     </div>
-     </LeftSource>
-     <RightSource>
-         <div className="mainstart">
-     <div className="h1">collet</div>
-     <div className="h1">digital art</div>
-     <p className="h2">Buy and sell NFTs from the</p>
-     <p className="h2">world's top artists</p>
-     <button className="startbutton">START COLLECTING</button>
-         </div>
-     </RightSource>
+    const previous = () => {
+        customeSlider.current.slickNext();
+    };
 
-     </FrontStartWrap>
- </FrontStart>
- </div>
-  );
+    const next = () => {
+        customeSlider.current.slickPrev();
+    };
+
+    return (
+        <FrontStart>
+            <div>
+                {/* <button class="buttonLeft" onClick={next}>
+                    Next
+                </button>
+                <button onClick={previous}>Previous</button> */}
+                <Slider {...settings} ref={customeSlider}>
+                    <div>
+                        <img src="https://miro.medium.com/max/10000/1*_GNQ_V6HjUfWFCKDKaZrgw@2x.jpeg" alt="" />
+                        <button>asdfkasfd</button>
+                    </div>
+                    <div>
+                        <img src="https://media.discordapp.net/attachments/886537798931349554/928206508276219954/769525b6fe6141d59bcf5982a7a74057.jpg" alt="" />
+                    </div>
+                    <div>
+                        <img src="https://media.discordapp.net/attachments/886537798931349554/928140644709437460/74038_12624_2915.jpeg" alt="" />
+                    </div>
+                    <div>
+                        <img src="https://cdn.discordapp.com/attachments/886537798931349554/928140644269043742/image_1572200809025_1000.jpeg" alt="" />
+                    </div>
+                    <div>
+                        <img
+                            src="https://www.christies.com/media-library/images/salelandingpage/2021/12/christies-x-opensea/chirsties-x-open-sea-online-auction-mdj-forever-mslp-hero-1892x500.jpg
+                            "
+                            alt=""
+                        />
+                    </div>
+                </Slider>
+            </div>
+            <FrontStartWrap>
+                <LeftSource>
+                    <div className="title">CURATOR ART</div>
+                    <img className="introImg" src="https://ipfs.pixura.io/ipfs/QmPVXTbzi83fDYHU6MNcHTJC3aYnkME5AZBvBDjeCUNnEg/Somber.jpg"></img>
+                    <div className="description">
+                        <div className="artist">
+                            <div>ARTIST</div>
+                            <div className="artist_data">{"@park-son"}</div>
+                        </div>
+                        <div className="release_date">
+                            <div className="date_title">RELEASE DATE</div>
+                            <div className="date"> {"Dec22,2021,12pm"}</div>
+                        </div>
+                    </div>
+                </LeftSource>
+                <RightSource>
+                    <div className="mainstart">
+                        <div className="h1">collet</div>
+                        <div className="h1">digital art</div>
+                        <p className="h2">Buy and sell NFTs from the</p>
+                        <p className="h2">world's top artists</p>
+                        <button className="startbutton">START COLLECTING</button>
+                    </div>
+                </RightSource>
+            </FrontStartWrap>
+        </FrontStart>
+    );
 }
 
          

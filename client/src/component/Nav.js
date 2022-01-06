@@ -1,16 +1,17 @@
 import "./Nav.css";
+import { Link } from "react-router-dom";
 
 function Nav() {
     return (
         <div className="NavBar">
             <div className="NavBarInisde">
                 <div className="NavBarInisdeContainer">
-                    <div className="homeNav">KiFT</div>
-                    <div className="nav">Market</div>
+                    <Link to="/" className="homeNav">KiFT</Link>
+                    <Link to="/market" className="nav">Market</Link>
                     <div className="nav">Curated</div>
                     <div className="nav">Community</div>
                     <div className="nav">Search</div>
-                    <div className="nav">Sign in</div>
+                    <Link to="/signin" className="nav">Sign in</Link>
                 </div>
             </div>
         </div>

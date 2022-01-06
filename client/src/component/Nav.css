@@ -35,6 +35,7 @@
     left: 30px;
     position: absolute;
     text-decoration: none;
+    color:black;
 }
 .nav {
     display: flex;
@@ -46,4 +47,6 @@
     min-width: 88px;
     padding: 8px 16px;
     font-size: 18px;
+    text-decoration: none;
+    color:black;
 }
