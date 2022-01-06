@@ -39,8 +39,13 @@ const settings = {
     slidesToScroll: 1,
 };
 
-function FrontPage() {
+function FrontPage({setfooter}) {
     //creating the ref
+    
+    useEffect(()=>{
+        setfooter(true)
+        },[])
+
     const customeSlider = useRef();
 
     // setting slider configurations

@@ -7,21 +7,33 @@ import SignIn from "./component/SignIn";
 import NotFound from "./component/notfound";
 import Nav from "./component/Nav";
 import Footer from "./component/Footer";
+import { useState,useEffect } from 'react'
 
 function App() {
-    return (
-        <BrowserRouter>
-            <Nav />
 
+    const [footer,setFooter] = useState(true)
+
+    function setfooter(e){
+        setFooter(e)
+    }
+
+    return (
+        
+        <BrowserRouter>
+     
+            <Nav />
             <Routes>
-                <Route exact path="/" element={<FrontPage />} />
-                <Route path="/market" element={<Market />} />
-                <Route path="/signin" element={<SignIn />} />
-                {/* <Route path="/*" element={<NotFound />} /> */}
-      
+                <Route exact path="/" element={<FrontPage setfooter={setfooter}/>} />
+                <Route path="/market" element={<Market setfooter={setfooter}/>} />
+                <Route path="/signin" element={<SignIn setfooter={setfooter}/>} />
+              
             </Routes>
-            <Footer />
+            {
+                footer ? <Footer /> : null
+            }
+         
         </BrowserRouter>
+        
     );
 }
 
