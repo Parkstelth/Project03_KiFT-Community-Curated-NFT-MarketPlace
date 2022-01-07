@@ -5,11 +5,14 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const cors = require('cors');
 
-// const mongoose = require('mongoose')
-// mongoose.connect('mongodb+srv://kiftmaster:root1234@kift.q7pbt.mongodb.net/myFirstDatabase?retryWrites=true&w=majority', {
-//     useNewUrlParser: true, useUnifiedTopology: true
-// }).then(() => console.log('mongoDB Connected...'))
-//   .catch(err => console.log(err))
+const mongoose = require('mongoose')
+mongoose.connect('mongodb+srv://kiftmaster:root1234@kift.q7pbt.mongodb.net/myFirstDatabase?retryWrites=true&w=majority', {
+    useNewUrlParser: true, useUnifiedTopology: true
+}).then(() => {
+  app.listen(app.get('port'), () => {
+    console.log(`app is listening in http://localhost:${app.get('port')}`);
+  });
+}).catch(err => console.log(err))
 
 
 var indexRouter = require('./routes/index');
@@ -53,8 +56,6 @@ app.use(function(err, req, res, next) {
 });
 
 app.set('port', port);
-app.listen(app.get('port'), () => {
-  console.log(`app is listening in http://localhost:${app.get('port')}`);
-});
+
 
 module.exports = app;

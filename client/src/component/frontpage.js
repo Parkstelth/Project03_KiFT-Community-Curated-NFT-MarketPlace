@@ -69,6 +69,7 @@ function FrontPage({setfooter}) {
         customeSlider.current.slickPrev();
     };
 
+
     return (
         <FrontStart>
             <div>
@@ -79,7 +80,6 @@ function FrontPage({setfooter}) {
                 <Slider {...settings} ref={customeSlider}>
                     <div>
                         <img src="https://miro.medium.com/max/10000/1*_GNQ_V6HjUfWFCKDKaZrgw@2x.jpeg" alt="" />
-                        <button>asdfkasfd</button>
                     </div>
                     <div>
                         <img src="https://media.discordapp.net/attachments/886537798931349554/928206508276219954/769525b6fe6141d59bcf5982a7a74057.jpg" alt="" />
