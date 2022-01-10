@@ -7,60 +7,59 @@ import SignIn from "./component/SignIn";
 import NotFound from "./component/notfound";
 import Nav from "./component/Nav";
 import Footer from "./component/Footer";
-import { useState,useEffect } from 'react'
-import Web3 from 'web3'
+import { useState, useEffect } from "react";
+import Web3 from "web3";
 
 function App() {
+    const [footer, setFooter] = useState(true);
+    const [loginAccount, setLoginAccount] = useState("");
+    const [web3, setWeb3] = useState([]);
+    const [isLogin, setIsLogin] = useState(false);
 
-    const [footer,setFooter] = useState(true)
-    const [loginAccount,setLoginAccount] = useState('')
-    const [web3,setWeb3] = useState([])
-
-   
-    function setfooter(e){
-        setFooter(e)
+    function setfooter(e) {
+        setFooter(e);
     }
-   
-    useEffect(async() => {
-        if (typeof window.ethereum !== 'undefined') {
-          // window.ethereum이 있다면
-          try {
-              const web = new Web3(window.ethereum);
-              await web.eth.getAccounts().then((account)=>{
-                  setLoginAccount(account)
-              })
-              setWeb3(web)
-          } catch (err) {
-            console.log(err);
-          }
-        }
-        else{
-            setLoginAccount('')
-            setWeb3([])
-        }
-      }, []);
 
+    useEffect(async () => {
+        //son: 이거 건든적이 없는데 왜 밑줄 뜰까요? await 해주면 되나
+        //만약 signin페이지에서 Web3(url) 을 window.ethereum 으로 안잡으면 밑에 조건문은 무효화?
 
-      console.log('text',loginAccount)
-      console.log('text2',web3)
+        if (typeof window.ethereum !== "undefined") {
+            // window.ethereum이 있다면
+            try {
+                const web = new Web3(window.ethereum);
+                await web.eth.getAccounts().then((account) => {
+                    setLoginAccount(account);
+                });
+                setWeb3(web);
+            } catch (err) {
+                console.log(err);
+            }
+        } else {
+            setLoginAccount("");
+            setWeb3([]);
+        }
+    }, []);
+
+    console.log("text", loginAccount);
+    console.log("text2", web3);
 
     return (
-        
         <BrowserRouter>
-     
-            <Nav />
+            <Nav isLogin={isLogin} />
             <Routes>
-                <Route exact path="/" element={<FrontPage setfooter={setfooter}/>} />
-                <Route path="/market" element={<Market setfooter={setfooter}/>} />
-                <Route path="/signin" element={<SignIn setfooter={setfooter} setLoginAccount={setLoginAccount} setWeb3={setWeb3}/>} />
-              
+                <Route exact path="/" element={<FrontPage setfooter={setfooter} />} />
+                <Route path="/market" element={<Market setfooter={setfooter} />} />
+                {/* 로그인 시 마켓으로 이동하게 해놨음! 다른 곳으로 원하면
+                바꿔도 됨*/}
+                {!isLogin ? (
+                    <Route path="/signin" element={<SignIn setfooter={setfooter} setIsLogin={setIsLogin} setLoginAccount={setLoginAccount} setWeb3={setWeb3} />} />
+                ) : (
+                    <Route path="/market" element={<Market setfooter={setfooter} />} />
+                )}
             </Routes>
-            {
-                footer ? <Footer /> : null
-            }
-         
+            {footer ? <Footer /> : null}
         </BrowserRouter>
-        
     );
 }
 
