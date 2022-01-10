@@ -4,6 +4,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import FrontPage from "./component/frontpage";
 import Market from "./component/Market";
 import SignIn from "./component/SignIn";
+import Mypage from "./component/MyPage";
+import About from "./component/About";
 import NotFound from "./component/notfound";
 import Nav from "./component/Nav";
 import Footer from "./component/Footer";
@@ -15,6 +17,8 @@ function App() {
     const [loginAccount, setLoginAccount] = useState("");
     const [web3, setWeb3] = useState([]);
     const [isLogin, setIsLogin] = useState(false);
+    
+    console.log('now account ===',loginAccount)
 
     function setfooter(e) {
         setFooter(e);
@@ -25,24 +29,32 @@ function App() {
         //만약 signin페이지에서 Web3(url) 을 window.ethereum 으로 안잡으면 밑에 조건문은 무효화?
 
         if (typeof window.ethereum !== "undefined") {
-            // window.ethereum이 있다면
+            console.log('true!!!!!')
+            // window.ethereum이 있다면 여기서 window.ethereum이란 메타마스크 설치여부
             try {
                 const web = new Web3(window.ethereum);
                 await web.eth.getAccounts().then((account) => {
-                    setLoginAccount(account);
+                    if(account.length===0){
+                        setLoginAccount("");
+                        setWeb3([]);
+                        setIsLogin(false)
+                    }
+                    else{
+                       setLoginAccount(account);
+                       setWeb3(web);
+                       setIsLogin(true)
+                    }
                 });
-                setWeb3(web);
+ 
             } catch (err) {
                 console.log(err);
             }
         } else {
             setLoginAccount("");
             setWeb3([]);
+            setIsLogin(false)
         }
     }, []);
-
-    console.log("text", loginAccount);
-    console.log("text2", web3);
 
     return (
         <BrowserRouter>
@@ -52,11 +64,9 @@ function App() {
                 <Route path="/market" element={<Market setfooter={setfooter} />} />
                 {/* 로그인 시 마켓으로 이동하게 해놨음! 다른 곳으로 원하면
                 바꿔도 됨*/}
-                {!isLogin ? (
-                    <Route path="/signin" element={<SignIn setfooter={setfooter} setIsLogin={setIsLogin} setLoginAccount={setLoginAccount} setWeb3={setWeb3} />} />
-                ) : (
-                    <Route path="/market" element={<Market setfooter={setfooter} />} />
-                )}
+                <Route path="/signin" element={<SignIn setfooter={setfooter} setIsLogin={setIsLogin} setLoginAccount={setLoginAccount} setWeb3={setWeb3} />} />
+                <Route path="/mypage" element={<Mypage />} />
+                <Route path="mypage/:id" element={<About />} />
             </Routes>
             {footer ? <Footer /> : null}
         </BrowserRouter>

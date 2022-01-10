@@ -27,6 +27,7 @@ function SignIn({ setfooter, setLoginAccount, setWeb3, setIsLogin }) {
             setIsLogin(true);
             setfooter(true);
             document.location.href ='/market'
+            
             //소유한 nft가져오는 법
             /* await axios.get(`https://testnets-api.opensea.io/assets?owner=${accounts[0]}`).then((result) => {
                 console.log(result.data.assets);
@@ -63,11 +64,12 @@ function SignIn({ setfooter, setLoginAccount, setWeb3, setIsLogin }) {
             //     console.log(e);
             // }
         } catch (e) {
-            if (e.code === -32002) {
-                console.log("error! ", e);
-            } else {
+            if (typeof window.ethereum === "undefined"){
                 var win = window.open("https://metamask.io/download.html", "_blank");
                 win.focus();
+            }
+            else{
+                console.log("error! ", e);
             }
         }
     };
