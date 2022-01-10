@@ -21,6 +21,9 @@ function App() {
     }
 
     useEffect(async () => {
+        //son: 이거 건든적이 없는데 왜 밑줄 뜰까요? await 해주면 되나
+        //만약 signin페이지에서 Web3(url) 을 window.ethereum 으로 안잡으면 밑에 조건문은 무효화?
+
         if (typeof window.ethereum !== "undefined") {
             // window.ethereum이 있다면
             try {
