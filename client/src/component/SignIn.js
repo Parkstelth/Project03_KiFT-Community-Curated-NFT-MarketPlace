@@ -1,6 +1,7 @@
 import "./SignIn.css";
 import { useState,useEffect } from 'react'
 import Web3 from 'web3'
+import axios from 'axios'
 
 
 function SignIn({setfooter,setLoginAccount,setWeb3}) {
@@ -32,9 +33,16 @@ function SignIn({setfooter,setLoginAccount,setWeb3}) {
             }
         
       };
+
+      function test(){
+        axios.get('http://localhost:3000/user').then((res)=>{
+            console.log(res)
+        })
+
+        }
       
     return(
-       <button onClick={()=>connectWallet()}>login</button>
+       <button onClick={()=>test()}>login</button>
     )
 }
 

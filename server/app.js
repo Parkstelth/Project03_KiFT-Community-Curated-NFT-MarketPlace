@@ -6,7 +6,7 @@ var logger = require('morgan');
 const cors = require('cors');
 
 const mongoose = require('mongoose')
-mongoose.connect('mongodb+srv://kiftmaster:root1234@kift.q7pbt.mongodb.net/myFirstDatabase?retryWrites=true&w=majority', {
+mongoose.connect('mongodb+srv://kiftmaster:root1234@kift.q7pbt.mongodb.net/testDB?retryWrites=true&w=majority', {
     useNewUrlParser: true, useUnifiedTopology: true
 }).then(() => {
   app.listen(app.get('port'), () => {
