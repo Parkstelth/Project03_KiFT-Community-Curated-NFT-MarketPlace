@@ -29,7 +29,7 @@ function App() {
         //만약 signin페이지에서 Web3(url) 을 window.ethereum 으로 안잡으면 밑에 조건문은 무효화?
 
         if (typeof window.ethereum !== "undefined") {
-            console.log('true!!!!!')
+        
             // window.ethereum이 있다면 여기서 window.ethereum이란 메타마스크 설치여부
             try {
                 const web = new Web3(window.ethereum);
