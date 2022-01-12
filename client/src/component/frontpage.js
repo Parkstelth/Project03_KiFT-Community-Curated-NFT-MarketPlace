@@ -81,7 +81,7 @@ function FrontPage({setfooter}) {
                     <div>
                         <img src="https://miro.medium.com/max/10000/1*_GNQ_V6HjUfWFCKDKaZrgw@2x.jpeg" alt="" />
                     </div>
-                    <div>
+                    {/* <div>
                         <img src="https://media.discordapp.net/attachments/886537798931349554/928206508276219954/769525b6fe6141d59bcf5982a7a74057.jpg" alt="" />
                     </div>
                     <div>
@@ -96,7 +96,7 @@ function FrontPage({setfooter}) {
                             "
                             alt=""
                         />
-                    </div>
+                    </div> */}
                 </Slider>
             </div>
             <FrontStartWrap>
