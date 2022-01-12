@@ -7,26 +7,31 @@ import {Card,CardGroup} from 'react-bootstrap'
 
 
 
-function MyPage() {
+function MyPage({setIsLogin}) {
 
     const [data, setData] = useState([]);
     const [nowAccount, setNowAccount] = useState('')
    
     const fetchNFTs = async () => {
         const web = new Web3(window.ethereum);
-        await web.eth.getAccounts().then(async(account) => {
-        
-             setNowAccount(account)
-            await axios.get(`https://testnets-api.opensea.io/assets?owner=${account}`).then(
-                (result) => setData(result.data.assets)
-            );
+        await web.eth.getAccounts().then((account) => {
+            setIsLogin(true)
+            setNowAccount(account)
         })
     };
+    fetchNFTs();
+   
 
+    const  fetchNFTs2 = async () => {
+    await axios.get(`https://testnets-api.opensea.io/assets?owner=${nowAccount}`).then(
+        (result) => setData(result.data.assets)
+    );
+    }
 
-    useEffect(() => {
-        fetchNFTs();
-    }, []);
+    useEffect(()=>{
+        fetchNFTs2();
+    },[nowAccount])
+
 
     return (
         <div className="MyPage">
@@ -84,37 +89,14 @@ function MyPage() {
                                     </button>
                                     </Link>
                                   </Card>
-                                  
-                                  
-                               
                                 )
                             })
                         } 
                         </CardGroup>
-
-
                     </div>
-
             }
         </div>
     );
 }
-
-
-                    //  {
-                    //         data.map((item)=>{
-                    //             console.log(item)
-                    //             return (
-                    //                 <Link to={`/mypage/${item.id}`}>
-                    //                 <div key={item.id}>
-                    //                     <div>토큰id : {item.token_id}</div>
-                    //                     <img src={item.image_url} />
-                    //                     </div>
-                    //                 </Link>
-                    //             )
-                    //         })
-                    //     } 
-
-
 
 export default MyPage;
