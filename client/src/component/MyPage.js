@@ -7,31 +7,28 @@ import {Card,CardGroup} from 'react-bootstrap'
 
 
 
-function MyPage({setIsLogin,loginAccount}) {
+function MyPage({setIsLogin}) {
 
     const [data, setData] = useState([]);
     const [nowAccount, setNowAccount] = useState('')
-    console.log('te',loginAccount)
+  
     const fetchNFTs = async () => {
         const web = new Web3(window.ethereum);
         await web.eth.getAccounts().then((account) => {
             setIsLogin(true)
-            setNowAccount(account)
+            return account
+            
+        }).then(async(account)=>{
+            await axios.get(`https://testnets-api.opensea.io/assets?owner=${account}`).then(
+                (result) => {
+                    setData(result.data.assets)
+                    setNowAccount(account)
+                }
+            );
         })
     };
    
-    const  fetchNFTs2 = async () => {
-        console.log('f2')
-    await axios.get(`https://testnets-api.opensea.io/assets?owner=${nowAccount}`).then(
-        (result) => {
-            setData(result.data.assets)
-        }
-    );
-    }
 
-    useEffect(()=>{
-        fetchNFTs2();
-    },[nowAccount])
 
     useEffect(()=>{
         fetchNFTs();
