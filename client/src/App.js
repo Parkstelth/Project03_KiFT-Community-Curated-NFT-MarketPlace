@@ -65,7 +65,7 @@ function App() {
                 {/* 로그인 시 마켓으로 이동하게 해놨음! 다른 곳으로 원하면
                 바꿔도 됨*/}
                 <Route path="/signin" element={<SignIn setfooter={setfooter} setIsLogin={setIsLogin} setLoginAccount={setLoginAccount} setWeb3={setWeb3} />} />
-                <Route path="/mypage" element={<Mypage setIsLogin={setIsLogin}/>} />
+                <Route path="/mypage" element={<Mypage setIsLogin={setIsLogin} loginAccount={loginAccount}/>} />
                 <Route path="mypage/:id" element={<About />} />
             </Routes>
             {footer ? <Footer /> : null}

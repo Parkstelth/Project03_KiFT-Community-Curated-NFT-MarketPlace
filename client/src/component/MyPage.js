@@ -7,11 +7,11 @@ import {Card,CardGroup} from 'react-bootstrap'
 
 
 
-function MyPage({setIsLogin}) {
+function MyPage({setIsLogin,loginAccount}) {
 
     const [data, setData] = useState([]);
     const [nowAccount, setNowAccount] = useState('')
-   
+    console.log('te',loginAccount)
     const fetchNFTs = async () => {
         const web = new Web3(window.ethereum);
         await web.eth.getAccounts().then((account) => {
@@ -19,12 +19,13 @@ function MyPage({setIsLogin}) {
             setNowAccount(account)
         })
     };
-    fetchNFTs();
    
-
     const  fetchNFTs2 = async () => {
+        console.log('f2')
     await axios.get(`https://testnets-api.opensea.io/assets?owner=${nowAccount}`).then(
-        (result) => setData(result.data.assets)
+        (result) => {
+            setData(result.data.assets)
+        }
     );
     }
 
@@ -32,6 +33,11 @@ function MyPage({setIsLogin}) {
         fetchNFTs2();
     },[nowAccount])
 
+    useEffect(()=>{
+        fetchNFTs();
+    },[])
+
+  
 
     return (
         <div className="MyPage">
@@ -49,7 +55,7 @@ function MyPage({setIsLogin}) {
                             <div className="address_box">{String(nowAccount).slice(0,6)+'...'+String(nowAccount).slice(-4,)}</div>
                             <div className="createdAt">joined November 2021</div>
                         </div>
-                        
+                        없음
 
                 </div>
                 :  <div>
@@ -77,7 +83,7 @@ function MyPage({setIsLogin}) {
                                       <Card.Title className="card_title">{item.asset_contract.name}</Card.Title>
                                       <Card.Text className="card_text">
                                         {item.collection.name}
-                                      </Card.Text>
+                                  </Card.Text>
                                     </Card.Body>
                                     <Card.Footer className="card_footer">
                                       <small className="text-muted">{item.collection.created_date.slice(0,10)}{' / '}{item.collection.created_date.slice(11,16)}</small>
