@@ -1,9 +1,22 @@
 .signInPage {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    /* top: 50%;
+    transform: translate(-50%, -50%);
+    top: 42%;
     left: 50%;
-    position: absolute; */
+    position: absolute;
+    max-width: 370px;
+    text-align: center;
+}
+.signInTitle {
+    font-size: 46px;
+}
+.signInButton {
+    background-color: black;
+    border-radius: 17px;
+    padding: 24px 32px;
+    width: 50%;
+    font-size: 15px;
+
+    color: white;
+    font-family: "Poppins";
+    border-color: black;
 }

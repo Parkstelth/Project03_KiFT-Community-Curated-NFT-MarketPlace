@@ -26,8 +26,8 @@ function SignIn({ setfooter, setLoginAccount, setWeb3, setIsLogin }) {
             setWeb3(web3);
             setIsLogin(true);
             setfooter(true);
-            document.location.href ='/market'
-            
+            document.location.href = "/market";
+
             //소유한 nft가져오는 법
             /* await axios.get(`https://testnets-api.opensea.io/assets?owner=${accounts[0]}`).then((result) => {
                 console.log(result.data.assets);
@@ -64,11 +64,10 @@ function SignIn({ setfooter, setLoginAccount, setWeb3, setIsLogin }) {
             //     console.log(e);
             // }
         } catch (e) {
-            if (typeof window.ethereum === "undefined"){
+            if (typeof window.ethereum === "undefined") {
                 var win = window.open("https://metamask.io/download.html", "_blank");
                 win.focus();
-            }
-            else{
+            } else {
                 console.log("error! ", e);
             }
         }
@@ -76,9 +75,11 @@ function SignIn({ setfooter, setLoginAccount, setWeb3, setIsLogin }) {
 
     return (
         <div className="signInPage">
-            <div>Sign in with your wallet for connecting KiFT</div>
+            <h2 className="signInTitle">Sign in with your wallet for connecting KiFT</h2>
             <div>
-                <button onClick={() => connectWallet()}>login</button>
+                <button className="signInButton" onClick={() => connectWallet()}>
+                    Select a Wallet
+                </button>
             </div>
         </div>
     );
