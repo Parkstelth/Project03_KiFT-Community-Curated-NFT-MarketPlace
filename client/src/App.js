@@ -15,31 +15,35 @@ import Web3 from "web3";
 function App() {
     const [footer, setFooter] = useState(true);
     const [loginAccount, setLoginAccount] = useState("");
-    const [web3, setWeb3] = useState([]);
+    const [loadWeb3, setWeb3] = useState([]);
     const [isLogin, setIsLogin] = useState(false);
     
-    console.log('now account ===',loginAccount)
+    console.log('now account ===>',loginAccount)
 
     function setfooter(e) {
         setFooter(e);
     }
 
-    useEffect(async () => {
+    useEffect(() => {
         //son: 이거 건든적이 없는데 왜 밑줄 뜰까요? await 해주면 되나
         //만약 signin페이지에서 Web3(url) 을 window.ethereum 으로 안잡으면 밑에 조건문은 무효화?
 
         if (typeof window.ethereum !== "undefined") {
-        
+            //여러 wallet 플랫폼중 metaMask로 연결
+   
+            const metamaskProvider = window.ethereum.providers.find((provider)=>provider.isMetaMask)
             // window.ethereum이 있다면 여기서 window.ethereum이란 메타마스크 설치여부
             try {
-                const web = new Web3(window.ethereum);
-                await web.eth.getAccounts().then((account) => {
+                const web = new Web3(metamaskProvider);
+                 web.eth.getAccounts().then((account) => {
+                    
                     if(account.length===0){
                         setLoginAccount("");
                         setWeb3([]);
                         setIsLogin(false)
                     }
                     else{
+                        console.log('success')
                        setLoginAccount(account);
                        setWeb3(web);
                        setIsLogin(true)
@@ -67,6 +71,7 @@ function App() {
                 <Route path="/signin" element={<SignIn setfooter={setfooter} setIsLogin={setIsLogin} setLoginAccount={setLoginAccount} setWeb3={setWeb3} />} />
                 <Route path="/mypage" element={<Mypage setIsLogin={setIsLogin} />} />
                 <Route path="mypage/:id" element={<About />} />
+                <Route path=":id" element={<NotFound />} />
             </Routes>
             {footer ? <Footer /> : null}
         </BrowserRouter>

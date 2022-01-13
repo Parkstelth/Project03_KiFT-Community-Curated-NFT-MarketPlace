@@ -1,7 +1,8 @@
+// import Loading from "./component/Loading";
 function NotFound() {
     return (
         <div>
-            <div>404</div>
+            {/* <Loading /> */}
         </div>
     );
 }

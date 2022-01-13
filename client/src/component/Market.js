@@ -5,6 +5,7 @@ import Item from "./Item";
 
 function Market({ setfooter }) {
     const [marketData, setMarketData] = useState([]);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         setfooter(true);
@@ -12,11 +13,13 @@ function Market({ setfooter }) {
 
     useEffect(() => {
         const dataLoad = async () => {
+
             await axios
                 .get(`https://api.opensea.io/api/v1/assets?order_direction=desc&offset=0&limit=21`)
                 .then((result) => {
                     console.log(result.data.assets);
                     setMarketData(result.data.assets);
+                    
                 })
                 .catch((err) => console.log(err));
         };

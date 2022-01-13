@@ -11,8 +11,9 @@ function SignIn({ setfooter, setLoginAccount, setWeb3, setIsLogin }) {
     // const fetchMyNFTs = axios.get(`https://testnets-api.opensea.io/assets?owner=${accounts[0]}`)
 
     const connectWallet = async () => {
+        const metamaskProvider = window.ethereum.providers.find((provider)=>provider.isMetaMask)
         try {
-            const accounts = await window.ethereum.request({
+            const accounts = await metamaskProvider.request({
                 method: "eth_requestAccounts",
             });
             //아래 두 줄은 서명 요청 하려고 테스트하던 것 지워도 괜춘

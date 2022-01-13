@@ -182,9 +182,9 @@ color:rgb(53,56,64);
     justify-content: center;
 }
 
-.acc_item{
+.acc_item {
     width: 815px;
-    margin: 0 16.4rem;
+    margin: 0 auto; 
     border-top: none;
     border-radius: 10px;
 }
@@ -204,4 +204,8 @@ button.accordion-button{
    border:2px solid rgb(229,232,235);
    width: 815px;
    border-radius: 10px;
+}
+
+.simple_description {
+    width: 470px;
 }
