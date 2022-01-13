@@ -20,23 +20,25 @@ function SignIn({ setfooter, setLoginAccount, setWeb3, setIsLogin }) {
             // const rpcURL = "https://rinkeby.infura.io/v3/14e49a40e7ca44f7b4a9afb62e21c945";
             // const web3 = await new Web3(rpcURL);
 
-            const web3 = await new Web3(window.ethereum);
+            //db로그인 저장
+            const web3 = await new Web3(metamaskProvider);
             setLoginAccount(accounts[0]);
-            console.log(accounts[0]);
-            console.log(web3);
             setWeb3(web3);
             setIsLogin(true);
             setfooter(true);
-            document.location.href = "/market";
 
-            //소유한 nft가져오는 법
-            /* await axios.get(`https://testnets-api.opensea.io/assets?owner=${accounts[0]}`).then((result) => {
-                console.log(result.data.assets);
-                result.data.assets.map((item) => {
-                    console.log(item.image_url); // or image_original_url 이건 원본
-                    return item.image_url;
-                });
-            }); */
+            const headers = {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Accept': '*/*'
+            }
+            const params = new URLSearchParams();
+            params.append('loginAddress',accounts[0]);
+
+            await axios.post('http://localhost:3000/user',params,{headers}).then((res)=>{
+            console.log(res)
+        })
+        
+            document.location.href = "/market";
 
             //서명 요청 이건 잘 안된다 ㅜ 없애도 괜츈
             // await web3.eth.getBalance(accounts[0]).then(console.log);
@@ -64,6 +66,7 @@ function SignIn({ setfooter, setLoginAccount, setWeb3, setIsLogin }) {
             // } catch (e) {
             //     console.log(e);
             // }
+
         } catch (e) {
             if (typeof window.ethereum === "undefined") {
                 var win = window.open("https://metamask.io/download.html", "_blank");

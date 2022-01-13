@@ -5,7 +5,7 @@ function Item({ marketData }) {
     return (
         <div className="marketItemContainer">
             {marketData.map((item) => (
-                <div class="marketItem">
+                <div className="marketItem" key={item.id}>
                     {/* <img src={item.image_url} alt="" /> */}
                     <div className="imgContainer">
                         {<img src={item.image_url === "" ? "https://testnets.opensea.io/static/images/placeholder.png" : item.image_url} className="market_image" alt="" />}

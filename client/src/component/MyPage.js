@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import { Card, CardGroup } from "react-bootstrap";
 import Loading from "./assets/Loading";
 
-function MyPage({ setIsLogin }) {
+function MyPage({ setIsLogin,setSellitem }) {
     const [data, setData] = useState([]);
     const [nowAccount, setNowAccount] = useState("");
     const [loading, setLoading] = useState(true);
@@ -58,7 +58,7 @@ function MyPage({ setIsLogin }) {
                         <CardGroup className="cardGroup">
                         {
                             data.map((item)=>{
-                             
+                                
                                 return (
                                     <Card key={item.id} className="card1">
                                     <Card.Img className="card_img" variant="top" src={item.image_url}/>
@@ -74,7 +74,7 @@ function MyPage({ setIsLogin }) {
                                         </small>
                                     </Card.Footer>
                                     <Link to={`/mypage/${item.id}`} className="button_link">
-                                        <button className="sell_button">Sell</button>
+                                        <button className="sell_button" onClick={()=>{setSellitem(item)}}>Sell</button>
                                     </Link>
                                 </Card>
                             );

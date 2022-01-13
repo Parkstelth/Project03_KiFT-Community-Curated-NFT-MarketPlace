@@ -17,6 +17,7 @@ function App() {
     const [loginAccount, setLoginAccount] = useState("");
     const [loadWeb3, setWeb3] = useState([]);
     const [isLogin, setIsLogin] = useState(false);
+    const [sellitem, setSellitem] = useState('')
     
     console.log('now account ===>',loginAccount)
 
@@ -43,7 +44,6 @@ function App() {
                         setIsLogin(false)
                     }
                     else{
-                        console.log('success')
                        setLoginAccount(account);
                        setWeb3(web);
                        setIsLogin(true)
@@ -69,8 +69,8 @@ function App() {
                 {/* 로그인 시 마켓으로 이동하게 해놨음! 다른 곳으로 원하면
                 바꿔도 됨*/}
                 <Route path="/signin" element={<SignIn setfooter={setfooter} setIsLogin={setIsLogin} setLoginAccount={setLoginAccount} setWeb3={setWeb3} />} />
-                <Route path="/mypage" element={<Mypage setIsLogin={setIsLogin} />} />
-                <Route path="mypage/:id" element={<About />} />
+                <Route path="/mypage" element={<Mypage setIsLogin={setIsLogin} setSellitem={setSellitem}/>} />
+                <Route path="mypage/:id" element={<About sellitem={sellitem} />} />
                 <Route path=":id" element={<NotFound />} />
             </Routes>
             {footer ? <Footer /> : null}

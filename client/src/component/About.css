@@ -172,6 +172,9 @@ color:rgb(53,56,64);
     font-size: 0.7rem;
     color:rgb(53,56,64);
 }
+.right_end.addoption{
+    cursor: pointer;
+}
 
 .price_input_box{
     position: absolute;

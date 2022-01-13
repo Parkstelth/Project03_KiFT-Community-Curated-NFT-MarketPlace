@@ -3,7 +3,7 @@ import "./Loading.css";
 
 function Loading() {
     return (
-        <div class="loading">
+        <div className="loading">
   <span>K</span>
   <span>i</span>
   <span>F</span>

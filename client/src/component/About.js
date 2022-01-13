@@ -2,16 +2,19 @@ import "./About.css";
 import { useState,useEffect } from 'react'
 import {Accordion} from 'react-bootstrap'
 
-function About() {
+function About({sellitem}) {
 
-
+    function runEtherscan(e){
+        var win = window.open(`https://rinkeby.etherscan.io/address/${e.target.outerText}`, "_blank");
+        win.focus();
+    }
     return(
         <div className="about_main">
             <div className="sell_bar"></div>
             <div className="middle2">
                 <div>
-                    <div class="nft_name_box">
-                    <div className="nft_name">Codestate #1</div>
+                    <div className="nft_name_box">
+                    <div className="nft_name">{sellitem.name}</div>
                      <div className="nft_owned">Owned by <span className="owned_address">you</span></div>
 
                     </div>
@@ -27,26 +30,32 @@ function About() {
                             <button className="sell_button">Sell</button>
                             </div>
                             </div>
-                            <div className="description2">created by <span className="description_address">0x78d0...7d05</span></div>
+                            <div className="description2">created by <span onClick={(e)=>runEtherscan(e)} className="description_address">{sellitem.creator.address}</span></div>
                     </div> 
                     <div className="center_properties">
                             <div className="properties_title">Properties</div>
                             <div className="properties">
-                                <div className="props">
-                                    <div className="props_1">power</div>
-                                    <div className="props_2">max</div>
-                                    <div className="props_3">100% have this trait</div>
-                                </div>
+                                {
+                                    sellitem.traits.map((prop)=>{
+                                        return(
+                                            <div className="props" key={prop.id}>
+                                            <div className="props_1">{prop.trait_type}</div>
+                                            <div className="props_2">{prop.value}</div>
+                                            <div className="props_3">100% have this trait</div>
+                                        </div>
+                                        )
+                                    })
+                                }
                             </div>
                     </div> 
 
                     <div className="center_details">
                             <div className="details_title">Details</div>
                             <div className="details">
-                                <div className="detail_menu"><span>contract Address</span><span className="right_end">0x55555</span></div>
-                                <div className="detail_menu"><span>token id</span><span className="right_end">1</span></div>
-                                <div className="detail_menu"><span>token standard</span><span className="right_end">erc-721</span></div>
-                                <div className="detail_menu"><span>blockchain</span><span className="right_end">rikny</span></div>
+                                <div className="detail_menu"><span>contract Address</span><span className="right_end addoption" onClick={(e)=>runEtherscan(e)}>{sellitem.asset_contract.address}</span></div>
+                                <div className="detail_menu"><span>token id</span><span className="right_end">{sellitem.token_id}</span></div>
+                                <div className="detail_menu"><span>token standard</span><span className="right_end">{sellitem.asset_contract.schema_name}</span></div>
+                                <div className="detail_menu"><span>blockchain</span><span className="right_end">Rinkeby</span></div>
                             </div>
                     </div> 
                 </div>
