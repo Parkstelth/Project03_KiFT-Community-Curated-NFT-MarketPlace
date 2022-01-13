@@ -22,6 +22,14 @@
     margin-left: auto;
 }
 
+.loading{
+    position: fixed;
+    font-size: 47px;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    top:360px;
+
+}
 .marketTitle {
     padding-bottom: 50px;
     margin: 2em 0;

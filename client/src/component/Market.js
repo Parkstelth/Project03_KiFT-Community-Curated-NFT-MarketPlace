@@ -2,10 +2,11 @@ import "./Market.css";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import Item from "./Item";
+import Loading from "./assets/Loading";
 
 function Market({ setfooter }) {
     const [marketData, setMarketData] = useState([]);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         setfooter(true);
@@ -13,13 +14,14 @@ function Market({ setfooter }) {
 
     useEffect(() => {
         const dataLoad = async () => {
-
+        
             await axios
                 .get(`https://api.opensea.io/api/v1/assets?order_direction=desc&offset=0&limit=21`)
                 .then((result) => {
                     console.log(result.data.assets);
                     setMarketData(result.data.assets);
-                    
+                    setLoading(false)
+
                 })
                 .catch((err) => console.log(err));
         };
@@ -29,12 +31,18 @@ function Market({ setfooter }) {
     return (
         <div>
             <div className="container">
+
                 <h1 className="marketTitle">Market</h1>
+
                 <div className="row">
                     <hr className="divider" />
                 </div>
-
-                <Item marketData={marketData}></Item>
+                {
+                    loading
+                    ? <Loading className="loading"/>
+                    : <Item marketData={marketData}></Item>
+                }
+              
             </div>
         </div>
     );

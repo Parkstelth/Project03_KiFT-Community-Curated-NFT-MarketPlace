@@ -4,10 +4,12 @@ import axios from "axios";
 import Web3 from "web3";
 import { Link } from "react-router-dom";
 import { Card, CardGroup } from "react-bootstrap";
+import Loading from "./assets/Loading";
 
 function MyPage({ setIsLogin }) {
     const [data, setData] = useState([]);
     const [nowAccount, setNowAccount] = useState("");
+    const [loading, setLoading] = useState(true);
 
     const fetchNFTs = async () => {
         const web = new Web3(window.ethereum);
@@ -22,7 +24,7 @@ function MyPage({ setIsLogin }) {
                 await axios.get(`https://testnets-api.opensea.io/assets?owner=${account}`).then((result) => {
                     setData(result.data.assets);
                     setNowAccount(account);
-                    console.log(account);
+                    setLoading(false)
                 });
             });
     };
@@ -33,7 +35,8 @@ function MyPage({ setIsLogin }) {
 
     return (
         <div className="MyPage">
-            {data.length === 0 ? (
+   
+            
                 <div>
                     <div className="main">
                         <div className="main_myimage_box">
@@ -44,23 +47,15 @@ function MyPage({ setIsLogin }) {
                         <div className="address_box">{String(nowAccount).slice(0, 6) + "..." + String(nowAccount).slice(-4)}</div>
                         <div className="createdAt">joined November 2021</div>
                     </div>
-                    없음
-                </div>
-            ) : (
-                <div>
-                    <div className="main">
-                        <div className="main_myimage_box">
-                            <img className="main_myimage" src="https://cdn.pixabay.com/photo/2012/04/01/18/40/button-23946_960_720.png" />
-                        </div>
-                    </div>
-
-                    <div className="middle">
-                        <div className="address_box">{String(nowAccount).slice(0, 6) + "..." + String(nowAccount).slice(-4)}</div>
-                        <div className="createdAt">joined November 2021</div>
-                    </div>
-
+                    {
+                        loading
+                        ? <Loading className="loading"/>
+                        :<>
+                        {
+                        data.length===0
+                        ? <div>없음</div>
+                        : 
                         <CardGroup className="cardGroup">
-                    
                         {
                             data.map((item)=>{
                              
@@ -85,8 +80,11 @@ function MyPage({ setIsLogin }) {
                             );
                         })}
                     </CardGroup>
+                    }
+                    </>
+                    }
+                    
                 </div>
-            )}
         </div>
     );
 }

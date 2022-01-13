@@ -1,7 +1,10 @@
 .loading span {
     display: inline-block;
-    margin: 0 -.05em;
+    margin: 0 -0.7rem;
     animation: loading 1.4s infinite alternate;
+    width: 60px;
+    height: 60px;
+    text-align: center;
   }
   loading span:nth-child(2) {
     animation-delay: .1s;
