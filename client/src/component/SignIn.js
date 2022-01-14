@@ -34,7 +34,7 @@ function SignIn({ setfooter, setLoginAccount, setWeb3, setIsLogin }) {
             const params = new URLSearchParams();
             params.append('loginAddress',accounts[0]);
 
-            await axios.post('http://localhost:3000/user',params,{headers}).then((res)=>{
+            await axios.post('http://localhost:3001/sign',params,{headers}).then((res)=>{
             console.log(res)
         })
         

@@ -1,5 +1,4 @@
 import "./About.css";
-import { useState,useEffect } from 'react'
 import {Accordion} from 'react-bootstrap'
 
 function About({sellitem}) {
@@ -36,9 +35,10 @@ function About({sellitem}) {
                             <div className="properties_title">Properties</div>
                             <div className="properties">
                                 {
-                                    sellitem.traits.map((prop)=>{
+                                    sellitem.traits.map((prop,index)=>{
+                                        console.log('t',prop)
                                         return(
-                                            <div className="props" key={prop.id}>
+                                            <div className="props" key={index}>
                                             <div className="props_1">{prop.trait_type}</div>
                                             <div className="props_2">{prop.value}</div>
                                             <div className="props_3">100% have this trait</div>

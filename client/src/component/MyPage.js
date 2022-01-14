@@ -10,7 +10,7 @@ function MyPage({ setIsLogin,setSellitem }) {
     const [data, setData] = useState([]);
     const [nowAccount, setNowAccount] = useState("");
     const [loading, setLoading] = useState(true);
-
+    console.log(data)
     const fetchNFTs = async () => {
         const web = new Web3(window.ethereum);
         await web.eth
@@ -58,7 +58,7 @@ function MyPage({ setIsLogin,setSellitem }) {
                         <CardGroup className="cardGroup">
                         {
                             data.map((item)=>{
-                                
+                            
                                 return (
                                     <Card key={item.id} className="card1">
                                     <Card.Img className="card_img" variant="top" src={item.image_url}/>

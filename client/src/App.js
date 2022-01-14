@@ -11,6 +11,7 @@ import Nav from "./component/Nav";
 import Footer from "./component/Footer";
 import { useState, useEffect } from "react";
 import Web3 from "web3";
+import axios from "axios";
 
 function App() {
     const [footer, setFooter] = useState(true);
@@ -36,7 +37,7 @@ function App() {
             // window.ethereum이 있다면 여기서 window.ethereum이란 메타마스크 설치여부
             try {
                 const web = new Web3(metamaskProvider);
-                 web.eth.getAccounts().then((account) => {
+                 web.eth.getAccounts().then(async(account) => {
                     
                     if(account.length===0){
                         setLoginAccount("");
@@ -47,7 +48,18 @@ function App() {
                        setLoginAccount(account);
                        setWeb3(web);
                        setIsLogin(true)
+                     
+                       const headers = {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'Accept': '*/*'
                     }
+                    const params = new URLSearchParams();
+                    params.append('loginAddress',account[0]);
+        
+                    await axios.post('http://localhost:3001/sign',params,{headers}).then((res)=>{
+                    console.log(res)
+                })
+                }
                 });
  
             } catch (err) {
