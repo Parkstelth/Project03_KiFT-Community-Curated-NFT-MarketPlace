@@ -1,6 +1,6 @@
 .marketItemContainer {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr; /* repeat(3, 1fr) fr = fraction */
     grid-template-rows: repeat(7, 600px);
 }
 
@@ -41,8 +41,11 @@
 }
 
 .marketItem_first-section {
-    width: 95%;
-    display: flex;
+    width: 300px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    /* display: flex; */
     align-items: center;
     justify-content: space-between;
     font-size: 17px;

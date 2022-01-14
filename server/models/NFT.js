@@ -10,10 +10,19 @@ const NFTSchema = new mongoose.Schema(
         asset_contract_type: { type: String },
         schema_name: { type: String },
         description: { type: String },
-        NFT_id: { type: String },
+        NFT_Token_id: { type: String },
         createdAt: { type: Date },
         image_url: { type: String },
-        traits: {},
+        openseaId: { type: Number },
+        traits: [
+            {
+                trait_type: { type: String },
+                value: { type: String },
+                display_type: { type: String },
+                max_value: { type: String },
+                trait_count: { type: String },
+            },
+        ],
         history: {},
     },
     {

@@ -1,10 +1,11 @@
 .signInPage {
-    transform: translate(-50%, -50%);
+    /* transform: translate(-50%, -50%);
     top: 42%;
     left: 50%;
-    position: absolute;
+    position: fixed; */
     max-width: 370px;
     text-align: center;
+    margin: 110px auto;
 }
 .signInTitle {
     font-size: 46px;
