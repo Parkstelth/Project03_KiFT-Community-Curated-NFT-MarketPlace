@@ -11,7 +11,7 @@ function SignIn({ setfooter, setLoginAccount, setWeb3, setIsLogin }) {
     // const fetchMyNFTs = axios.get(`https://testnets-api.opensea.io/assets?owner=${accounts[0]}`)
 
     const connectWallet = async () => {
-        const metamaskProvider = window.ethereum.providers.find((provider)=>provider.isMetaMask)
+        const metamaskProvider = window.ethereum.providers.find((provider) => provider.isMetaMask);
         try {
             const accounts = await metamaskProvider.request({
                 method: "eth_requestAccounts",
@@ -28,16 +28,16 @@ function SignIn({ setfooter, setLoginAccount, setWeb3, setIsLogin }) {
             setfooter(true);
 
             const headers = {
-                'Content-Type': 'application/x-www-form-urlencoded',
-                'Accept': '*/*'
-            }
+                "Content-Type": "application/x-www-form-urlencoded",
+                Accept: "*/*",
+            };
             const params = new URLSearchParams();
-            params.append('loginAddress',accounts[0]);
+            params.append("loginAddress", accounts[0]);
 
-            await axios.post('http://localhost:3000/user',params,{headers}).then((res)=>{
-            console.log(res)
-        })
-        
+            await axios.post("http://localhost:3001/sign", params, { headers }).then((res) => {
+                console.log(res);
+            });
+
             document.location.href = "/market";
 
             //서명 요청 이건 잘 안된다 ㅜ 없애도 괜츈
@@ -66,7 +66,6 @@ function SignIn({ setfooter, setLoginAccount, setWeb3, setIsLogin }) {
             // } catch (e) {
             //     console.log(e);
             // }
-
         } catch (e) {
             if (typeof window.ethereum === "undefined") {
                 var win = window.open("https://metamask.io/download.html", "_blank");
