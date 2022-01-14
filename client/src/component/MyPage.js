@@ -48,6 +48,18 @@ function MyPage({ setIsLogin, setSellitem }) {
             setLoading(false);
 
             result.data.assets.map(async (item) => {
+              // const traitOfItem = {};
+              console.log(item.traits);
+              // item.traits.forEach((el) => {
+              //     traitOfItem.trait_type = el.trait_type;
+              //     traitOfItem.value = el.value;
+              //     console.log(traitOfItem);
+              // });
+              // console.log(traitOfItem);
+              // item.traits.map((trait) => {
+              //     console.log(trait.trait_type);
+              //     console.log(trait.value);
+              // });
               const headers = {
                 "Content-Type": "application/json",
                 Accept: "application/json",
@@ -62,10 +74,12 @@ function MyPage({ setIsLogin, setSellitem }) {
                   asset_contract_type: item.asset_contract.asset_contract_type,
                   schema_name: item.asset_contract.schema_name,
                   description: item.description,
-                  NFT_id: item.token_id,
+                  NFT_Token_id: item.token_id,
                   createdAt: item.collection.created_date,
                   image_url: item.image_url,
                   history: item.collection.created_date,
+                  openseaId: item.id,
+                  traits: item.traits,
                 },
                 headers
               );
@@ -89,6 +103,7 @@ function MyPage({ setIsLogin, setSellitem }) {
             />
           </div>
         </div>
+
         <div className="middle">
           <div className="address_box">
             {String(nowAccount).slice(0, 6) +

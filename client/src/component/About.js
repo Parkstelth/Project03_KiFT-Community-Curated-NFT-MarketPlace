@@ -33,8 +33,9 @@ function About() {
         },
         headers
       )
-      .then((item) => {
-        setSellitem(item);
+      .then((result) => {
+        console.log(result);
+        setSellitem(result.data);
       });
   }
 

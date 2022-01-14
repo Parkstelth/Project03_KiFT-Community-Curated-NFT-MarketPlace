@@ -32,20 +32,6 @@ router.post("/sign", async (req, res) => {
         res.status(200).send("기존 계정 DB 존재");
       }
     })
-    .then(async (result) => {
-      console.log("yy", reqAddress);
-      if (!result) {
-        const user = new User({
-          address: req.body.loginAddress, //주소가 들어가게
-          createdAt: new Date(),
-          ownedNFTs: [],
-        });
-        await user.save();
-        res.status(200).send("새로운 계정 DB 생성");
-      } else {
-        res.status(200).send("기존 계정 DB 존재");
-      }
-    })
     .catch((e) => {
       console.log(e);
       res.status(409).send({ message: e });
@@ -88,6 +74,35 @@ router.post("/NFT", async (req, res) => {
       console.log(err);
       res.status(400).send(err);
     });
+});
+
+router.post("/searchNFT", async (req, res) => {
+  NFT.findOne({
+    openseaId: req.body.openseaId,
+  })
+    .then(async (result) => {
+      if (!result) {
+        res.status(404);
+      } else {
+        res.status(200).send(result);
+      }
+    })
+    .catch((e) => {
+      console.log(e);
+      res.status(409).send({ message: e });
+    });
+});
+
+router.post("/regdate", async (req, res) => {
+  User.findOne({
+    address: req.body.address,
+  }).then((result) => {
+    if (!result) {
+      res.status(200).send("not address");
+    } else {
+      res.status(200).send(result);
+    }
+  });
 });
 
 module.exports = router;

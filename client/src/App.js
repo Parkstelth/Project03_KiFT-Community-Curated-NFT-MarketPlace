@@ -109,7 +109,7 @@ function App() {
           path="/mypage"
           element={<Mypage setIsLogin={setIsLogin} setSellitem={setSellitem} />}
         />
-        <Route path="mypage/:id" element={<About sellitem={sellitem} />} />
+        <Route path="mypage/:id" element={<About />} />
         <Route path=":id" element={<NotFound />} />
       </Routes>
       {footer ? <Footer /> : null}
