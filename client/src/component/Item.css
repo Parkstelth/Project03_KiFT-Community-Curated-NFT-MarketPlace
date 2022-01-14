@@ -1,7 +1,7 @@
 .marketItemContainer {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
-    grid-auto-rows: minmax(70px, 1fr);
+    grid-template-rows: repeat(7, 600px);
 }
 
 .marketItem {
@@ -13,10 +13,12 @@
     display: flex;
     flex-direction: column;
     font-size: 14px;
+    /* height: 600px; */
 }
 
 .imgContainer {
     flex: 1 auto;
+    overflow: hidden;
     /* object-fit: cover; */
     /* position: absolute;
     top: 0;
