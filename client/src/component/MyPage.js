@@ -10,14 +10,34 @@ function MyPage({ setIsLogin, setSellitem }) {
   const [data, setData] = useState([]);
   const [nowAccount, setNowAccount] = useState("");
   const [loading, setLoading] = useState(true);
+  const [regDate, setRegDate] = useState("");
 
   const fetchNFTs = async () => {
-    const web = new Web3(window.ethereum);
+    const metamaskProvider = window.ethereum.providers.find(
+      (provider) => provider.isMetaMask
+    );
+    const web = new Web3(metamaskProvider);
     await web.eth
       .getAccounts()
-      .then((account) => {
+      .then(async (account) => {
         setIsLogin(true);
-        console.log(account);
+        setNowAccount(account);
+        const headers = {
+          "Content-Type": "application/x-www-form-urlencoded",
+          Accept: "*/*",
+        };
+        const params = new URLSearchParams();
+        params.append("address", account[0].toLowerCase());
+
+        await axios
+          .post("http://localhost:3001/regdate", params, { headers })
+          .then((result) => {
+            if (result.data !== "not address") {
+              setRegDate(result.data.createdAt);
+            } else {
+              setRegDate("");
+            }
+          });
         return account;
       })
       .then(async (account) => {
@@ -25,8 +45,6 @@ function MyPage({ setIsLogin, setSellitem }) {
           .get(`https://testnets-api.opensea.io/assets?owner=${account}`)
           .then(async (result) => {
             setData(result.data.assets);
-            console.log(result.data.assets);
-            setNowAccount(account);
             setLoading(false);
 
             result.data.assets.map(async (item) => {
@@ -77,7 +95,18 @@ function MyPage({ setIsLogin, setSellitem }) {
               "..." +
               String(nowAccount).slice(-4)}
           </div>
-          <div className="createdAt">joined November 2021</div>
+          <div className="createdAt">
+            {regDate === "" ? (
+              "..."
+            ) : (
+              <>
+                {"Joined "}
+                {regDate.slice(5, 7)}
+                {"-"}
+                {regDate.slice(0, 4)}
+              </>
+            )}
+          </div>
         </div>
         {loading ? (
           <Loading className="loading" />

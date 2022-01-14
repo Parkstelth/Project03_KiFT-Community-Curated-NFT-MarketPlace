@@ -1,7 +1,16 @@
 import "./About.css";
 import { Accordion } from "react-bootstrap";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
-function About({ sellitem }) {
+function About() {
+  const [sellitem, setSellitem] = useState([]);
+  const URLparam = document.location.href.split("mypage/")[1];
+
+  useEffect(() => {
+    loadSellItem();
+  }, []);
+
   function runEtherscan(e) {
     var win = window.open(
       `https://rinkeby.etherscan.io/address/${e.target.outerText}`,
@@ -9,6 +18,26 @@ function About({ sellitem }) {
     );
     win.focus();
   }
+
+  async function loadSellItem() {
+    const headers = {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    };
+    // const params = new URLSearchParams();
+    await axios
+      .post(
+        "http://localhost:3001/searchNFT",
+        {
+          openseaId: URLparam,
+        },
+        headers
+      )
+      .then((item) => {
+        setSellitem(item);
+      });
+  }
+
   return (
     <div className="about_main">
       <div className="sell_bar"></div>
@@ -38,14 +67,14 @@ function About({ sellitem }) {
                 onClick={(e) => runEtherscan(e)}
                 className="description_address"
               >
-                {sellitem.creator.address}
+                {"패치중"}
               </span>
             </div>
           </div>
           <div className="center_properties">
             <div className="properties_title">Properties</div>
             <div className="properties">
-              {sellitem.traits.map((prop, index) => {
+              {/* {sellitem.traits.map((prop, index) => {
                 console.log("t", prop);
                 return (
                   <div className="props" key={index}>
@@ -54,7 +83,8 @@ function About({ sellitem }) {
                     <div className="props_3">100% have this trait</div>
                   </div>
                 );
-              })}
+              })} */}
+              {"traits 패치중"}
             </div>
           </div>
 
@@ -67,18 +97,16 @@ function About({ sellitem }) {
                   className="right_end addoption"
                   onClick={(e) => runEtherscan(e)}
                 >
-                  {sellitem.asset_contract.address}
+                  {sellitem.contract_address}
                 </span>
               </div>
               <div className="detail_menu">
                 <span>token id</span>
-                <span className="right_end">{sellitem.token_id}</span>
+                <span className="right_end">{sellitem.NFT_Token_id}</span>
               </div>
               <div className="detail_menu">
                 <span>token standard</span>
-                <span className="right_end">
-                  {sellitem.asset_contract.schema_name}
-                </span>
+                <span className="right_end">{sellitem.schema_name}</span>
               </div>
               <div className="detail_menu">
                 <span>blockchain</span>

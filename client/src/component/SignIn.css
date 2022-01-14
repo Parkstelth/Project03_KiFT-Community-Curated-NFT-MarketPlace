@@ -1,22 +1,19 @@
 .signInPage {
-    transform: translate(-50%, -50%);
-    top: 42%;
-    left: 50%;
-    position: absolute;
-    max-width: 370px;
-    text-align: center;
+  margin: 220px auto;
+  max-width: 370px;
+  text-align: center;
 }
 .signInTitle {
-    font-size: 46px;
+  font-size: 46px;
 }
 .signInButton {
-    background-color: black;
-    border-radius: 17px;
-    padding: 24px 32px;
-    width: 50%;
-    font-size: 15px;
-    cursor: pointer;
-    color: white;
-    font-family: "Poppins";
-    border-color: black;
+  background-color: black;
+  border-radius: 17px;
+  padding: 24px 32px;
+  width: 50%;
+  font-size: 15px;
+  cursor: pointer;
+  color: white;
+  font-family: "Poppins";
+  border-color: black;
 }
