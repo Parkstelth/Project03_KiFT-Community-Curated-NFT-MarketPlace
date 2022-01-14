@@ -32,6 +32,20 @@ router.post("/sign", async (req, res) => {
         res.status(200).send("기존 계정 DB 존재");
       }
     })
+    .then(async (result) => {
+      console.log("yy", reqAddress);
+      if (!result) {
+        const user = new User({
+          address: req.body.loginAddress, //주소가 들어가게
+          createdAt: new Date(),
+          ownedNFTs: [],
+        });
+        await user.save();
+        res.status(200).send("새로운 계정 DB 생성");
+      } else {
+        res.status(200).send("기존 계정 DB 존재");
+      }
+    })
     .catch((e) => {
       console.log(e);
       res.status(409).send({ message: e });
@@ -40,70 +54,39 @@ router.post("/sign", async (req, res) => {
 
 router.post("/NFT", async (req, res) => {
   let reqContractAddress = req.body.contract_address;
-  let reqTokenId = req.body.NFT_id;
-  NFT.findOne({
-    contract_address: reqContractAddress,
-    NFT_id: reqTokenId,
-  })
-    .then(async (result) => {
-      if (!result) {
-        const nft = new NFT({
-          // owner: { type: mongoose.Schema.Types.ObjectId },
-          isSale: req.body.isSale,
-          name: req.body.name,
-          contract_address: req.body.contract_address,
-          asset_contract_type: req.body.asset_contract_type,
-          schema_name: req.body.schema_name,
-          description: req.body.description,
-          NFT_id: req.body.NFT_id,
-          createdAt: req.body.createdAt,
-          image_url: req.body.image_url,
-          history: { minted: req.body.history },
-        });
-        await nft.save();
-        res.status(200).send("Save complete");
-      } else {
-        res.status(200).send("Already exist");
-      }
-    })
-    .catch((e) => {
-      console.log(e);
-      res.status(409).send({ message: e });
-    });
-});
+  let reqTokenId = req.body.NFT_Token_id;
 
-router.post("/searchNFT", async (req, res) => {
-  NFT.findOne({
-    openseaId: req.body.openseaId,
-  })
+  NFT.updateOne(
+    {
+      contract_address: reqContractAddress,
+      NFT_Token_id: reqTokenId,
+    },
+    {
+      isSale: req.body.isSale,
+      name: req.body.name,
+      contract_address: req.body.contract_address,
+      asset_contract_type: req.body.asset_contract_type,
+      schema_name: req.body.schema_name,
+      description: req.body.description,
+      NFT_Token_id: req.body.NFT_Token_id,
+      createdAt: req.body.createdAt,
+      image_url: req.body.image_url,
+      openseaId: req.body.openseaId,
+      traits: req.body.traits,
+      history: { minted: req.body.history },
+    },
+    {
+      upsert: true,
+    }
+  )
     .then(async (result) => {
-      if (!result) {
-        res.status(404);
-      } else {
-        res.status(200).send(result);
-      }
+      // const nft = new NFT();
+      // await nft.save();
+      res.status(200).send({ result: result, message: "maybe good" });
     })
-    .catch((e) => {
-      console.log(e);
-      res.status(409).send({ message: e });
-    });
-});
-
-router.post("/regdate", async (req, res) => {
-  console.log(req.body.address);
-  User.findOne({
-    address: req.body.address,
-  })
-    .then(async (result) => {
-      if (!result) {
-        res.status(200).send("not address");
-      } else {
-        res.status(200).send(result);
-      }
-    })
-    .catch((e) => {
-      console.log(e);
-      res.status(409).send({ message: e });
+    .catch((err) => {
+      console.log(err);
+      res.status(400).send(err);
     });
 });
 
