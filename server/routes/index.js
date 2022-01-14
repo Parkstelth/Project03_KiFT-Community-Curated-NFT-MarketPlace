@@ -20,6 +20,7 @@ router.post("/sign", async (req, res) => {
     address: reqAddress,
   })
     .then(async (result) => {
+      console.log("yy", reqAddress);
       if (!result) {
         const user = new User({
           address: req.body.loginAddress, //주소가 들어가게
@@ -27,7 +28,7 @@ router.post("/sign", async (req, res) => {
           ownedNFTs: [],
         });
         await user.save();
-        res.status(200).send("새로운 계정 DB 존재");
+        res.status(200).send("새로운 계정 DB 생성");
       } else {
         res.status(200).send("기존 계정 DB 존재");
       }
