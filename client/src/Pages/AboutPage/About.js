@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import NotifyModal from "./Components/NotifyModal.js";
 import Web3 from "web3";
+var KiFTabi = require("./KiFTabi");
 var erc721abi = require("./erc721abi");
 
 function About() {
@@ -24,12 +25,9 @@ function About() {
   };
   async function ListItem() {
     setShowModal(true);
-
-    try {
-      await setApprovalAll().then(async (result) => {
-        await listNFTOnTheMarket;
-      });
-    } catch {}
+    await setApprovalAll().then((result) => {
+      console.log(result);
+    });
   }
 
   useEffect(() => {
@@ -82,6 +80,7 @@ function About() {
       )
       .then((result) => {
         if (result.status === 200) {
+          console.log("db nft ok!");
           setMessage("Upload your NFT Success!");
           return result;
         }
@@ -115,16 +114,55 @@ function About() {
             )
             .send({
               from: account[0],
-              gas: 2000000,
-              gasPrice: "100000000000",
+              gas: 100000,
+              gasPrice: "10000000000",
             })
-            .then((result) => {
+            .then(async (result) => {
               setMessage("Approve to KiFT Success!");
+
               return result;
             });
         });
       } catch (err) {
         setMessage("Approve to KiFT Fail!");
+      }
+    }
+  }
+
+  async function createItem() {
+    if (typeof window.ethereum !== "undefined") {
+      //여러 wallet 플랫폼중 metaMask로 연결
+
+      const metamaskProvider = await window.ethereum.providers.find(
+        (provider) => provider.isMetaMask
+      );
+      // window.ethereum이 있다면 여기서 window.ethereum이란 메타마스크 설치여부
+      try {
+        const web = new Web3(metamaskProvider);
+
+        web.eth.getAccounts().then(async (account) => {
+          let contract = await new web.eth.Contract(
+            KiFTabi,
+            "0x543f6fbc5908a8c599c9d9028cf8d4b0026af1ac"
+          );
+          await contract.methods
+            .createMarketItem(
+              sellitem.contract_address, //setapproval 받을 kift.sol 배포 주소
+              sellitem.NFT_Token_id,
+              web.utils.toWei(String(priceSellerPut), "ether")
+            )
+            .send({
+              from: account[0],
+              gas: 100000,
+              gasPrice: "10000000000",
+            })
+            .then(async (result) => {
+              setMessage("upload blockChain to KiFT Success!");
+              return result;
+            });
+        });
+      } catch (err) {
+        setMessage("upload blockChain to KiFT Fail!");
       }
     }
   }
