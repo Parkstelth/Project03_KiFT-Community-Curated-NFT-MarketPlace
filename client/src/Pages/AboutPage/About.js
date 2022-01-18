@@ -9,7 +9,7 @@ var erc721abi = require("./erc721abi");
 
 function About() {
   const [sellitem, setSellitem] = useState([]);
-  const [priceSellerPut, setPrice] = useState("");
+  const [priceSellerPut, setPrice] = useState(0);
   const [showModal, setShowModal] = useState(false);
   const [traits, setTraits] = useState([]);
   const [message, setMessage] = useState("");
@@ -23,11 +23,11 @@ function About() {
     setPrice(e.target.value);
     console.log(priceSellerPut);
   };
+
   async function ListItem() {
+    setMessage("");
     setShowModal(true);
-    await setApprovalAll().then((result) => {
-      console.log(result);
-    });
+    setApprovalAll();
   }
 
   useEffect(() => {
@@ -80,7 +80,6 @@ function About() {
       )
       .then((result) => {
         if (result.status === 200) {
-          console.log("db nft ok!");
           setMessage("Upload your NFT Success!");
           return result;
         }
@@ -117,10 +116,16 @@ function About() {
               gas: 100000,
               gasPrice: "10000000000",
             })
-            .then(async (result) => {
-              setMessage("Approve to KiFT Success!");
-
+            .then((result) => {
+              setMessage("Approve to KiFT Success!", result.blockHash);
+              console.log("This is success result--->>>", result);
+              console.log("This is Hash ", result.blockHash);
               return result;
+            })
+            .catch((err) => {
+              console.log("this is whole error message", err);
+              console.log("this is error message----->>>>", err.message);
+              setMessage(err.message);
             });
         });
       } catch (err) {
