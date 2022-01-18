@@ -3,12 +3,15 @@ import { Accordion } from "react-bootstrap";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import NotifyModal from "./Components/NotifyModal.js";
+import Web3 from "web3";
+var erc721abi = require("./erc721abi");
 
 function About() {
   const [sellitem, setSellitem] = useState([]);
   const [priceSellerPut, setPrice] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [traits, setTraits] = useState([]);
+  const [message, setMessage] = useState("");
   const URLparam = document.location.href.split("mypage/")[1];
 
   const closeModal = () => {
@@ -19,10 +22,15 @@ function About() {
     setPrice(e.target.value);
     console.log(priceSellerPut);
   };
-  const ListItem = (e) => {
-    listNFTOnTheMarket();
-    setPrice("");
-  };
+  async function ListItem() {
+    setShowModal(true);
+
+    try {
+      await setApprovalAll().then(async (result) => {
+        await listNFTOnTheMarket;
+      });
+    } catch {}
+  }
 
   useEffect(() => {
     loadSellItem();
@@ -58,7 +66,6 @@ function About() {
   }
 
   async function listNFTOnTheMarket() {
-    console.log(priceSellerPut);
     const headers = {
       "Content-Type": "application/json",
       Accept: "application/json",
@@ -74,23 +81,61 @@ function About() {
         headers
       )
       .then((result) => {
-        console.log(result);
         if (result.status === 200) {
-          setShowModal(true);
+          setMessage("Upload your NFT Success!");
+          return result;
         }
       })
       .catch((e) => {
         //에러를 프론트로 띄워주세요
-        console.log("listItem request failed! you can check error below");
-        console.log(e);
+        setMessage("listItem request failed! you can check error below");
       });
   }
+
+  async function setApprovalAll() {
+    if (typeof window.ethereum !== "undefined") {
+      //여러 wallet 플랫폼중 metaMask로 연결
+
+      const metamaskProvider = await window.ethereum.providers.find(
+        (provider) => provider.isMetaMask
+      );
+      // window.ethereum이 있다면 여기서 window.ethereum이란 메타마스크 설치여부
+      try {
+        const web = new Web3(metamaskProvider);
+
+        web.eth.getAccounts().then(async (account) => {
+          let contract = await new web.eth.Contract(
+            erc721abi,
+            sellitem.contract_address
+          );
+          await contract.methods
+            .setApprovalForAll(
+              "0x543f6fBC5908a8c599C9d9028cF8d4B0026AF1AC", //setapproval 받을 kift.sol 배포 주소
+              true
+            )
+            .send({
+              from: account[0],
+              gas: 2000000,
+              gasPrice: "100000000000",
+            })
+            .then((result) => {
+              setMessage("Approve to KiFT Success!");
+              return result;
+            });
+        });
+      } catch (err) {
+        setMessage("Approve to KiFT Fail!");
+      }
+    }
+  }
+
   return (
     <div className="about_main">
       {showModal && (
         <NotifyModal
           showModal={showModal}
           closeModal={closeModal}
+          message={message}
         ></NotifyModal>
       )}
 
@@ -135,9 +180,9 @@ function About() {
           <div className="center_properties">
             <div className="properties_title">Properties</div>
             <div className="properties">
-              {traits.map((prop) => {
+              {traits.map((prop, index) => {
                 return (
-                  <div className="props">
+                  <div className="props" key={index}>
                     <div className="props_1">{prop.trait_type}</div>
                     <div className="props_2">{prop.value}</div>
                     <div className="props_3">100% have this trait</div>
