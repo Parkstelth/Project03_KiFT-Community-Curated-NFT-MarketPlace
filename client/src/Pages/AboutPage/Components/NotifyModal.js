@@ -5,9 +5,9 @@ function NotifyModal({ closeModal, showModal, message }) {
   return (
     <div className="modal__container">
       <div className="modal">
-        <div>{message}</div>
+        <div className="modal_message">{message}</div>
         <button className="modal__button" onClick={closeModal}>
-          Modal close
+          Close
         </button>
       </div>
     </div>

@@ -192,7 +192,7 @@
   transition: background-color 0.15s;
 }
 .sell_button:hover {
-  background-color: rgb(32 119 226);
+  background-color: rgb(32, 119, 226);
   color: white;
 }
 
