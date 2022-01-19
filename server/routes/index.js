@@ -106,6 +106,14 @@ router.post("/searchNFT", async (req, res) => {
     NFT.findOne({
         openseaId: req.body.openseaId,
     })
+        .populate("owner")
+        .then((result, err) => {
+            if (err) return res.status(400).send(err);
+            console.log(result);
+            res.status(200).send(result);
+        });
+    /*
+
         .then(async (result) => {
             if (!result) {
                 res.status(404);
@@ -116,7 +124,7 @@ router.post("/searchNFT", async (req, res) => {
         .catch((e) => {
             console.log(e);
             res.status(409).send({ message: e });
-        });
+        }); */
 });
 
 router.post("/regdate", async (req, res) => {

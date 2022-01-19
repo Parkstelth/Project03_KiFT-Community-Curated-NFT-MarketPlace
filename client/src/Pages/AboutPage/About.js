@@ -37,7 +37,6 @@ function About() {
     async function changePrice() {
         setMessage("");
         setShowModal(true);
-        changeItemPrice();
 
         if (isNaN(priceSellerPut) === false && priceSellerPut !== null && priceSellerPut !== "") {
             changeItemPrice();
@@ -67,6 +66,7 @@ function About() {
     }
 
     async function loadSellItem() {
+        //어바웃 페이지의 아이템 정보 가져오기
         const headers = {
             "Content-Type": "application/json",
             Accept: "application/json",
@@ -81,8 +81,8 @@ function About() {
                 headers
             )
             .then((result) => {
-                console.log(result.data.owner);
                 setSellitem(result.data);
+                console.log("this is owner address!!! ===> ", sellitem.owner.address);
                 setTraits(result.data.traits);
             });
     }
@@ -320,6 +320,8 @@ function About() {
         }
     }
 
+    // console.log(sellitem.owner.address);
+
     return (
         <div className="about_main">
             {showModal && <NotifyModal showModal={showModal} closeModal={closeModal} message={message}></NotifyModal>}
@@ -330,7 +332,12 @@ function About() {
                     <div className="nft_name_box">
                         <div className="nft_name">{sellitem.name}</div>
                         <div className="nft_owned">
-                            Owned by <span className="owned_address">you</span>
+                            Owned by{" "}
+                            <span className="owned_address">
+                                {sellitem.owner.address.slice(0, 6)}
+                                {"..."}
+                                {sellitem.owner.address.slice(-6)}
+                            </span>
                         </div>
                     </div>
 
