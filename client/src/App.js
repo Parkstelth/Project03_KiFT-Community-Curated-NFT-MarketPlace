@@ -1,5 +1,4 @@
 import "./App.css";
-
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import FrontPage from "./Pages/FrontPage/frontpage";
 import Market from "./Pages/MarketPage/Market";
@@ -16,16 +15,15 @@ import axios from "axios";
 function App() {
   const [footer, setFooter] = useState(true);
   const [loginAccount, setLoginAccount] = useState("");
-  const [loadWeb3, setWeb3] = useState([]);
   const [isLogin, setIsLogin] = useState(false);
-  const [sellitem, setSellitem] = useState("");
 
   console.log("now account ===>", loginAccount);
   <auto></auto>;
   function setfooter(e) {
     setFooter(e);
   }
-  //메타마스크 계정 변경 감지
+
+  //메타마스크 계정 변경 디텍트 부분
   // useEffect(() => {
   //     async function listenMMAccount() {
   //         window.ethereum.on("accountsChanged", async function () {
@@ -39,10 +37,8 @@ function App() {
   //     }
   //     listenMMAccount();
   // }, []);
-  useEffect(() => {
-    //son: 이거 건든적이 없는데 왜 밑줄 뜰까요? await 해주면 되나
-    //만약 signin페이지에서 Web3(url) 을 window.ethereum 으로 안잡으면 밑에 조건문은 무효화?
 
+  useEffect(() => {
     if (typeof window.ethereum !== "undefined") {
       //여러 wallet 플랫폼중 metaMask로 연결
 
@@ -56,11 +52,9 @@ function App() {
         web.eth.getAccounts().then(async (account) => {
           if (account.length === 0) {
             setLoginAccount("");
-            setWeb3([]);
             setIsLogin(false);
           } else {
             setLoginAccount(account[0].toLowerCase());
-            setWeb3(web);
             setIsLogin(true);
 
             const headers = {
@@ -85,7 +79,6 @@ function App() {
       win.focus();
 
       setLoginAccount("");
-      setWeb3([]);
       setIsLogin(false);
     }
   }, []);
@@ -105,15 +98,14 @@ function App() {
               setfooter={setfooter}
               setIsLogin={setIsLogin}
               setLoginAccount={setLoginAccount}
-              setWeb3={setWeb3}
             />
           }
         />
+        <Route path="/mypage" element={<Mypage setIsLogin={setIsLogin} />} />
         <Route
-          path="/mypage"
-          element={<Mypage setIsLogin={setIsLogin} setSellitem={setSellitem} />}
+          path="mypage/:id"
+          element={<About loginAccount={loginAccount} />}
         />
-        <Route path="mypage/:id" element={<About />} />
         <Route path=":id" element={<NotFound />} />
       </Routes>
       {footer ? <Footer /> : null}

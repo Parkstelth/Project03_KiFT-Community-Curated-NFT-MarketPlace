@@ -4,20 +4,26 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import NotifyModal from "./Components/NotifyModal.js";
 import Web3 from "web3";
+import dotenv from "dotenv";
+dotenv.config();
+const Kift_Contract_Address = process.env.REACT_APP_KIFT_CONTRACT_ADDRESS;
+
 var KiFTabi = require("./KiFTabi");
 var erc721abi = require("./erc721abi");
 
-function About() {
+function About({ loginAccount }) {
   const [sellitem, setSellitem] = useState([]);
   const [priceSellerPut, setPrice] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [traits, setTraits] = useState([]);
   const [ownerAddress, setOwnerAddress] = useState("");
   const [message, setMessage] = useState("");
+  const [closebox, setClosebox] = useState(false);
   const URLparam = document.location.href.split("mypage/")[1]; //about으로 변경준비
 
   const closeModal = () => {
     setShowModal(false);
+    setClosebox(false);
   };
 
   const onChange = (e) => {
@@ -33,8 +39,20 @@ function About() {
       priceSellerPut !== null &&
       priceSellerPut !== ""
     ) {
-      setApprovalAll();
+      const metamaskProvider = await window.ethereum.providers.find(
+        (provider) => provider.isMetaMask
+      );
+      const web = new Web3(metamaskProvider);
+      await web.eth.getAccounts().then(async (account) => {
+        if (ownerAddress === account[0].toLowerCase()) {
+          setApprovalAll();
+        } else {
+          setMessage("You aren't NFT Owner!");
+          setClosebox(true);
+        }
+      });
     } else {
+      setClosebox(true);
       setMessage("Please Submit Price!");
     }
   }
@@ -50,6 +68,7 @@ function About() {
     ) {
       changeItemPrice();
     } else {
+      setClosebox(true);
       setMessage("Please Submit Price!");
     }
     //가격변경 함수가 추가된 솔리디티 함수 작동
@@ -187,6 +206,7 @@ function About() {
   }
 
   async function setApprovalAll() {
+    setMessage(`Please wait until "Sucess"`);
     if (typeof window.ethereum !== "undefined") {
       //여러 wallet 플랫폼중 metaMask로 연결
 
@@ -198,13 +218,10 @@ function About() {
         web.eth.getAccounts().then(async (account) => {
           let contract = await new web.eth.Contract(
             KiFTabi,
-            "0x2F5b9e3c11aFB60A582777dde9D1D4F5B921Fe7a"
+            Kift_Contract_Address
           );
           await contract.methods
-            .isApprovedForAll(
-              sellitem.contract_address,
-              "0x2F5b9e3c11aFB60A582777dde9D1D4F5B921Fe7a"
-            )
+            .isApprovedForAll(sellitem.contract_address, Kift_Contract_Address)
             .call({
               from: account[0],
             })
@@ -221,7 +238,7 @@ function About() {
                 );
                 await contract.methods
                   .setApprovalForAll(
-                    "0x2F5b9e3c11aFB60A582777dde9D1D4F5B921Fe7a", //setapproval 받을 kift.sol 배포 주소
+                    Kift_Contract_Address, //setapproval 받을 kift.sol 배포 주소
                     true
                   )
                   .send({
@@ -238,6 +255,7 @@ function About() {
                   .catch((err) => {
                     console.log("this is whole error message", err);
                     console.log("this is error message----->>>>", err.message);
+                    setClosebox(true);
                     setMessage(err.message);
                   })
                   .then(async (result) => {
@@ -248,6 +266,7 @@ function About() {
                   .catch((err) => {
                     console.log("this is whole error message", err);
                     console.log("this is error message----->>>>", err.message);
+                    setClosebox(true);
                     setMessage(err.message);
                   });
               }
@@ -265,6 +284,7 @@ function About() {
   }
 
   async function changeItemPrice() {
+    setMessage(`Please wait until "Sucess"`);
     if (typeof window.ethereum !== "undefined") {
       //여러 wallet 플랫폼중 metaMask로 연결
 
@@ -276,7 +296,7 @@ function About() {
         web.eth.getAccounts().then(async (account) => {
           let contract = await new web.eth.Contract(
             KiFTabi,
-            "0x2F5b9e3c11aFB60A582777dde9D1D4F5B921Fe7a"
+            Kift_Contract_Address
           );
 
           await contract.methods
@@ -296,6 +316,7 @@ function About() {
             .catch((err) => {
               console.log("this is whole error message", err);
               console.log("this is error message----->>>>", err.message);
+              setClosebox(true);
               setMessage(err.message);
             });
         });
@@ -306,6 +327,7 @@ function About() {
   }
 
   async function cancleMarketItem() {
+    setMessage(`Please wait until "Sucess"`);
     if (typeof window.ethereum !== "undefined") {
       //여러 wallet 플랫폼중 metaMask로 연결
 
@@ -317,7 +339,7 @@ function About() {
         web.eth.getAccounts().then(async (account) => {
           let contract = await new web.eth.Contract(
             KiFTabi,
-            "0x2F5b9e3c11aFB60A582777dde9D1D4F5B921Fe7a"
+            Kift_Contract_Address
           );
 
           await contract.methods
@@ -334,6 +356,7 @@ function About() {
             .catch((err) => {
               console.log("this is whole error message", err);
               console.log("this is error message----->>>>", err.message);
+              setClosebox(true);
               setMessage(err.message);
             });
         });
@@ -357,7 +380,7 @@ function About() {
         web.eth.getAccounts().then(async (account) => {
           let contract = await new web.eth.Contract(
             KiFTabi,
-            "0x2F5b9e3c11aFB60A582777dde9D1D4F5B921Fe7a"
+            Kift_Contract_Address
           );
           await contract.methods
             .createMarketItem(
@@ -381,6 +404,7 @@ function About() {
             .catch((err) => {
               console.log("this is whole error message", err);
               console.log("this is error message----->>>>", err.message);
+              setClosebox(true);
               setMessage(err.message);
             });
         });
@@ -399,6 +423,7 @@ function About() {
           showModal={showModal}
           closeModal={closeModal}
           message={message}
+          closebox={closebox}
         ></NotifyModal>
       )}
 
@@ -425,21 +450,25 @@ function About() {
               Description
               <div className="price_input_box">
                 {sellitem.isSale ? (
-                  <>
-                    {" "}
-                    <input
-                      className="price"
-                      placeholder={`Now : ${sellitem.price} ETH`}
-                      value={priceSellerPut}
-                      onChange={onChange}
-                    />
-                    <button className="sell_button" onClick={changePrice}>
-                      Change Price
-                    </button>
-                    <button className="cancle_button" onClick={cancleItem}>
-                      Cancle Selling
-                    </button>
-                  </>
+                  loginAccount === ownerAddress ? (
+                    <>
+                      {" "}
+                      <input
+                        className="price"
+                        placeholder={`Now : ${sellitem.price} ETH`}
+                        value={priceSellerPut}
+                        onChange={onChange}
+                      />
+                      <button className="sell_button" onClick={changePrice}>
+                        Change Price
+                      </button>
+                      <button className="cancle_button" onClick={cancleItem}>
+                        Cancle Selling
+                      </button>
+                    </>
+                  ) : (
+                    <button onClick={null}>BUY</button>
+                  )
                 ) : (
                   <>
                     {" "}
