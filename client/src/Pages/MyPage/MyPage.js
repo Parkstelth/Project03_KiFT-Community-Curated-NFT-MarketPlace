@@ -17,7 +17,7 @@ function MyPage({ setIsLogin, setSellitem }) {
             .getAccounts()
             .then((account) => {
                 setIsLogin(true);
-                console.log(account);
+                console.log("this is your account=====>", account);
                 return account;
             })
             .then(async (account) => {
@@ -43,13 +43,13 @@ function MyPage({ setIsLogin, setSellitem }) {
                         .then(async (user) => {
                             await console.log("this is your user's data ====>", user.data.data);
                             const data = user.data.data;
-                            console.log("---------> ", data);
+                            console.log("just data ---------> ", data);
                             return data;
                         })
                         .then((data) => {
                             result.data.assets.map(async (item) => {
                                 // const traitOfItem = {};
-                                console.log(item.traits);
+                                // console.log(item.traits);
                                 // item.traits.forEach((el) => {
                                 //     traitOfItem.trait_type = el.trait_type;
                                 //     traitOfItem.value = el.value;
@@ -65,24 +65,31 @@ function MyPage({ setIsLogin, setSellitem }) {
                                     Accept: "application/json",
                                 };
                                 // const params = new URLSearchParams();
-                                await axios.post(
-                                    "http://localhost:3001/NFT",
-                                    {
-                                        owner: data._id,
-                                        name: item.name,
-                                        contract_address: item.asset_contract.address,
-                                        asset_contract_type: item.asset_contract.asset_contract_type,
-                                        schema_name: item.asset_contract.schema_name,
-                                        description: item.description,
-                                        NFT_Token_id: item.token_id,
-                                        createdAt: item.collection.created_date,
-                                        image_url: item.image_url,
-                                        history: item.collection.created_date,
-                                        openseaId: item.id,
-                                        traits: item.traits,
-                                    },
-                                    headers
-                                );
+                                await axios
+                                    .post(
+                                        "http://localhost:3001/NFT",
+                                        {
+                                            owner: data._id,
+                                            name: item.name,
+                                            contract_address: item.asset_contract.address,
+                                            asset_contract_type: item.asset_contract.asset_contract_type,
+                                            schema_name: item.asset_contract.schema_name,
+                                            description: item.description,
+                                            NFT_Token_id: item.token_id,
+                                            createdAt: item.collection.created_date,
+                                            image_url: item.image_url,
+                                            history: item.collection.created_date,
+                                            openseaId: item.id,
+                                            traits: item.traits,
+                                        },
+                                        headers
+                                    )
+                                    .then((result) => {
+                                        console.log("this is result from axios/NFT ===>", result);
+                                    })
+                                    .catch((err) => {
+                                        console.log("errrrrrr ", err);
+                                    });
                             });
                         })
                         .catch((err) => {

@@ -49,6 +49,7 @@ function App() {
       const metamaskProvider = window.ethereum.providers.find(
         (provider) => provider.isMetaMask
       );
+      console.log("terr", metamaskProvider);
       // window.ethereum이 있다면 여기서 window.ethereum이란 메타마스크 설치여부
       try {
         const web = new Web3(metamaskProvider);

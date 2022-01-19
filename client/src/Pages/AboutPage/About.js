@@ -12,6 +12,7 @@ function About() {
   const [priceSellerPut, setPrice] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [traits, setTraits] = useState([]);
+  const [ownerAddress, setOwnerAddress] = useState("");
   const [message, setMessage] = useState("");
   const URLparam = document.location.href.split("mypage/")[1]; //about으로 변경준비
 
@@ -77,6 +78,7 @@ function About() {
   }
 
   async function loadSellItem() {
+    //어바웃 페이지의 아이템 정보 가져오기
     const headers = {
       "Content-Type": "application/json",
       Accept: "application/json",
@@ -91,9 +93,11 @@ function About() {
         headers
       )
       .then((result) => {
-        console.log(result.data.owner);
         setSellitem(result.data);
+
+        // console.log("this is owner address!!! ===> ", sellitem.owner.address);
         setTraits(result.data.traits);
+        setOwnerAddress(result.data.owner.address);
       });
   }
 
@@ -117,7 +121,7 @@ function About() {
       .then((result) => {
         if (result.status === 200) {
           setMessage("Upload your NFT Success!");
-          return result;
+          document.location.href = `/mypage/${URLparam}`;
         }
       })
       .catch((e) => {
@@ -142,7 +146,7 @@ function About() {
       .then((result) => {
         if (result.status === 200) {
           setMessage("Change your NFT Item Price Success!");
-          return result;
+          document.location.href = `/mypage/${URLparam}`;
         }
       })
       .catch((e) => {
@@ -171,7 +175,7 @@ function About() {
       .then((result) => {
         if (result.status === 200) {
           setMessage("Cancle your NFT Item Success!");
-          return result;
+          document.location.href = `/mypage/${URLparam}`;
         }
       })
       .catch((e) => {
@@ -231,6 +235,11 @@ function About() {
                     console.log("This is Hash ", result.blockHash);
                     return result;
                   })
+                  .catch((err) => {
+                    console.log("this is whole error message", err);
+                    console.log("this is error message----->>>>", err.message);
+                    setMessage(err.message);
+                  })
                   .then(async (result) => {
                     if (result) {
                       await createItem();
@@ -242,6 +251,11 @@ function About() {
                     setMessage(err.message);
                   });
               }
+            })
+            .catch((err) => {
+              console.log("this is whole error message", err);
+              console.log("this is error message----->>>>", err.message);
+              setMessage(err.message);
             });
         });
       } catch (err) {
@@ -363,6 +377,11 @@ function About() {
               );
               await setMessage("upload blockChain to KiFT Success!");
               await listNFTOnTheMarket(result);
+            })
+            .catch((err) => {
+              console.log("this is whole error message", err);
+              console.log("this is error message----->>>>", err.message);
+              setMessage(err.message);
             });
         });
       } catch (err) {
@@ -370,6 +389,8 @@ function About() {
       }
     }
   }
+
+  // console.log(sellitem.owner.address);
 
   return (
     <div className="about_main">
@@ -387,7 +408,12 @@ function About() {
           <div className="nft_name_box">
             <div className="nft_name">{sellitem.name}</div>
             <div className="nft_owned">
-              Owned by <span className="owned_address">you</span>
+              Owned by{" "}
+              <span className="owned_address">
+                {ownerAddress.slice(0, 6)}
+                {"..."}
+                {ownerAddress.slice(-6)}
+              </span>
             </div>
           </div>
 

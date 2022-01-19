@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const NFTSchema = new mongoose.Schema(
     {
-        owner: { type: mongoose.Schema.Types.ObjectId },
+        owner: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
         itemIdOnBlockChain: { type: Number },
         isSale: { type: Boolean, default: false },
         price: { type: Number, default: 0 },
