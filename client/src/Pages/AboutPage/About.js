@@ -26,13 +26,32 @@ function About() {
   async function ListItem() {
     setMessage("");
     setShowModal(true);
-    setApprovalAll();
+
+    if (
+      isNaN(priceSellerPut) === false &&
+      priceSellerPut !== null &&
+      priceSellerPut !== ""
+    ) {
+      setApprovalAll();
+    } else {
+      setMessage("Please Submit Price!");
+    }
   }
 
   async function changePrice() {
     setMessage("");
     setShowModal(true);
     changeItemPrice();
+
+    if (
+      isNaN(priceSellerPut) === false &&
+      priceSellerPut !== null &&
+      priceSellerPut !== ""
+    ) {
+      changeItemPrice();
+    } else {
+      setMessage("Please Submit Price!");
+    }
     //가격변경 함수가 추가된 솔리디티 함수 작동
     // 솔리디티 내 가격 변화 함수 작성
     // vscode abi 변경
@@ -44,11 +63,6 @@ function About() {
     setMessage("");
     setShowModal(true);
     cancleMarketItem();
-    //가격변경 함수가 추가된 솔리디티 함수 작동
-    // 솔리디티 내 가격 변화 함수 작성
-    // vscode abi 변경
-    // setapprovalall 함수 복제
-    // 복제 낸 내부속 가격변화함수 새로 작성후 주입
   }
 
   useEffect(() => {
