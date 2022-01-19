@@ -145,6 +145,7 @@ router.post("/listItem", async (req, res) => {
     let reqOpenseaId = req.body.openseaId;
     let reqPrice = req.body.price;
     let reqIsSale = req.body.isSale;
+    let reqItemIdOnBlockChain = req.body.itemIdOnBlockChain;
 
     NFT.updateOne(
         {
@@ -153,6 +154,7 @@ router.post("/listItem", async (req, res) => {
         {
             isSale: reqIsSale,
             price: reqPrice,
+            itemIdOnBlockChain: reqItemIdOnBlockChain,
         } //옵션으로 upsert는 안써도 됨. 이미 존재하는걸 수정하는거니까
     )
         .then(async (result) => {
