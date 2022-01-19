@@ -127,6 +127,7 @@ function About() {
                 //어프로브 금지
                 await createItem();
               } else {
+                //어프로브 시작
                 let contract = await new web.eth.Contract(
                   erc721abi,
                   sellitem.contract_address

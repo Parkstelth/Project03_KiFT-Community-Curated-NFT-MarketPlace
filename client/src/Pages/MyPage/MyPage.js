@@ -47,42 +47,65 @@ function MyPage({ setIsLogin, setSellitem }) {
             setData(result.data.assets);
             setLoading(false);
 
-            result.data.assets.map(async (item) => {
-              // const traitOfItem = {};
+            const headers = {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            };
 
-              // item.traits.forEach((el) => {
-              //     traitOfItem.trait_type = el.trait_type;
-              //     traitOfItem.value = el.value;
-              //     console.log(traitOfItem);
-              // });
-              // console.log(traitOfItem);
-              // item.traits.map((trait) => {
-              //     console.log(trait.trait_type);
-              //     console.log(trait.value);
-              // });
-              const headers = {
-                "Content-Type": "application/json",
-                Accept: "application/json",
-              };
-              // const params = new URLSearchParams();
-              await axios.post(
-                "http://localhost:3001/NFT",
+            await axios
+              .post(
+                "http://localhost:3001/findUser",
                 {
-                  name: item.name,
-                  contract_address: item.asset_contract.address,
-                  asset_contract_type: item.asset_contract.asset_contract_type,
-                  schema_name: item.asset_contract.schema_name,
-                  description: item.description,
-                  NFT_Token_id: item.token_id,
-                  createdAt: item.collection.created_date,
-                  image_url: item.image_url,
-                  history: item.collection.created_date, // 추후 수정 예정
-                  openseaId: item.id,
-                  traits: item.traits,
+                  address: result.data.assets[0].owner.address,
                 },
                 headers
-              );
-            });
+              )
+              .then(async (user) => {
+                await console.log(
+                  "this is your user's data ====>",
+                  user.data.data
+                );
+                const data = user.data.data;
+                console.log("---------> ", data);
+                return data;
+              })
+              .then((data) => {
+                console.log("this is data", data._id);
+                console.log("this is item", result);
+
+                result.data.assets.map(async (item) => {
+                  const headers = {
+                    "Content-Type": "application/json",
+                    Accept: "application/json",
+                  };
+                  // const params = new URLSearchParams();
+                  await axios.post(
+                    "http://localhost:3001/NFT",
+                    {
+                      owner: data._id,
+                      name: item.name,
+                      contract_address: item.asset_contract.address,
+                      asset_contract_type:
+                        item.asset_contract.asset_contract_type,
+                      schema_name: item.asset_contract.schema_name,
+                      description: item.description,
+                      NFT_Token_id: item.token_id,
+                      createdAt: item.collection.created_date,
+                      image_url: item.image_url,
+                      history: item.collection.created_date, // 추후 수정 예정
+                      openseaId: item.id,
+                      traits: item.traits,
+                    },
+                    headers
+                  );
+                });
+              })
+              .catch((err) => {
+                console.log(err);
+                return err;
+              });
+
+            // console.log("asdflkajsflsiefjaslejifilasefjalsief", data);
           });
       });
   };
