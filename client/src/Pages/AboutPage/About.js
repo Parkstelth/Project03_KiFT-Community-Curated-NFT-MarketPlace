@@ -9,10 +9,11 @@ var erc721abi = require("./erc721abi");
 
 function About() {
   const [sellitem, setSellitem] = useState([]);
-  const [priceSellerPut, setPrice] = useState(0);
+  const [priceSellerPut, setPrice] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [traits, setTraits] = useState([]);
   const [message, setMessage] = useState("");
+  const [approve, setApprove] = useState(false);
   const URLparam = document.location.href.split("mypage/")[1];
 
   const closeModal = () => {
@@ -21,13 +22,22 @@ function About() {
 
   const onChange = (e) => {
     setPrice(e.target.value);
-    console.log(priceSellerPut);
   };
 
   async function ListItem() {
     setMessage("");
     setShowModal(true);
     setApprovalAll();
+  }
+
+  async function changePrice() {
+    setMessage("");
+    setShowModal(true);
+    //가격변경 함수가 추가된 솔리디티 함수 작동
+    // 솔리디티 내 가격 변화 함수 작성
+    // vscode abi 변경
+    // setapprovalall 함수 복제
+    // 복제 낸 내부속 가격변화함수 새로 작성후 주입
   }
 
   useEffect(() => {
@@ -57,7 +67,6 @@ function About() {
         headers
       )
       .then((result) => {
-        console.log(result);
         setSellitem(result.data);
         setTraits(result.data.traits);
       });
@@ -97,39 +106,62 @@ function About() {
       const metamaskProvider = await window.ethereum.providers.find(
         (provider) => provider.isMetaMask
       );
-      // window.ethereum이 있다면 여기서 window.ethereum이란 메타마스크 설치여부
       try {
         const web = new Web3(metamaskProvider);
-
         web.eth.getAccounts().then(async (account) => {
           let contract = await new web.eth.Contract(
-            erc721abi,
-            sellitem.contract_address
+            KiFTabi,
+            "0x2F5b9e3c11aFB60A582777dde9D1D4F5B921Fe7a"
           );
           await contract.methods
-            .setApprovalForAll(
-              "0x543f6fBC5908a8c599C9d9028cF8d4B0026AF1AC", //setapproval 받을 kift.sol 배포 주소
-              true
+            .isApprovedForAll(
+              sellitem.contract_address,
+              "0x2F5b9e3c11aFB60A582777dde9D1D4F5B921Fe7a"
             )
-            .send({
+            .call({
               from: account[0],
-              gas: 100000,
-              gasPrice: "10000000000",
             })
-            .then((result) => {
-              setMessage("Approve to KiFT Success!", result.blockHash);
-              console.log("This is success result--->>>", result);
-              console.log("This is Hash ", result.blockHash);
-              return result;
-            })
-            .catch((err) => {
-              console.log("this is whole error message", err);
-              console.log("this is error message----->>>>", err.message);
-              setMessage(err.message);
+            .then(async (result) => {
+              console.log("now approve", result);
+              if (result) {
+                //어프로브 금지
+                await createItem();
+              } else {
+                let contract = await new web.eth.Contract(
+                  erc721abi,
+                  sellitem.contract_address
+                );
+                await contract.methods
+                  .setApprovalForAll(
+                    "0x2F5b9e3c11aFB60A582777dde9D1D4F5B921Fe7a", //setapproval 받을 kift.sol 배포 주소
+                    true
+                  )
+                  .send({
+                    from: account[0],
+                    gas: 100000,
+                    gasPrice: "10000000000",
+                  })
+                  .then((result) => {
+                    setMessage("Approve to KiFT Success!", result.blockHash);
+                    console.log("This is success result--->>>", result);
+                    console.log("This is Hash ", result.blockHash);
+                    return result;
+                  })
+                  .then(async (result) => {
+                    if (result) {
+                      await createItem();
+                    }
+                  })
+                  .catch((err) => {
+                    console.log("this is whole error message", err);
+                    console.log("this is error message----->>>>", err.message);
+                    setMessage(err.message);
+                  });
+              }
             });
         });
       } catch (err) {
-        setMessage("Approve to KiFT Fail!");
+        console.log(err);
       }
     }
   }
@@ -148,22 +180,26 @@ function About() {
         web.eth.getAccounts().then(async (account) => {
           let contract = await new web.eth.Contract(
             KiFTabi,
-            "0x543f6fbc5908a8c599c9d9028cf8d4b0026af1ac"
+            "0x2F5b9e3c11aFB60A582777dde9D1D4F5B921Fe7a"
           );
           await contract.methods
             .createMarketItem(
-              sellitem.contract_address, //setapproval 받을 kift.sol 배포 주소
+              sellitem.contract_address,
               sellitem.NFT_Token_id,
               web.utils.toWei(String(priceSellerPut), "ether")
             )
             .send({
               from: account[0],
-              gas: 100000,
-              gasPrice: "10000000000",
+              gas: 500000,
+              gasPrice: "2450000000",
             })
             .then(async (result) => {
-              setMessage("upload blockChain to KiFT Success!");
-              return result;
+              console.log(
+                "itemId",
+                result.events.MarketItemCreated.returnValues.itemId
+              );
+              await setMessage("upload blockChain to KiFT Success!");
+              await listNFTOnTheMarket();
             });
         });
       } catch (err) {
@@ -199,15 +235,33 @@ function About() {
             <div className="description_title">
               Description
               <div className="price_input_box">
-                <input
-                  className="price"
-                  placeholder="Amount"
-                  value={priceSellerPut}
-                  onChange={onChange}
-                />
-                <button className="sell_button" onClick={ListItem}>
-                  Sell
-                </button>
+                {sellitem.isSale ? (
+                  <>
+                    {" "}
+                    <input
+                      className="price"
+                      placeholder={`Now : ${sellitem.price} ETH`}
+                      value={priceSellerPut}
+                      onChange={onChange}
+                    />
+                    <button className="sell_button" onClick={changePrice}>
+                      Change Price
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    {" "}
+                    <input
+                      className="price"
+                      placeholder="Amount"
+                      value={priceSellerPut}
+                      onChange={onChange}
+                    />
+                    <button className="sell_button" onClick={ListItem}>
+                      Sell
+                    </button>
+                  </>
+                )}
               </div>
             </div>
             <div className="description2">

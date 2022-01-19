@@ -49,7 +49,7 @@ function MyPage({ setIsLogin, setSellitem }) {
 
             result.data.assets.map(async (item) => {
               // const traitOfItem = {};
-              console.log(item.traits);
+
               // item.traits.forEach((el) => {
               //     traitOfItem.trait_type = el.trait_type;
               //     traitOfItem.value = el.value;

@@ -1,5 +1,64 @@
 const KiFTabi = [
   {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "itemId",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "price",
+        type: "uint256",
+      },
+    ],
+    name: "changeMarketItemPrice",
+    outputs: [],
+    stateMutability: "payable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "nftContract",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "tokenId",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "price",
+        type: "uint256",
+      },
+    ],
+    name: "createMarketItem",
+    outputs: [],
+    stateMutability: "payable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "nftContract",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "itemId",
+        type: "uint256",
+      },
+    ],
+    name: "createMarketSale",
+    outputs: [],
+    stateMutability: "payable",
+    type: "function",
+  },
+  {
     inputs: [],
     stateMutability: "nonpayable",
     type: "constructor",
@@ -56,40 +115,31 @@ const KiFTabi = [
   {
     inputs: [
       {
-        internalType: "address",
-        name: "nftContract",
-        type: "address",
-      },
-      {
         internalType: "uint256",
-        name: "tokenId",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "price",
+        name: "_price",
         type: "uint256",
       },
     ],
-    name: "createMarketItem",
-    outputs: [],
-    stateMutability: "payable",
+    name: "setListingPrice",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "nonpayable",
     type: "function",
   },
   {
     inputs: [
-      {
-        internalType: "address",
-        name: "nftContract",
-        type: "address",
-      },
       {
         internalType: "uint256",
         name: "itemId",
         type: "uint256",
       },
     ],
-    name: "createMarketSale",
+    name: "soldOutMarketItem",
     outputs: [],
     stateMutability: "payable",
     type: "function",
@@ -279,25 +329,6 @@ const KiFTabi = [
       },
     ],
     stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "_price",
-        type: "uint256",
-      },
-    ],
-    name: "setListingPrice",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "nonpayable",
     type: "function",
   },
 ];
