@@ -1,7 +1,8 @@
+
 function NotFound() {
     return (
         <div>
-            <div>404</div>
+            404 error!
         </div>
     );
 }
