@@ -104,3 +104,16 @@
   transform: translate(-50%, -50%);
   top: 360px;
 }
+
+.noItem_box {
+  margin: 40px;
+  border: 2px solid rgb(229, 232, 235);
+  border-radius: 5px;
+}
+
+.noItem {
+  margin: auto;
+  display: block;
+  width: 758px;
+  margin-top: 50px;
+}

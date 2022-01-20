@@ -31,7 +31,7 @@ function Item({ marketData, userMarketData }) {
             <div className="marketItem_price-item-container">
               <div className="marketItem_price-item">
                 <span>Price</span>
-                <p className="marketItem_price-text">{item.price}</p>
+                <p className="marketItem_price-text">{item.price} ETH</p>
               </div>
             </div>
 
