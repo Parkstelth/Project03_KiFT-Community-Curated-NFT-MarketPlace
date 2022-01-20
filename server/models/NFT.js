@@ -13,6 +13,7 @@ const NFTSchema = new mongoose.Schema(
     description: { type: String },
     NFT_Token_id: { type: String, required: true },
     createdAt: { type: Date },
+    image_url: { type: String },
     openseaId: { type: Number },
     traits: [
       {
