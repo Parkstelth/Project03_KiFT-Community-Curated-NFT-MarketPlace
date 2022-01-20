@@ -1,14 +1,11 @@
 import "./SignIn.css";
-import { useState, useEffect } from "react";
-import Web3 from "web3";
+import { useEffect } from "react";
 import axios from "axios";
 
-function SignIn({ setfooter, setLoginAccount, setWeb3, setIsLogin }) {
+function SignIn({ setfooter, setLoginAccount, setIsLogin }) {
   useEffect(() => {
     setfooter(false);
   }, []);
-
-  // const fetchMyNFTs = axios.get(`https://testnets-api.opensea.io/assets?owner=${accounts[0]}`)
 
   const connectWallet = async () => {
     const metamaskProvider = window.ethereum.providers.find(
@@ -21,12 +18,11 @@ function SignIn({ setfooter, setLoginAccount, setWeb3, setIsLogin }) {
       //아래 두 줄은 서명 요청 하려고 테스트하던 것 지워도 괜춘
       // const rpcURL = "https://rinkeby.infura.io/v3/14e49a40e7ca44f7b4a9afb62e21c945";
       // const web3 = await new Web3(rpcURL);
-
       //db로그인 저장
-      const web3 = await new Web3(metamaskProvider);
+      // const web3 = await new Web3(metamaskProvider);
 
       setLoginAccount(accounts[0].toLowerCase());
-      setWeb3(web3);
+
       setIsLogin(true);
       setfooter(true);
 

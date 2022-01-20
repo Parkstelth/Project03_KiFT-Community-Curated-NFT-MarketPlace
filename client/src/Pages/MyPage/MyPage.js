@@ -6,38 +6,18 @@ import { Link } from "react-router-dom";
 import { Card, CardGroup } from "react-bootstrap";
 import Loading from "../../component/assets/Loading";
 
-function MyPage({ setIsLogin, setSellitem }) {
+function MyPage({ setIsLogin }) {
   const [data, setData] = useState([]);
   const [nowAccount, setNowAccount] = useState("");
   const [loading, setLoading] = useState(true);
-  const [regDate, setRegDate] = useState("");
 
   const fetchNFTs = async () => {
-    const metamaskProvider = window.ethereum.providers.find(
-      (provider) => provider.isMetaMask
-    );
-    const web = new Web3(metamaskProvider);
+    const web = new Web3(window.ethereum);
     await web.eth
       .getAccounts()
-      .then(async (account) => {
+      .then((account) => {
         setIsLogin(true);
-        setNowAccount(account);
-        const headers = {
-          "Content-Type": "application/x-www-form-urlencoded",
-          Accept: "*/*",
-        };
-        const params = new URLSearchParams();
-        params.append("address", account[0].toLowerCase());
-
-        await axios
-          .post("http://localhost:3001/regdate", params, { headers })
-          .then((result) => {
-            if (result.data !== "not address") {
-              setRegDate(result.data.createdAt);
-            } else {
-              setRegDate("");
-            }
-          });
+        console.log("this is your account=====>", account);
         return account;
       })
       .then(async (account) => {
@@ -45,6 +25,8 @@ function MyPage({ setIsLogin, setSellitem }) {
           .get(`https://testnets-api.opensea.io/assets?owner=${account}`)
           .then(async (result) => {
             setData(result.data.assets);
+            console.log(result.data.assets);
+            setNowAccount(account);
             setLoading(false);
 
             const headers = {
@@ -66,46 +48,47 @@ function MyPage({ setIsLogin, setSellitem }) {
                   user.data.data
                 );
                 const data = user.data.data;
-                console.log("---------> ", data);
+                console.log("just data ---------> ", data);
                 return data;
               })
               .then((data) => {
-                console.log("this is data", data._id);
-                console.log("this is item", result);
-
                 result.data.assets.map(async (item) => {
                   const headers = {
                     "Content-Type": "application/json",
                     Accept: "application/json",
                   };
-                  // const params = new URLSearchParams();
-                  await axios.post(
-                    "http://localhost:3001/NFT",
-                    {
-                      owner: data._id,
-                      name: item.name,
-                      contract_address: item.asset_contract.address,
-                      asset_contract_type:
-                        item.asset_contract.asset_contract_type,
-                      schema_name: item.asset_contract.schema_name,
-                      description: item.description,
-                      NFT_Token_id: item.token_id,
-                      createdAt: item.collection.created_date,
-                      image_url: item.image_url,
-                      history: item.collection.created_date, // 추후 수정 예정
-                      openseaId: item.id,
-                      traits: item.traits,
-                    },
-                    headers
-                  );
+                  await axios
+                    .post(
+                      "http://localhost:3001/NFT",
+                      {
+                        owner: data._id,
+                        name: item.name,
+                        contract_address: item.asset_contract.address,
+                        asset_contract_type:
+                          item.asset_contract.asset_contract_type,
+                        schema_name: item.asset_contract.schema_name,
+                        description: item.description,
+                        NFT_Token_id: item.token_id,
+                        createdAt: item.collection.created_date,
+                        image_url: item.image_url,
+                        history: item.collection.created_date,
+                        openseaId: item.id,
+                        traits: item.traits,
+                      },
+                      headers
+                    )
+                    .then((result) => {
+                      console.log("this is result from axios/NFT ===>", result);
+                    })
+                    .catch((err) => {
+                      console.log("errrrrrr ", err);
+                    });
                 });
               })
               .catch((err) => {
                 console.log(err);
                 return err;
               });
-
-            // console.log("asdflkajsflsiefjaslejifilasefjalsief", data);
           });
       });
   };
@@ -125,25 +108,13 @@ function MyPage({ setIsLogin, setSellitem }) {
             />
           </div>
         </div>
-
         <div className="middle">
           <div className="address_box">
             {String(nowAccount).slice(0, 6) +
               "..." +
               String(nowAccount).slice(-4)}
           </div>
-          <div className="createdAt">
-            {regDate === "" ? (
-              "..."
-            ) : (
-              <>
-                {"Joined "}
-                {regDate.slice(5, 7)}
-                {"-"}
-                {regDate.slice(0, 4)}
-              </>
-            )}
-          </div>
+          <div className="createdAt">joined November 2021</div>
         </div>
         {loading ? (
           <Loading className="loading" />
@@ -177,14 +148,7 @@ function MyPage({ setIsLogin, setSellitem }) {
                         </small>
                       </Card.Footer>
                       <Link to={`/mypage/${item.id}`} className="button_link">
-                        <button
-                          className="sell_button"
-                          onClick={() => {
-                            setSellitem(item);
-                          }}
-                        >
-                          Sell
-                        </button>
+                        <button className="sell_button">Sell</button>
                       </Link>
                     </Card>
                   );
