@@ -34,14 +34,16 @@ function About({ loginAccount }) {
     setMessage("");
     setShowModal(true);
 
-    if (
-      isNaN(priceSellerPut) === false &&
-      priceSellerPut !== null &&
-      priceSellerPut !== ""
-    ) {
-      const metamaskProvider = await window.ethereum.providers.find(
-        (provider) => provider.isMetaMask
-      );
+    if (isNaN(priceSellerPut) === false && priceSellerPut !== null && priceSellerPut !== "") {
+      if (typeof window.ethereum.providers === "undefined") {
+        var metamaskProvider = window.ethereum;
+        console.log("메타마스크만 다운되어있는 것 처리===>", metamaskProvider);
+      } else {
+        var metamaskProvider = window.ethereum.providers.find((provider) => provider.isMetaMask);
+        console.log("여러개 지갑 처리 ==>", metamaskProvider);
+      }
+      //위에 두상황 테스트, 통과 후 아래 세 줄 없애기
+      // const metamaskProvider = await window.ethereum.providers.find((provider) => provider.isMetaMask);
       const web = new Web3(metamaskProvider);
       await web.eth.getAccounts().then(async (account) => {
         if (ownerAddress === account[0].toLowerCase()) {
@@ -61,11 +63,7 @@ function About({ loginAccount }) {
     setMessage("");
     setShowModal(true);
 
-    if (
-      isNaN(priceSellerPut) === false &&
-      priceSellerPut !== null &&
-      priceSellerPut !== ""
-    ) {
+    if (isNaN(priceSellerPut) === false && priceSellerPut !== null && priceSellerPut !== "") {
       changeItemPrice();
     } else {
       setClosebox(true);
@@ -89,10 +87,7 @@ function About({ loginAccount }) {
   }, []);
 
   function runEtherscan(e) {
-    var win = window.open(
-      `https://rinkeby.etherscan.io/address/${e.target.outerText}`,
-      "_blank"
-    );
+    var win = window.open(`https://rinkeby.etherscan.io/address/${e.target.outerText}`, "_blank");
     win.focus();
   }
 
@@ -132,8 +127,7 @@ function About({ loginAccount }) {
           openseaId: URLparam,
           price: priceSellerPut,
           isSale: true,
-          itemIdOnBlockChain:
-            result.events.MarketItemCreated.returnValues.itemId,
+          itemIdOnBlockChain: result.events.MarketItemCreated.returnValues.itemId,
         },
         headers
       )
@@ -145,8 +139,7 @@ function About({ loginAccount }) {
       })
       .catch((e) => {
         //에러를 프론트로 띄워주세요
-        setClosebox(true);
-        setMessage("listItem request failed! You can check error below");
+        setMessage("listItem request failed! you can check error below");
       });
   }
   async function ChangePriceNFTOnTheMarket(priceSellerPut) {
@@ -171,10 +164,7 @@ function About({ loginAccount }) {
       })
       .catch((e) => {
         //에러를 프론트로 띄워주세요
-        setClosebox(true);
-        setMessage(
-          "listItemPrice Change request failed! you can check error below"
-        );
+        setMessage("listItemPrice Change request failed! you can check error below");
       });
   }
 
@@ -201,44 +191,40 @@ function About({ loginAccount }) {
       })
       .catch((e) => {
         //에러를 프론트로 띄워주세요
-        setClosebox(true);
-        setMessage(
-          "Cancle your NFT Item request failed! you can check error below"
-        );
+        setMessage("Cancle your NFT Item request failed! you can check error below");
       });
   }
 
   async function setApprovalAll() {
-    setMessage(`Please wait until "Success!"`);
+    setMessage(`Please wait until "Sucess"`);
     if (typeof window.ethereum !== "undefined") {
       //여러 wallet 플랫폼중 metaMask로 연결
-
-      const metamaskProvider = await window.ethereum.providers.find(
-        (provider) => provider.isMetaMask
-      );
+      if (typeof window.ethereum.providers === "undefined") {
+        var metamaskProvider = window.ethereum;
+        console.log("메타마스크만 다운되어있는 것 처리===>", metamaskProvider);
+      } else {
+        var metamaskProvider = window.ethereum.providers.find((provider) => provider.isMetaMask);
+        console.log("여러개 지갑 처리 ==>", metamaskProvider);
+      }
+      //위에 두상황 테스트, 통과 후 아래 세 줄 없애기
+      // const metamaskProvider = await window.ethereum.providers.find((provider) => provider.isMetaMask);
       try {
         const web = new Web3(metamaskProvider);
         web.eth.getAccounts().then(async (account) => {
-          let contract = await new web.eth.Contract(
-            KiFTabi,
-            Kift_Contract_Address
-          );
+          let contract = await new web.eth.Contract(KiFTabi, Kift_Contract_Address);
           await contract.methods
             .isApprovedForAll(sellitem.contract_address, Kift_Contract_Address)
             .call({
               from: account[0],
             })
             .then(async (result) => {
-              console.log("now approve ===> ", result);
+              console.log("now approve", result);
               if (result) {
                 //어프로브 금지
                 await createItem();
               } else {
                 //어프로브 시작
-                let contract = await new web.eth.Contract(
-                  erc721abi,
-                  sellitem.contract_address
-                );
+                let contract = await new web.eth.Contract(erc721abi, sellitem.contract_address);
                 await contract.methods
                   .setApprovalForAll(
                     Kift_Contract_Address, //setapproval 받을 kift.sol 배포 주소
@@ -250,10 +236,7 @@ function About({ loginAccount }) {
                     gasPrice: "10000000000",
                   })
                   .then((result) => {
-                    setMessage(
-                      "Approve to KiFT! Please sign the next one",
-                      result.blockHash
-                    );
+                    setMessage("Approve to KiFT Success!", result.blockHash);
                     console.log("This is success result--->>>", result);
                     console.log("This is Hash ", result.blockHash);
                     return result;
@@ -280,7 +263,6 @@ function About({ loginAccount }) {
             .catch((err) => {
               console.log("this is whole error message", err);
               console.log("this is error message----->>>>", err.message);
-              setClosebox(true);
               setMessage(err.message);
             });
         });
@@ -291,26 +273,25 @@ function About({ loginAccount }) {
   }
 
   async function changeItemPrice() {
-    setMessage(`Please wait until "Success!" to change the price`);
+    setMessage(`Please wait until "Sucess"`);
     if (typeof window.ethereum !== "undefined") {
       //여러 wallet 플랫폼중 metaMask로 연결
-
-      const metamaskProvider = await window.ethereum.providers.find(
-        (provider) => provider.isMetaMask
-      );
+      if (typeof window.ethereum.providers === "undefined") {
+        var metamaskProvider = window.ethereum;
+        console.log("메타마스크만 다운되어있는 것 처리===>", metamaskProvider);
+      } else {
+        var metamaskProvider = window.ethereum.providers.find((provider) => provider.isMetaMask);
+        console.log("여러개 지갑 처리 ==>", metamaskProvider);
+      }
+      //위에 두상황 테스트, 통과 후 아래 세 줄 없애기
+      // const metamaskProvider = await window.ethereum.providers.find((provider) => provider.isMetaMask);
       try {
         const web = new Web3(metamaskProvider);
         web.eth.getAccounts().then(async (account) => {
-          let contract = await new web.eth.Contract(
-            KiFTabi,
-            Kift_Contract_Address
-          );
+          let contract = await new web.eth.Contract(KiFTabi, Kift_Contract_Address);
 
           await contract.methods
-            .changeMarketItemPrice(
-              sellitem.itemIdOnBlockChain,
-              web.utils.toWei(String(priceSellerPut), "ether")
-            )
+            .changeMarketItemPrice(sellitem.itemIdOnBlockChain, web.utils.toWei(String(priceSellerPut), "ether"))
             .send({
               from: account[0],
               gas: 500000,
@@ -334,20 +315,22 @@ function About({ loginAccount }) {
   }
 
   async function cancleMarketItem() {
-    setMessage(`Please wait until "Success!" to cancle your Item`);
+    setMessage(`Please wait until "Sucess"`);
     if (typeof window.ethereum !== "undefined") {
       //여러 wallet 플랫폼중 metaMask로 연결
-
-      const metamaskProvider = await window.ethereum.providers.find(
-        (provider) => provider.isMetaMask
-      );
+      if (typeof window.ethereum.providers === "undefined") {
+        var metamaskProvider = window.ethereum;
+        console.log("메타마스크만 다운되어있는 것 처리===>", metamaskProvider);
+      } else {
+        var metamaskProvider = window.ethereum.providers.find((provider) => provider.isMetaMask);
+        console.log("여러개 지갑 처리 ==>", metamaskProvider);
+      }
+      //위에 두상황 테스트, 통과 후 아래 세 줄 없애기
+      // const metamaskProvider = await window.ethereum.providers.find((provider) => provider.isMetaMask);
       try {
         const web = new Web3(metamaskProvider);
         web.eth.getAccounts().then(async (account) => {
-          let contract = await new web.eth.Contract(
-            KiFTabi,
-            Kift_Contract_Address
-          );
+          let contract = await new web.eth.Contract(KiFTabi, Kift_Contract_Address);
 
           await contract.methods
             .soldOutMarketItem(sellitem.itemIdOnBlockChain)
@@ -376,35 +359,33 @@ function About({ loginAccount }) {
   async function createItem() {
     if (typeof window.ethereum !== "undefined") {
       //여러 wallet 플랫폼중 metaMask로 연결
+      if (typeof window.ethereum.providers === "undefined") {
+        var metamaskProvider = window.ethereum;
+        console.log("메타마스크만 다운되어있는 것 처리===>", metamaskProvider);
+      } else {
+        var metamaskProvider = window.ethereum.providers.find((provider) => provider.isMetaMask);
+        console.log("여러개 지갑 처리 ==>", metamaskProvider);
+      }
+      //위에 두상황 테스트, 통과 후 아래 세 줄 없애기
 
-      const metamaskProvider = await window.ethereum.providers.find(
-        (provider) => provider.isMetaMask
-      );
+      // const metamaskProvider = await window.ethereum.providers.find(
+      //   (provider) => provider.isMetaMask
+      // );
       // window.ethereum이 있다면 여기서 window.ethereum이란 메타마스크 설치여부
       try {
         const web = new Web3(metamaskProvider);
 
         web.eth.getAccounts().then(async (account) => {
-          let contract = await new web.eth.Contract(
-            KiFTabi,
-            Kift_Contract_Address
-          );
+          let contract = await new web.eth.Contract(KiFTabi, Kift_Contract_Address);
           await contract.methods
-            .createMarketItem(
-              sellitem.contract_address,
-              sellitem.NFT_Token_id,
-              web.utils.toWei(String(priceSellerPut), "ether")
-            )
+            .createMarketItem(sellitem.contract_address, sellitem.NFT_Token_id, web.utils.toWei(String(priceSellerPut), "ether"))
             .send({
               from: account[0],
               gas: 500000,
               gasPrice: "2450000000",
             })
             .then(async (result) => {
-              console.log(
-                "itemId",
-                result.events.MarketItemCreated.returnValues.itemId
-              );
+              console.log("itemId", result.events.MarketItemCreated.returnValues.itemId);
               await setMessage("upload blockChain to KiFT Success!");
               await listNFTOnTheMarket(result);
             })
@@ -421,16 +402,11 @@ function About({ loginAccount }) {
     }
   }
 
+  // console.log(sellitem.owner.address);
+
   return (
     <div className="about_main">
-      {showModal && (
-        <NotifyModal
-          showModal={showModal}
-          closeModal={closeModal}
-          message={message}
-          closebox={closebox}
-        ></NotifyModal>
-      )}
+      {showModal && <NotifyModal showModal={showModal} closeModal={closeModal} message={message} closebox={closebox}></NotifyModal>}
 
       <div className="sell_bar"></div>
       <div className="middle2">
@@ -458,12 +434,7 @@ function About({ loginAccount }) {
                   loginAccount === ownerAddress ? (
                     <>
                       {" "}
-                      <input
-                        className="price"
-                        placeholder={`Now : ${sellitem.price} ETH`}
-                        value={priceSellerPut}
-                        onChange={onChange}
-                      />
+                      <input className="price" placeholder={`Now : ${sellitem.price} ETH`} value={priceSellerPut} onChange={onChange} />
                       <button className="sell_button" onClick={changePrice}>
                         Change Price
                       </button>
@@ -472,28 +443,12 @@ function About({ loginAccount }) {
                       </button>
                     </>
                   ) : (
-                    <>
-                      <div className="price_box">
-                        <img
-                          className="eth-logo"
-                          src="https://storage.opensea.io/files/6f8e2979d428180222796ff4a33ab929.svg"
-                        />
-                        <span className="price_set">{sellitem.price}</span>
-                      </div>
-                      <button className="sell_button" onClick={null}>
-                        BUY
-                      </button>
-                    </>
+                    <button onClick={null}>BUY</button>
                   )
                 ) : (
                   <>
                     {" "}
-                    <input
-                      className="price"
-                      placeholder="Amount"
-                      value={priceSellerPut}
-                      onChange={onChange}
-                    />
+                    <input className="price" placeholder="Amount" value={priceSellerPut} onChange={onChange} />
                     <button className="sell_button" onClick={ListItem}>
                       Sell
                     </button>
@@ -503,10 +458,7 @@ function About({ loginAccount }) {
             </div>
             <div className="description2">
               created by{" "}
-              <span
-                onClick={(e) => runEtherscan(e)}
-                className="description_address"
-              >
+              <span onClick={(e) => runEtherscan(e)} className="description_address">
                 {"패치중"}
               </span>
             </div>
@@ -531,10 +483,7 @@ function About({ loginAccount }) {
             <div className="details">
               <div className="detail_menu">
                 <span>contract Address</span>
-                <span
-                  className="right_end addoption"
-                  onClick={(e) => runEtherscan(e)}
-                >
+                <span className="right_end addoption" onClick={(e) => runEtherscan(e)}>
                   {sellitem.contract_address}
                 </span>
               </div>
@@ -556,9 +505,7 @@ function About({ loginAccount }) {
       </div>
       <Accordion defaultActiveKey="0">
         <Accordion.Item className="acc_item" eventKey="0">
-          <Accordion.Header className="acc_header">
-            Price History
-          </Accordion.Header>
+          <Accordion.Header className="acc_header">Price History</Accordion.Header>
           <Accordion.Body>NOT UPDATING..</Accordion.Body>
         </Accordion.Item>
       </Accordion>
