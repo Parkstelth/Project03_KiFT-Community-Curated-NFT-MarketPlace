@@ -21,75 +21,68 @@ function MyPage({ setIsLogin }) {
         return account;
       })
       .then(async (account) => {
-        await axios
-          .get(`https://testnets-api.opensea.io/assets?owner=${account}`)
-          .then(async (result) => {
-            setData(result.data.assets);
-            console.log(result.data.assets);
-            setNowAccount(account);
-            setLoading(false);
+        await axios.get(`https://testnets-api.opensea.io/assets?owner=${account}`).then(async (result) => {
+          setData(result.data.assets);
+          console.log(result.data.assets);
+          setNowAccount(account);
+          setLoading(false);
 
-            const headers = {
-              "Content-Type": "application/json",
-              Accept: "application/json",
-            };
-
-            await axios
-              .post(
-                "http://localhost:3001/findUser",
-                {
-                  address: result.data.assets[0].owner.address,
-                },
-                headers
-              )
-              .then(async (user) => {
-                await console.log(
-                  "this is your user's data ====>",
-                  user.data.data
-                );
-                const data = user.data.data;
-                console.log("just data ---------> ", data);
-                return data;
-              })
-              .then((data) => {
-                result.data.assets.map(async (item) => {
-                  const headers = {
-                    "Content-Type": "application/json",
-                    Accept: "application/json",
-                  };
-                  await axios
-                    .post(
-                      "http://localhost:3001/NFT",
-                      {
-                        owner: data._id,
-                        name: item.name,
-                        contract_address: item.asset_contract.address,
-                        asset_contract_type:
-                          item.asset_contract.asset_contract_type,
-                        schema_name: item.asset_contract.schema_name,
-                        description: item.description,
-                        NFT_Token_id: item.token_id,
-                        createdAt: item.collection.created_date,
-                        image_url: item.image_url,
-                        history: item.collection.created_date,
-                        openseaId: item.id,
-                        traits: item.traits,
-                      },
-                      headers
-                    )
-                    .then((result) => {
-                      console.log("this is result from axios/NFT ===>", result);
-                    })
-                    .catch((err) => {
-                      console.log("errrrrrr ", err);
-                    });
-                });
-              })
-              .catch((err) => {
-                console.log(err);
-                return err;
+          const headers = {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          };
+          await axios
+            .post(
+              "http://localhost:3001/findUser",
+              {
+                address: account[0].toLowerCase(),
+              },
+              headers
+            )
+            .then(async (user) => {
+              await console.log("this is your user's data ====>", user.data.data);
+              const data = user.data.data;
+              console.log("just data ---------> ", data);
+              return data;
+            })
+            .then((data) => {
+              result.data.assets.map(async (item) => {
+                const headers = {
+                  "Content-Type": "application/json",
+                  Accept: "application/json",
+                };
+                await axios
+                  .post(
+                    "http://localhost:3001/NFT",
+                    {
+                      owner: data._id,
+                      name: item.name,
+                      contract_address: item.asset_contract.address,
+                      asset_contract_type: item.asset_contract.asset_contract_type,
+                      schema_name: item.asset_contract.schema_name,
+                      description: item.description,
+                      NFT_Token_id: item.token_id,
+                      createdAt: item.collection.created_date,
+                      image_url: item.image_url,
+                      history: item.collection.created_date,
+                      openseaId: item.id,
+                      traits: item.traits,
+                    },
+                    headers
+                  )
+                  .then((result) => {
+                    console.log("this is result from axios/NFT ===>", result);
+                  })
+                  .catch((err) => {
+                    console.log("errrrrrr ", err);
+                  });
               });
-          });
+            })
+            .catch((err) => {
+              console.log(err);
+              return err;
+            });
+        });
       });
   };
 
@@ -102,18 +95,11 @@ function MyPage({ setIsLogin }) {
       <div>
         <div className="main">
           <div className="main_myimage_box">
-            <img
-              className="main_myimage"
-              src="https://cdn.pixabay.com/photo/2012/04/01/18/40/button-23946_960_720.png"
-            />
+            <img className="main_myimage" src="https://cdn.pixabay.com/photo/2012/04/01/18/40/button-23946_960_720.png" />
           </div>
         </div>
         <div className="middle">
-          <div className="address_box">
-            {String(nowAccount).slice(0, 6) +
-              "..." +
-              String(nowAccount).slice(-4)}
-          </div>
+          <div className="address_box">{String(nowAccount).slice(0, 6) + "..." + String(nowAccount).slice(-4)}</div>
           <div className="createdAt">joined November 2021</div>
         </div>
         {loading ? (
@@ -121,24 +107,21 @@ function MyPage({ setIsLogin }) {
         ) : (
           <>
             {data.length === 0 ? (
-              <div>없음</div>
+              <div className="noItem_box">
+                <img
+                  className="noItem"
+                  src="https://images-ext-2.discordapp.net/external/trFmW50QKa9FxyNgDh4m400OaIuLnm9XVa0o-fIuXoQ/https/testnftbucketforcucumber.s3.ap-northeast-2.amazonaws.com/image/noItemFound.jpg?width=665&height=499"
+                />
+              </div>
             ) : (
               <CardGroup className="cardGroup">
                 {data.map((item) => {
                   return (
                     <Card key={item.id} className="card1">
-                      <Card.Img
-                        className="card_img"
-                        variant="top"
-                        src={item.image_url}
-                      />
+                      <Card.Img className="card_img" variant="top" src={item.image_url} />
                       <Card.Body className="card_body">
-                        <Card.Title className="card_title">
-                          {item.asset_contract.name}
-                        </Card.Title>
-                        <Card.Text className="card_text">
-                          {item.collection.name}
-                        </Card.Text>
+                        <Card.Title className="card_title">{item.asset_contract.name}</Card.Title>
+                        <Card.Text className="card_text">{item.collection.name}</Card.Text>
                       </Card.Body>
                       <Card.Footer className="card_footer">
                         <small className="text-muted">

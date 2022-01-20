@@ -145,7 +145,8 @@ function About({ loginAccount }) {
       })
       .catch((e) => {
         //에러를 프론트로 띄워주세요
-        setMessage("listItem request failed! you can check error below");
+        setClosebox(true);
+        setMessage("listItem request failed! You can check error below");
       });
   }
   async function ChangePriceNFTOnTheMarket(priceSellerPut) {
@@ -170,6 +171,7 @@ function About({ loginAccount }) {
       })
       .catch((e) => {
         //에러를 프론트로 띄워주세요
+        setClosebox(true);
         setMessage(
           "listItemPrice Change request failed! you can check error below"
         );
@@ -199,6 +201,7 @@ function About({ loginAccount }) {
       })
       .catch((e) => {
         //에러를 프론트로 띄워주세요
+        setClosebox(true);
         setMessage(
           "Cancle your NFT Item request failed! you can check error below"
         );
@@ -206,7 +209,7 @@ function About({ loginAccount }) {
   }
 
   async function setApprovalAll() {
-    setMessage(`Please wait until "Sucess"`);
+    setMessage(`Please wait until "Success!"`);
     if (typeof window.ethereum !== "undefined") {
       //여러 wallet 플랫폼중 metaMask로 연결
 
@@ -226,7 +229,7 @@ function About({ loginAccount }) {
               from: account[0],
             })
             .then(async (result) => {
-              console.log("now approve", result);
+              console.log("now approve ===> ", result);
               if (result) {
                 //어프로브 금지
                 await createItem();
@@ -247,7 +250,10 @@ function About({ loginAccount }) {
                     gasPrice: "10000000000",
                   })
                   .then((result) => {
-                    setMessage("Approve to KiFT Success!", result.blockHash);
+                    setMessage(
+                      "Approve to KiFT! Please sign the next one",
+                      result.blockHash
+                    );
                     console.log("This is success result--->>>", result);
                     console.log("This is Hash ", result.blockHash);
                     return result;
@@ -274,6 +280,7 @@ function About({ loginAccount }) {
             .catch((err) => {
               console.log("this is whole error message", err);
               console.log("this is error message----->>>>", err.message);
+              setClosebox(true);
               setMessage(err.message);
             });
         });
@@ -284,7 +291,7 @@ function About({ loginAccount }) {
   }
 
   async function changeItemPrice() {
-    setMessage(`Please wait until "Sucess"`);
+    setMessage(`Please wait until "Success!" to change the price`);
     if (typeof window.ethereum !== "undefined") {
       //여러 wallet 플랫폼중 metaMask로 연결
 
@@ -327,7 +334,7 @@ function About({ loginAccount }) {
   }
 
   async function cancleMarketItem() {
-    setMessage(`Please wait until "Sucess"`);
+    setMessage(`Please wait until "Success!" to cancle your Item`);
     if (typeof window.ethereum !== "undefined") {
       //여러 wallet 플랫폼중 metaMask로 연결
 
@@ -414,8 +421,6 @@ function About({ loginAccount }) {
     }
   }
 
-  // console.log(sellitem.owner.address);
-
   return (
     <div className="about_main">
       {showModal && (
@@ -467,7 +472,18 @@ function About({ loginAccount }) {
                       </button>
                     </>
                   ) : (
-                    <button onClick={null}>BUY</button>
+                    <>
+                      <div className="price_box">
+                        <img
+                          className="eth-logo"
+                          src="https://storage.opensea.io/files/6f8e2979d428180222796ff4a33ab929.svg"
+                        />
+                        <span className="price_set">{sellitem.price}</span>
+                      </div>
+                      <button className="sell_button" onClick={null}>
+                        BUY
+                      </button>
+                    </>
                   )
                 ) : (
                   <>
