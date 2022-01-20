@@ -142,6 +142,7 @@ function About({ loginAccount }) {
         setMessage("listItem request failed! You can check error below");
       });
   }
+
   async function ChangePriceNFTOnTheMarket(priceSellerPut) {
     const headers = {
       "Content-Type": "application/json",
@@ -397,13 +398,84 @@ function About({ loginAccount }) {
     }
   }
 
+  async function buyNFT() {
+    //여러 wallet 플랫폼중 metaMask로 연결
+
+    if (typeof window.ethereum.providers === "undefined") {
+      var metamaskProvider = window.ethereum;
+      console.log("메타마스크만 다운되어있는 것 처리===>", metamaskProvider);
+    } else {
+      var metamaskProvider = window.ethereum.providers.find((provider) => provider.isMetaMask);
+      console.log("여러개 지갑 처리 ==>", metamaskProvider);
+    }
+    // window.ethereum이 있다면 여기서 window.ethereum이란 메타마스크 설치여부
+    try {
+      const web = new Web3(metamaskProvider);
+
+      web.eth.getAccounts().then(async (account) => {
+        let contract = await new web.eth.Contract(KiFTabi, Kift_Contract_Address);
+        await contract.methods
+          .createMarketSale(sellitem.contract_address, sellitem.itemIdOnBlockChain)
+
+          .send({
+            from: account[0],
+            gas: 500000,
+            gasPrice: "2450000000",
+            value: web.utils.toWei(String(sellitem.price), "ether"),
+          })
+          .then(async (result) => {
+            console.log("Receipt===>", result);
+            await setMessage("Your purchase request Success!");
+            await soldoutNFTOnTheMarket();
+          })
+          .catch((err) => {
+            console.log("this is whole error message", err);
+            console.log("this is error message----->>>>", err.message);
+            setClosebox(true);
+            setMessage(err.message);
+          });
+      });
+    } catch (err) {
+      setMessage("Your purchase request Fail!");
+    }
+  }
+
+  async function soldoutNFTOnTheMarket() {
+    const headers = {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    };
+    await axios
+      .post(
+        "http://localhost:3001/listItem",
+        {
+          openseaId: URLparam,
+          price: 0,
+          isSale: false,
+          itemIdOnBlockChain: null,
+        },
+        headers
+      )
+      .then((result) => {
+        if (result.status === 200) {
+          setMessage("Your NFT purchase Success!");
+          document.location.href = `/mypage/${URLparam}`;
+        }
+      })
+      .catch((e) => {
+        //에러를 프론트로 띄워주세요
+        setClosebox(true);
+        setMessage("Your purchase request failed! You can check error below");
+      });
+  }
+
   return (
     <div className="about_main">
       {showModal && <NotifyModal showModal={showModal} closeModal={closeModal} message={message} closebox={closebox}></NotifyModal>}
 
       <div className="sell_bar"></div>
       <div className="middle2">
-        <div>
+        <div className="main_left">
           <div className="nft_name_box">
             <div className="nft_name">{sellitem.name}</div>
             <div className="nft_owned">
@@ -419,51 +491,41 @@ function About({ loginAccount }) {
           <img className="nft_image" src={sellitem.image_url} />
         </div>
         <div className="simple_description">
-          <div className="center_description">
-            <div className="description_title">
-              Description
-              <div className="price_input_box">
-                {sellitem.isSale ? (
-                  loginAccount === ownerAddress ? (
-                    <>
-                      {" "}
-                      <input className="price" placeholder={`Now : ${sellitem.price} ETH`} value={priceSellerPut} onChange={onChange} />
-                      <button className="sell_button" onClick={changePrice}>
-                        Change Price
-                      </button>
-                      <button className="cancle_button" onClick={cancleItem}>
-                        Cancle Selling
-                      </button>
-                    </>
-                  ) : (
-                    <>
-                      <div className="price_box">
-                        <img className="eth-logo" src="https://storage.opensea.io/files/6f8e2979d428180222796ff4a33ab929.svg" />
-                        <span className="price_set">{sellitem.price}</span>
-                      </div>
-                      <button className="sell_button" onClick={null}>
-                        BUY
-                      </button>
-                    </>
-                  )
-                ) : (
-                  <>
-                    {" "}
-                    <input className="price" placeholder="Amount" value={priceSellerPut} onChange={onChange} />
-                    <button className="sell_button" onClick={ListItem}>
-                      Sell
-                    </button>
-                  </>
-                )}
-              </div>
-            </div>
-            <div className="description2">
-              created by{" "}
-              <span onClick={(e) => runEtherscan(e)} className="description_address">
-                {"패치중"}
-              </span>
-            </div>
+          <div className="price_input_box">
+            {sellitem.isSale ? (
+              loginAccount === ownerAddress ? (
+                <>
+                  {" "}
+                  <input className="price" placeholder={`Current Price : ${sellitem.price} ETH`} value={priceSellerPut} onChange={onChange} />
+                  <button className="sell_button addoption" onClick={changePrice}>
+                    Change Price
+                  </button>
+                  <button className="cancle_button" onClick={cancleItem}>
+                    Cancel Selling
+                  </button>
+                </>
+              ) : (
+                <>
+                  <div className="price_box">
+                    <img className="eth-logo" src="https://storage.opensea.io/files/6f8e2979d428180222796ff4a33ab929.svg" />
+                    <span className="price_set">{sellitem.price}</span>
+                  </div>
+                  <button className="sell_button" onClick={buyNFT}>
+                    BUY
+                  </button>
+                </>
+              )
+            ) : (
+              <>
+                {" "}
+                <input className="price" placeholder="Amount" value={priceSellerPut} onChange={onChange} />
+                <button className="sell_button" onClick={ListItem}>
+                  Sell
+                </button>
+              </>
+            )}
           </div>
+
           <div className="center_properties">
             <div className="properties_title">Properties</div>
             <div className="properties">
@@ -504,7 +566,11 @@ function About({ loginAccount }) {
           </div>
         </div>
       </div>
-      <Accordion defaultActiveKey="0">
+      <div className="center_description addoption">
+        <div className="description_title">Description</div>
+        <div className="description2">{sellitem.description}</div>
+      </div>
+      <Accordion defaultActiveKey="0" className="accord addoption">
         <Accordion.Item className="acc_item" eventKey="0">
           <Accordion.Header className="acc_header">Price History</Accordion.Header>
           <Accordion.Body>NOT UPDATING..</Accordion.Body>

@@ -87,6 +87,10 @@
   cursor: pointer;
 }
 
+.sell_button.addoption2 {
+  margin: 10px auto;
+}
+
 .sell_button:hover {
   background-color: #ffc107;
   color: black;

@@ -131,7 +131,7 @@ function MyPage({ setIsLogin }) {
                         </small>
                       </Card.Footer>
                       <Link to={`/mypage/${item.id}`} className="button_link">
-                        <button className="sell_button">Sell</button>
+                        <button className="sell_button addoption2">Sell</button>
                       </Link>
                     </Card>
                   );
