@@ -38,15 +38,24 @@ function App() {
   //     listenMMAccount();
   // }, []);
 
+  const setAccountListner = (provider) => {
+    provider.on("accountsChanged", (_) => (window.location.href = "/"));
+  };
+  // document.location.href = "/market";
   useEffect(() => {
     if (typeof window.ethereum !== "undefined") {
       //여러 wallet 플랫폼중 metaMask로 연결
 
-      const metamaskProvider = window.ethereum.providers.find(
-        (provider) => provider.isMetaMask
-      );
-      console.log("terr", metamaskProvider);
+      if (typeof window.ethereum.providers === "undefined") {
+        var metamaskProvider = window.ethereum;
+        console.log("메타마스크만 다운되어있는 것 처리===>", metamaskProvider);
+      } else {
+        var metamaskProvider = window.ethereum.providers.find((provider) => provider.isMetaMask);
+        console.log("여러개 지갑 처리 ==>", metamaskProvider);
+      }
+      console.log("ethereum provider=====>>>>", metamaskProvider);
       // window.ethereum이 있다면 여기서 window.ethereum이란 메타마스크 설치여부
+      setAccountListner(metamaskProvider); //  지갑 감지 변화
       try {
         const web = new Web3(metamaskProvider);
         web.eth.getAccounts().then(async (account) => {
@@ -64,11 +73,9 @@ function App() {
             const params = new URLSearchParams();
             params.append("loginAddress", account[0].toLowerCase());
 
-            await axios
-              .post("http://localhost:3001/sign", params, { headers })
-              .then((res) => {
-                console.log(res);
-              });
+            await axios.post("http://localhost:3001/sign", params, { headers }).then((res) => {
+              console.log(res);
+            });
           }
         });
       } catch (err) {
@@ -91,21 +98,9 @@ function App() {
         <Route path="/market" element={<Market setfooter={setfooter} />} />
         {/* 로그인 시 마켓으로 이동하게 해놨음! 다른 곳으로 원하면
                 바꿔도 됨*/}
-        <Route
-          path="/signin"
-          element={
-            <SignIn
-              setfooter={setfooter}
-              setIsLogin={setIsLogin}
-              setLoginAccount={setLoginAccount}
-            />
-          }
-        />
+        <Route path="/signin" element={<SignIn setfooter={setfooter} setIsLogin={setIsLogin} setLoginAccount={setLoginAccount} />} />
         <Route path="/mypage" element={<Mypage setIsLogin={setIsLogin} />} />
-        <Route
-          path="mypage/:id"
-          element={<About loginAccount={loginAccount} />}
-        />
+        <Route path="mypage/:id" element={<About loginAccount={loginAccount} />} />
         <Route path=":id" element={<NotFound />} />
       </Routes>
       {footer ? <Footer /> : null}

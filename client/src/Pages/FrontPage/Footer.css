@@ -1,78 +1,78 @@
 .footerBlock {
-    background-color: black;
-    display: block;
-    /* position: absolute; */
-    bottom: 0;
-    padding: 48px 0 28px;
-    margin-top: 100px;
-    /* max-width: 1600px; */
-    color: white;
+  background-color: black;
+  display: block;
+  /* position: absolute; */
+  bottom: 0;
+  padding: 48px 0 28px;
+  margin-top: 100px;
+  /* max-width: 1600px; */
+  color: white;
 }
 .footerContainer {
-    margin-left: auto;
-    margin-right: auto;
-    max-width: 1600px;
-    padding-left: 20px;
-    padding-right: 20px;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 1600px;
+  padding-left: 20px;
+  padding-right: 20px;
 }
 .ContainerUpperSide {
-    padding-bottom: 20px;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
+  padding-bottom: 20px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
 }
 .ContainerDownSide {
-    padding-top: 10px;
-    border-top: 1px solid #666666;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
+  padding-top: 10px;
+  border-top: 1px solid #666666;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
 }
 .up1 {
-    display: flex;
-    flex-direction: column;
-    max-width: 250px;
+  display: flex;
+  flex-direction: column;
+  max-width: 250px;
 }
 .up1-2 {
-    color: #7f7f7f;
-    font-size: 14px;
-    text-decoration: underline;
-    display: flex;
+  color: #7f7f7f;
+  font-size: 14px;
+  text-decoration: underline;
+  display: flex;
 }
 .email {
-    width: 24px;
-    margin-right: 5px;
+  width: 24px;
+  margin-right: 5px;
 }
 
 .up2 {
-    display: flex;
-    flex-direction: column;
-    text-align: right;
+  display: flex;
+  flex-direction: column;
+  text-align: right;
 }
 
 .down1 {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    /* margin-right: 20px; */
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  /* margin-right: 20px; */
 }
 .down1-1 {
-    font-size: 30px;
-    margin-right: 20px;
+  font-size: 30px;
+  margin-right: 20px;
 }
 
 .down1-2 {
-    margin-right: 20px;
-    color: #7f7f7f;
+  margin-right: 20px;
+  color: #7f7f7f;
 }
 .down2 {
-    display: flex;
-    flex-direction: row;
-    color: #7f7f7f;
+  display: flex;
+  flex-direction: row;
+  color: #7f7f7f;
 }
 
 .down2-1 {
-    margin-right: 10px;
+  margin-right: 10px;
 }
