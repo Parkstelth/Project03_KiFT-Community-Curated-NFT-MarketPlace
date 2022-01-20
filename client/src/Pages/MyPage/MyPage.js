@@ -5,11 +5,21 @@ import Web3 from "web3";
 import { Link } from "react-router-dom";
 import { Card, CardGroup } from "react-bootstrap";
 import Loading from "../../component/assets/Loading";
+import styled from "styled-components";
 
 function MyPage({ setIsLogin }) {
   const [data, setData] = useState([]);
   const [nowAccount, setNowAccount] = useState("");
   const [loading, setLoading] = useState(true);
+  const [specialColor, setColor] = useState("");
+
+  const ProfileCircle = styled.div`
+    background-color: #${specialColor};
+    border: 8px solid white;
+    height: 7rem;
+    width: 7rem;
+    border-radius: 43%;
+  `;
 
   const fetchNFTs = async () => {
     const web = new Web3(window.ethereum);
@@ -23,7 +33,6 @@ function MyPage({ setIsLogin }) {
       .then(async (account) => {
         await axios.get(`https://testnets-api.opensea.io/assets?owner=${account}`).then(async (result) => {
           setData(result.data.assets);
-          console.log(result.data.assets);
           setNowAccount(account);
           setLoading(false);
 
@@ -46,6 +55,7 @@ function MyPage({ setIsLogin }) {
               return data;
             })
             .then((data) => {
+              console.log("return data", data);
               result.data.assets.map(async (item) => {
                 const headers = {
                   "Content-Type": "application/json",
@@ -75,6 +85,7 @@ function MyPage({ setIsLogin }) {
                   })
                   .catch((err) => {
                     console.log("errrrrrr ", err);
+                    return err;
                   });
               });
             })
@@ -90,12 +101,19 @@ function MyPage({ setIsLogin }) {
     fetchNFTs();
   }, []);
 
+  useEffect(() => {
+    if (nowAccount !== "") {
+      setColor(nowAccount[0].slice(-6));
+    }
+    console.log("this is special color=====>", specialColor);
+  }, [nowAccount]);
+
   return (
     <div className="MyPage">
       <div>
         <div className="main">
           <div className="main_myimage_box">
-            <img className="main_myimage" src="https://cdn.pixabay.com/photo/2012/04/01/18/40/button-23946_960_720.png" />
+            <ProfileCircle></ProfileCircle>
           </div>
         </div>
         <div className="middle">
