@@ -6,6 +6,7 @@ import SignIn from "./Pages/SigninPage/SignIn";
 import Mypage from "./Pages/MyPage/MyPage";
 import About from "./Pages/AboutPage/About";
 import Claim from "./Pages/ClaimPage/Claim";
+import CreateNft from "./Pages/CreateNftPage/CreateNft";
 import NotFound from "./Pages/NotFoundPage/notfound";
 import Nav from "./Pages/FrontPage/Nav";
 import Footer from "./Pages/FrontPage/Footer";
@@ -103,6 +104,7 @@ function App() {
         <Route path="/mypage" element={<Mypage setIsLogin={setIsLogin} />} />
         <Route path="mypage/:id" element={<About loginAccount={loginAccount} />} />
         <Route path="/claim" element={<Claim />} />
+        <Route path="/create" element={<CreateNft />} />
         <Route path=":id" element={<NotFound />} />
       </Routes>
       {footer ? <Footer /> : null}

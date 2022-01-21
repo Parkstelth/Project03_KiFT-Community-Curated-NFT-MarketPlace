@@ -53,6 +53,7 @@ router.post("/findUser", async (req, res) => {
         data: {
           _id: result._id,
           address: result.address,
+          createdAt: result.createdAt,
           points: result.ContributionPoionts,
         },
       });

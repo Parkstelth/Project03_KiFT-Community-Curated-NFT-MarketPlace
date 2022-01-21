@@ -12,6 +12,7 @@ function MyPage({ setIsLogin }) {
   const [nowAccount, setNowAccount] = useState("");
   const [loading, setLoading] = useState(true);
   const [specialColor, setColor] = useState("");
+  const [regdate, setRegdate] = useState("");
 
   const ProfileCircle = styled.div`
     background-color: #${specialColor};
@@ -52,6 +53,7 @@ function MyPage({ setIsLogin }) {
               await console.log("this is your user's data ====>", user.data.data);
               const data = user.data.data;
               console.log("just data ---------> ", data);
+              setRegdate(data.createdAt.slice(0, 10));
               return data;
             })
             .then((data) => {
@@ -118,7 +120,11 @@ function MyPage({ setIsLogin }) {
         </div>
         <div className="middle">
           <div className="address_box">{String(nowAccount).slice(0, 6) + "..." + String(nowAccount).slice(-4)}</div>
-          <div className="createdAt">joined November 2021</div>
+          <div className="createdAt">
+            joined {regdate.slice(5, 10)}
+            {" , "}
+            {regdate.slice(0, 4)}
+          </div>
         </div>
         {loading ? (
           <Loading className="loading" />
