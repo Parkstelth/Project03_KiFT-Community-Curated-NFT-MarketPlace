@@ -105,7 +105,10 @@ router.post("/NFT", async (req, res) => {
         })
         .then(async (result) => {
           console.log(result);
-          await User.findOneAndUpdate({ _id: result.owner }, { $addToSet: { ownedNFTs: result._id } }).then(console.log);
+          await User.findOneAndUpdate({ _id: result.owner }, { $addToSet: { ownedNFTs: result._id } }).then((result) => {
+            console.log("this is result of NFT api", result);
+            res.status(200).send(result);
+          });
         });
     })
     .catch((err) => {
@@ -114,14 +117,13 @@ router.post("/NFT", async (req, res) => {
     });
 });
 
-router.post("/searchNFT", async (req, res) => {
+router.post("/searchNFT", (req, res) => {
   NFT.findOne({
     openseaId: req.body.openseaId,
   })
     .populate("owner")
     .then((result, err) => {
       if (err) return res.status(400).send(err);
-      console.log(result);
       res.status(200).send(result);
     });
   /*

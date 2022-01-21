@@ -33,6 +33,7 @@ function MyPage({ setIsLogin }) {
       .then(async (account) => {
         await axios.get(`https://testnets-api.opensea.io/assets?owner=${account}`).then(async (result) => {
           setData(result.data.assets);
+          console.log(result.data.assets);
           setNowAccount(account);
           setLoading(false);
 
@@ -54,8 +55,7 @@ function MyPage({ setIsLogin }) {
               console.log("just data ---------> ", data);
               return data;
             })
-            .then((data) => {
-              console.log("return data", data);
+            .then(async (data) => {
               result.data.assets.map(async (item) => {
                 const headers = {
                   "Content-Type": "application/json",
