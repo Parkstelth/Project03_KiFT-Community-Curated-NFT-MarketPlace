@@ -14,7 +14,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "https://naver.com",
     },
-    TheNumberOfTxTime: {
+    ContributionPoionts: {
       type: Number,
       default: 0,
     },

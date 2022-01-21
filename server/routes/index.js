@@ -109,6 +109,10 @@ router.post("/NFT", async (req, res) => {
             console.log("this is result of NFT api", result);
             res.status(200).send(result);
           });
+        })
+        .catch((err) => {
+          console.log(err);
+          res.status(401).send(err);
         });
     })
     .catch((err) => {
@@ -211,6 +215,43 @@ router.post("/cancleListings", async (req, res) => {
     })
     .catch((err) => {
       res.status(401).send(err);
+    });
+});
+
+router.post("/toGiveContributePoint", async (req, res) => {
+  //일단 보류
+  let reqAddress = req.body.address;
+  let reqSecondAddress = req.body.secondAddress;
+  let reqPoint = req.body.point;
+
+  console.log(reqPoint);
+
+  User.findOneAndUpdate({ address: reqAddress }, { $inc: { ContributionPoionts: reqPoint } })
+    .then(() => {
+      User.findOne({ address: reqAddress })
+        .then((result) => {
+          console.log("This is result of toGiveContributePoint========>>>>>>", result);
+
+          if (reqSecondAddress === null) {
+            res.status(200).send({ result: result, message: "Sending API Successed!!" });
+          }
+          return result;
+        })
+        .then((firstResult) => {
+          console.log("test====================================");
+          console.log(reqSecondAddress);
+          {
+            User.findOneAndUpdate({ address: reqSecondAddress }, { $inc: { ContributionPoionts: reqPoint } }).then(() => {
+              User.findOne({ address: reqSecondAddress }).then((result) => {
+                res.status(200).send({ firstResult: firstResult, secondResult: result, message: "done" });
+              });
+            });
+          }
+        });
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(401).send({ message: "err!!!", result: err });
     });
 });
 

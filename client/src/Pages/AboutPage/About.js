@@ -11,12 +11,12 @@ const Kift_Contract_Address = process.env.REACT_APP_KIFT_CONTRACT_ADDRESS;
 var KiFTabi = require("./KiFTabi");
 var erc721abi = require("./erc721abi");
 
-function About({ loginAccount }) {
+function About({ loginAccount /* 로그인된 계정 */ }) {
   const [sellitem, setSellitem] = useState([]);
   const [priceSellerPut, setPrice] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [traits, setTraits] = useState([]);
-  const [ownerAddress, setOwnerAddress] = useState("");
+  const [ownerAddress, setOwnerAddress] = useState(""); // 아이템의 주인
   const [message, setMessage] = useState("");
   const [closebox, setClosebox] = useState(false);
   const URLparam = document.location.href.split("mypage/")[1]; //about으로 변경준비
@@ -31,6 +31,7 @@ function About({ loginAccount }) {
   };
 
   async function ListItem() {
+    //아이템 마켓에 올리기
     setMessage("");
     setShowModal(true);
 
@@ -86,17 +87,20 @@ function About({ loginAccount }) {
   }, []);
 
   function runEtherscan(e) {
+    //아이템 정보에 있는 계정으로 이더스캔 들어가기
     var win = window.open(`https://rinkeby.etherscan.io/address/${e.target.outerText}`, "_blank");
     win.focus();
   }
 
   async function loadSellItem() {
     //어바웃 페이지의 아이템 정보 가져오기
+
     const headers = {
       "Content-Type": "application/json",
       Accept: "application/json",
     };
-    // const params = new URLSearchParams();
+
+    //데이터베이스에서 NFT 조회 후 받아온 정보로 페이지 구성
     await axios
       .post(
         "http://localhost:3001/searchNFT",
@@ -108,14 +112,13 @@ function About({ loginAccount }) {
       .then((result) => {
         console.log("fetch", result);
         setSellitem(result.data);
-
-        // console.log("this is owner address!!! ===> ", sellitem.owner.address);
         setTraits(result.data.traits);
         setOwnerAddress(result.data.owner.address);
       });
   }
 
   async function listNFTOnTheMarket(result) {
+    //아이템 리스팅 후 기여도 1포인트 지급
     const headers = {
       "Content-Type": "application/json",
       Accept: "application/json",
@@ -131,9 +134,22 @@ function About({ loginAccount }) {
         },
         headers
       )
-      .then((result) => {
+      .then(async (result) => {
         if (result.status === 200) {
           setMessage("Upload your NFT Success!");
+
+          await axios
+            .post("http://localhost:3001/toGiveContributePoint", {
+              address: loginAccount,
+              point: 1,
+            })
+            .then((result) => {
+              console.log("this is result", result);
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+
           document.location.href = `/mypage/${URLparam}`;
         }
       })
@@ -165,13 +181,13 @@ function About({ loginAccount }) {
         }
       })
       .catch((e) => {
-        //에러를 프론트로 띄워주세요
         setClosebox(true);
         setMessage("listItemPrice Change request failed! you can check error below");
       });
   }
 
   async function CancleNFTOnTheMarket() {
+    //리스팅 된 아이템 취소 후 기여도 1포인트 지급 (가스비 때문)
     const headers = {
       "Content-Type": "application/json",
       Accept: "application/json",
@@ -186,9 +202,20 @@ function About({ loginAccount }) {
         },
         headers
       )
-      .then((result) => {
+      .then(async (result) => {
         if (result.status === 200) {
           setMessage("Cancle your NFT Item Success!");
+          await axios
+            .post("http://localhost:3001/toGiveContributePoint", {
+              address: loginAccount,
+              point: 1,
+            })
+            .then((result) => {
+              console.log("this is result", result);
+            })
+            .catch((err) => {
+              console.log(err);
+            });
           document.location.href = `/mypage/${URLparam}`;
         }
       })
@@ -223,7 +250,7 @@ function About({ loginAccount }) {
             .then(async (result) => {
               console.log("now approve ===> ", result);
               if (result) {
-                //어프로브 금지
+                //어프로브 금지 후 아이템 리스팅
                 await createItem();
               } else {
                 //어프로브 시작
@@ -429,6 +456,19 @@ function About({ loginAccount }) {
             console.log("Receipt===>", result);
             await setMessage("Your purchase request Success!");
             await soldoutNFTOnTheMarket();
+
+            await axios
+              .post("http://localhost:3001/toGiveContributePoint", {
+                address: loginAccount,
+                secondAddress: ownerAddress,
+                point: 10,
+              })
+              .then((result) => {
+                console.log("this is result", result);
+              })
+              .catch((err) => {
+                console.log(err);
+              });
           })
           .catch((err) => {
             console.log("this is whole error message", err);
@@ -443,6 +483,7 @@ function About({ loginAccount }) {
   }
 
   async function soldoutNFTOnTheMarket() {
+    //위에 buyNFT 후 디비 정보 변경
     const headers = {
       "Content-Type": "application/json",
       Accept: "application/json",
