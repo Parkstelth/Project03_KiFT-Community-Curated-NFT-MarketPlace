@@ -35,7 +35,7 @@ function MyPage({ setIsLogin }) {
           setData(result.data.assets);
           setNowAccount(account);
           setLoading(false);
-
+          console.log("opensea retrieve assets", result);
           const headers = {
             "Content-Type": "application/json",
             Accept: "application/json",
@@ -82,6 +82,7 @@ function MyPage({ setIsLogin }) {
                   )
                   .then((result) => {
                     console.log("this is result from axios/NFT ===>", result);
+                    return result;
                   })
                   .catch((err) => {
                     console.log("errrrrrr ", err);

@@ -105,7 +105,14 @@ router.post("/NFT", async (req, res) => {
         })
         .then(async (result) => {
           console.log(result);
-          await User.findOneAndUpdate({ _id: result.owner }, { $addToSet: { ownedNFTs: result._id } }).then(console.log);
+          await User.findOneAndUpdate({ _id: result.owner }, { $addToSet: { ownedNFTs: result._id } }).then((result) => {
+            console.log("this is result of NFT api", result);
+            res.status(200).send(result);
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+          res.status(401).send(err);
         });
     })
     .catch((err) => {
@@ -211,6 +218,25 @@ router.post("/cancleListings", async (req, res) => {
       res.status(401).send(err);
     });
 });
+
+/* router.post("/toGiveContributePoint", async (req, res) => { //일단 보류
+  let reqAddress = req.body.address;
+  let reqPoint = req.body.point;
+
+  console.log(reqPoint);
+
+  User.findOneAndUpdate({ address: reqAddress }, { $inc: { ContributionPoionts: reqPoint } })
+    .then(() => {
+      User.findOne({ address: reqAddress }).then((result) => {
+        console.log("This is result of toGiveContributePoint========>>>>>>", result);
+        res.status(200).send({ result: result, message: "Sending API Successed!!" });
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(401).send({ message: "err!!!", result: err });
+    });
+}); */
 
 router.post("buyNFT", async (req, res) => {
   let buyerAddress = req.body.buyerAddress;
