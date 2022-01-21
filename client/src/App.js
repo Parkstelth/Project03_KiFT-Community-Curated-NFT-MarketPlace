@@ -2,6 +2,7 @@ import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import FrontPage from "./Pages/FrontPage/frontpage";
 import Market from "./Pages/MarketPage/Market";
+import Curated from "./Pages/CuratedPage/Curated";
 import SignIn from "./Pages/SigninPage/SignIn";
 import Mypage from "./Pages/MyPage/MyPage";
 import About from "./Pages/AboutPage/About";
@@ -100,6 +101,7 @@ function App() {
         <Route path="/market" element={<Market setfooter={setfooter} />} />
         {/* 로그인 시 마켓으로 이동하게 해놨음! 다른 곳으로 원하면
                 바꿔도 됨*/}
+        <Route path='/curated' element={<Curated/>}/>
         <Route path="/signin" element={<SignIn setfooter={setfooter} setIsLogin={setIsLogin} setLoginAccount={setLoginAccount} />} />
         <Route path="/mypage" element={<Mypage setIsLogin={setIsLogin} />} />
         <Route path="mypage/:id" element={<About loginAccount={loginAccount} />} />
