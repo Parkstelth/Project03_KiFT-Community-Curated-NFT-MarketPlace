@@ -1,6 +1,8 @@
 import Web3 from "web3";
 import dotenv from "dotenv";
 import axios from "axios";
+import "./Claim.css";
+
 dotenv.config();
 var KiFTTokenabi = require("./KiFTTokenabi");
 
@@ -74,7 +76,8 @@ function Claim() {
   }
 
   return (
-    <div>
+    <div className="claimPageContainer">
+      <div className="claimPageBlock"></div>
       <button onClick={claimKiFTToken}>클레임</button>
     </div>
   );
