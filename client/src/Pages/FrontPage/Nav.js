@@ -13,7 +13,9 @@ function Nav({ isLogin }) {
                     <Link to="/market" className="nav">
                         Market
                     </Link>
-                    <div className="nav">Curated</div>
+                    <Link to='/curated' className="nav">
+                        Curated
+                    </Link>
                     <div className="nav">Community</div> {/* 드롭다운 메뉴 만들어야함 */}
                     <div className="nav">Search</div>
                     {!isLogin ? (
