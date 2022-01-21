@@ -55,7 +55,6 @@ function MyPage({ setIsLogin }) {
               return data;
             })
             .then((data) => {
-              console.log("return data", data);
               result.data.assets.map(async (item) => {
                 const headers = {
                   "Content-Type": "application/json",

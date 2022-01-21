@@ -81,8 +81,8 @@ function About({ loginAccount }) {
     cancleMarketItem();
   }
 
-  useEffect(() => {
-    loadSellItem();
+  useEffect(async () => {
+    await loadSellItem();
   }, []);
 
   function runEtherscan(e) {
@@ -106,6 +106,7 @@ function About({ loginAccount }) {
         headers
       )
       .then((result) => {
+        console.log("fetch", result);
         setSellitem(result.data);
 
         // console.log("this is owner address!!! ===> ", sellitem.owner.address);
@@ -400,7 +401,8 @@ function About({ loginAccount }) {
 
   async function buyNFT() {
     //여러 wallet 플랫폼중 metaMask로 연결
-
+    setShowModal(true);
+    setMessage(`Please sign the MetaMask! and wait until "Success!"`);
     if (typeof window.ethereum.providers === "undefined") {
       var metamaskProvider = window.ethereum;
       console.log("메타마스크만 다운되어있는 것 처리===>", metamaskProvider);
