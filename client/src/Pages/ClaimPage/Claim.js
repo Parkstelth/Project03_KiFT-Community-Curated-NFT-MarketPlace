@@ -1,5 +1,6 @@
 import Web3 from "web3";
 import dotenv from "dotenv";
+import axios from "axios";
 dotenv.config();
 var KiFTTokenabi = require("./KiFTTokenabi");
 
@@ -15,26 +16,59 @@ function Claim() {
         var metamaskProvider = window.ethereum.providers.find((provider) => provider.isMetaMask);
         console.log("여러개 지갑 처리 ==>", metamaskProvider);
       }
+
       try {
         const web = new Web3(metamaskProvider);
         web.eth.getAccounts().then(async (account) => {
-          let contract = await new web.eth.Contract(KiFTTokenabi, process.env.REACT_APP_KIFT_TOKEN_CONTRACT_ADDRESS);
-          await contract.methods
-            .mintToken(account[0], "1000000000000000000")
-            .send({
-              from: account[0],
-              gas: 100000,
-              gasPrice: "10000000000",
+          //계정 조회후 포인트 받아옴
+          await axios
+            .post("http://localhost:3001/findUser", {
+              address: account[0].toLowerCase(),
             })
-            .then((receipt) => {
-              console.log(receipt);
+            .then((result) => {
+              console.log("how many got token======>>>>", result.data.data.points);
+              return result.data.data.points;
+            })
+            .then(async (point) => {
+              //포인트 있으면 민트 가능!!
+              if (point > 0) {
+                let numbersUserCanClaim = point * 7 * 1000000000000000000;
+                console.log(numbersUserCanClaim.toString());
+                let contract = await new web.eth.Contract(KiFTTokenabi, process.env.REACT_APP_KIFT_TOKEN_CONTRACT_ADDRESS);
+                await contract.methods
+                  .mintToken(account[0], numbersUserCanClaim.toString())
+                  .send({
+                    from: account[0],
+                    gas: 100000,
+                    gasPrice: "10000000000",
+                  })
+                  .then(async (receipt) => {
+                    console.log(receipt);
+                    if (receipt.blockHash) {
+                      //민트 성공하면 디비 초기화 !!
+                      await axios
+                        .post("http://localhost:3001/initializePoints", {
+                          address: account[0].toLowerCase(),
+                        })
+                        .then((result) => {
+                          console.log("requesting initialize points to zero successed!!!! =====>>", result);
+                        });
+                    } else {
+                      //민트 실패
+                      console.log("there's no points you got, it failed to claim Tokens");
+                    }
+                  })
+                  .catch((err) => {
+                    console.log("Error occured when minting Tokens!!!!!======>>", err);
+                  });
+              }
             })
             .catch((err) => {
-              console.log("2", err);
+              console.log("Error occured when sending request about POINTS!! ====>>", err);
             });
         });
       } catch (err) {
-        console.log("1", err);
+        console.log("Claim Token failed!!!!!", err);
       }
     }
   }

@@ -53,6 +53,7 @@ router.post("/findUser", async (req, res) => {
         data: {
           _id: result._id,
           address: result.address,
+          points: result.ContributionPoionts,
         },
       });
     })
@@ -252,6 +253,26 @@ router.post("/toGiveContributePoint", async (req, res) => {
     .catch((err) => {
       console.log(err);
       res.status(401).send({ message: "err!!!", result: err });
+    });
+});
+
+router.post("/initializePoints", async (req, res) => {
+  let reqAddress = req.body.address;
+
+  User.findOneAndUpdate({ address: reqAddress }, { ContributionPoionts: 0 })
+    .then(() => {
+      User.findOne({ address: reqAddress })
+        .then((result) => {
+          res.status(200).send({ result: result, message: "Initialize points Done!!!" });
+        })
+        .catch((err) => {
+          console.log(err);
+          res.status(401).send(err);
+        });
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(401).send(err);
     });
 });
 
