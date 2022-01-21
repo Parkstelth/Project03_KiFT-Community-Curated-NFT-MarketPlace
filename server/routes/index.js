@@ -109,13 +109,10 @@ router.post("/NFT", async (req, res) => {
             console.log("this is result of NFT api", result);
             res.status(200).send(result);
           });
-<<<<<<< HEAD
         })
         .catch((err) => {
           console.log(err);
           res.status(401).send(err);
-=======
->>>>>>> cb5302f75fd25bcf2fa62b23ae0e119e6cdae88f
         });
     })
     .catch((err) => {
@@ -221,24 +218,42 @@ router.post("/cancleListings", async (req, res) => {
     });
 });
 
-/* router.post("/toGiveContributePoint", async (req, res) => { //일단 보류
+router.post("/toGiveContributePoint", async (req, res) => {
+  //일단 보류
   let reqAddress = req.body.address;
+  let reqSecondAddress = req.body.secondAddress;
   let reqPoint = req.body.point;
 
   console.log(reqPoint);
 
   User.findOneAndUpdate({ address: reqAddress }, { $inc: { ContributionPoionts: reqPoint } })
     .then(() => {
-      User.findOne({ address: reqAddress }).then((result) => {
-        console.log("This is result of toGiveContributePoint========>>>>>>", result);
-        res.status(200).send({ result: result, message: "Sending API Successed!!" });
-      });
+      User.findOne({ address: reqAddress })
+        .then((result) => {
+          console.log("This is result of toGiveContributePoint========>>>>>>", result);
+
+          if (reqSecondAddress === null) {
+            res.status(200).send({ result: result, message: "Sending API Successed!!" });
+          }
+          return result;
+        })
+        .then((firstResult) => {
+          console.log("test====================================");
+          console.log(reqSecondAddress);
+          {
+            User.findOneAndUpdate({ address: reqSecondAddress }, { $inc: { ContributionPoionts: reqPoint } }).then(() => {
+              User.findOne({ address: reqSecondAddress }).then((result) => {
+                res.status(200).send({ firstResult: firstResult, secondResult: result, message: "done" });
+              });
+            });
+          }
+        });
     })
     .catch((err) => {
       console.log(err);
       res.status(401).send({ message: "err!!!", result: err });
     });
-}); */
+});
 
 router.post("buyNFT", async (req, res) => {
   let buyerAddress = req.body.buyerAddress;
