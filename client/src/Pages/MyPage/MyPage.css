@@ -49,8 +49,15 @@
   margin: 0 20px 30px 20px;
   border-radius: 15px;
   border: 0.5px solid rgb(229, 232, 235);
+  position: relative;
+  height: 24rem;
 }
 
+.card_addoption {
+  position: absolute;
+  width: 100%;
+  bottom: 0;
+}
 .card-img-top.card_img {
   width: 100%;
   border-radius: 15px;

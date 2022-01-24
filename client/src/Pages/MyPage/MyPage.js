@@ -143,20 +143,24 @@ function MyPage({ setIsLogin }) {
                   return (
                     <Card key={item.id} className="card1">
                       <Card.Img className="card_img" variant="top" src={item.image_url} />
-                      <Card.Body className="card_body">
-                        <Card.Title className="card_title">{item.asset_contract.name}</Card.Title>
-                        <Card.Text className="card_text">{item.collection.name}</Card.Text>
-                      </Card.Body>
-                      <Card.Footer className="card_footer">
-                        <small className="text-muted">
-                          {item.collection.created_date.slice(0, 10)}
-                          {" / "}
-                          {item.collection.created_date.slice(11, 16)}
-                        </small>
-                      </Card.Footer>
-                      <Link to={`/mypage/${item.id}`} className="button_link">
-                        <button className="sell_button addoption2">Sell</button>
-                      </Link>
+                      <div className="card_addoption">
+                        <Card.Body className="card_body">
+                          <Card.Title className="card_title">{item.asset_contract.name}</Card.Title>
+                          <Card.Text className="card_text">{item.collection.name}</Card.Text>
+                        </Card.Body>
+
+                        <Card.Footer className="card_footer">
+                          <small className="text-muted">
+                            {item.collection.created_date.slice(0, 10)}
+                            {" / "}
+                            {item.collection.created_date.slice(11, 16)}
+                          </small>
+                        </Card.Footer>
+
+                        <Link to={`/mypage/${item.id}`} className="button_link">
+                          <button className="sell_button addoption2">Sell</button>
+                        </Link>
+                      </div>
                     </Card>
                   );
                 })}
