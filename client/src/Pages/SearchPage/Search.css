@@ -1,0 +1,87 @@
+.searchPage {
+  /* height: 500px; */
+}
+
+.searchTitle {
+  padding-bottom: 50px;
+  margin: 2em 0;
+  font-size: 34px;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.container {
+  padding-right: 15px;
+  padding-left: 15px;
+  margin-right: auto;
+  margin-left: auto;
+  width: 1170px;
+}
+
+.inputContainer {
+  margin-left: 0;
+  margin-bottom: 0;
+  width: 100%;
+  display: flex;
+}
+
+.searchLabel {
+  font-size: 18px;
+  font-weight: 400;
+  color: rgba(0, 0, 0, 0.54);
+}
+
+.searchInput {
+  /* font-size: 16px; */
+  color: rgba(0, 0, 0, 0.87);
+  background: none;
+  border: 0;
+  line-height: inherit;
+  width: 100%;
+  font-size: 20px;
+  font-weight: 400;
+}
+.searchInput:focus {
+  outline: none;
+}
+
+.divider {
+  margin-top: 10px;
+  margin-bottom: 70px;
+  border: 0;
+  border-top: 1px solid #eee;
+  width: 100%;
+}
+
+.searchedItems {
+  padding-bottom: 50px;
+  margin: 2em 0;
+  font-size: 20px;
+  /* text-transform: uppercase; */
+  text-align: center;
+  color: rgba(52, 52, 52, 0.87);
+}
+
+.trendingItemsTitle {
+  padding-bottom: 30px;
+  margin: 2em 0;
+  font-size: 20px;
+  /* text-transform: uppercase; */
+  text-align: center;
+}
+
+.searchedItemsTitle {
+  margin-bottom: 70px;
+}
+
+.trendingItemsTitle {
+  color: rgba(52, 52, 52, 0.87);
+}
+.search-icon {
+  width: 25px;
+}
+.searchButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+}

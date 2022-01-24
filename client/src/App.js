@@ -7,6 +7,7 @@ import SignIn from "./Pages/SigninPage/SignIn";
 import Mypage from "./Pages/MyPage/MyPage";
 import About from "./Pages/AboutPage/About";
 import Claim from "./Pages/ClaimPage/Claim";
+import Search from "./Pages/SearchPage/Search";
 import CreateNft from "./Pages/CreateNftPage/CreateNft";
 import NotFound from "./Pages/NotFoundPage/notfound";
 import Nav from "./Pages/FrontPage/Nav";
@@ -101,12 +102,13 @@ function App() {
         <Route path="/market" element={<Market setfooter={setfooter} />} />
         {/* 로그인 시 마켓으로 이동하게 해놨음! 다른 곳으로 원하면
                 바꿔도 됨*/}
-        <Route path='/curated' element={<Curated/>}/>
+        <Route path="/curated" element={<Curated />} />
         <Route path="/signin" element={<SignIn setfooter={setfooter} setIsLogin={setIsLogin} setLoginAccount={setLoginAccount} />} />
         <Route path="/mypage" element={<Mypage setIsLogin={setIsLogin} />} />
         <Route path="mypage/:id" element={<About loginAccount={loginAccount} />} />
         <Route path="/claim" element={<Claim />} />
         <Route path="/create" element={<CreateNft />} />
+        <Route path="/search" element={<Search />} />
         <Route path=":id" element={<NotFound />} />
       </Routes>
       {footer ? <Footer /> : null}

@@ -24,7 +24,10 @@ function Nav({ isLogin }) {
             </Dropdown.Item>
           </DropdownButton>
 
-          <div className="nav">Search</div>
+          <Link to="/search" className="nav">
+            Search
+          </Link>
+
           {!isLogin ? (
             <Link to="/signin" className="nav">
               Sign in

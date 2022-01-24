@@ -277,11 +277,32 @@ router.post("/initializePoints", async (req, res) => {
     });
 });
 
-router.post("buyNFT", async (req, res) => {
+router.post("/buyNFT", async (req, res) => {
   let buyerAddress = req.body.buyerAddress;
 });
 //추후에 토큰 만들고나서 만들 것
-router.post("claimTokens", async (req, res) => {
+router.post("/claimTokens", async (req, res) => {
   let userAddress = req.body.userAddress;
+});
+
+router.post("/searchItems", async (req, res) => {
+  let reqNameOfItem = req.body.nameOfItem;
+
+  console.log("seflijsfilsejfsil========", reqNameOfItem);
+
+  //대소문자 구분 없이하려면 $"options" : "i" 추가해야함!
+  NFT.find({ name: { $regex: reqNameOfItem, $options: "i" } })
+    .then((result) => {
+      console.log("this is result========>>>>>>", result[0]);
+      if (result[0] === undefined) {
+        res.status(201).send({ result: result, message: "it's undefined" });
+      } else {
+        res.status(200).send({ result: result, message: "searchItems done!" });
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(402).send({ message: "error" });
+    });
 });
 module.exports = router;

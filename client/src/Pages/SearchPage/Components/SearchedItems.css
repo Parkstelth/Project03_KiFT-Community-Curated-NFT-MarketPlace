@@ -1,0 +1,24 @@
+.searchedItemsContainer {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  /* grid-template-rows: repeat(1, 350px); */
+}
+
+.market_image {
+  height: 330px;
+}
+
+.imgContainer {
+  height: 330px;
+}
+
+/* .searchedItems  */
+.searchedItemsContainer .wrongResult {
+  align-items: center;
+  display: flex;
+}
+
+.wrongResult {
+  color: black;
+  font-size: 30px;
+}
