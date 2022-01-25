@@ -21,6 +21,9 @@ function About({ loginAccount /* 로그인된 계정 */ }) {
   const [closebox, setClosebox] = useState(false);
   const URLparam = document.location.href.split("mypage/")[1]; //about으로 변경준비
 
+  console.log(loginAccount);
+  console.log(ownerAddress);
+  console.log(sellitem.openseaId);
   const closeModal = () => {
     setShowModal(false);
     setClosebox(false);
@@ -456,6 +459,11 @@ function About({ loginAccount /* 로그인된 계정 */ }) {
             console.log("Receipt===>", result);
             await setMessage("Your purchase request Success!");
             await soldoutNFTOnTheMarket();
+            console.log("is there ownerAddress found???? =====>>>>>>", ownerAddress);
+
+            console.log("Before changeownerandownedNFTS ==========================");
+
+            await changeOwner();
 
             await axios
               .post("http://localhost:3001/toGiveContributePoint", {
@@ -463,8 +471,8 @@ function About({ loginAccount /* 로그인된 계정 */ }) {
                 secondAddress: ownerAddress,
                 point: 10,
               })
-              .then((result) => {
-                console.log("this is result", result);
+              .then(async (result) => {
+                console.log("contribute points done!", result);
               })
               .catch((err) => {
                 console.log(err);
@@ -512,6 +520,29 @@ function About({ loginAccount /* 로그인된 계정 */ }) {
       });
   }
 
+  async function changeOwner() {
+    const headers = {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    };
+    await axios
+      .post(
+        "http://localhost:3001/changeOwnerAndOwnedNFTs",
+        {
+          address: loginAccount,
+          // secondAddress: ownerAddress,
+          openseaId: sellitem.openseaId,
+        },
+        headers
+      )
+      .then((result) => {
+        console.log("After changeownerandownedNFTS ==========================");
+        console.log("fetching changeOwnerAndOwnedNFTs API!===>>", result);
+      })
+      .catch((err) => {
+        console.log("fetching changeOwnerAndOwnedNFTs API FAILED!!!! ===>", err);
+      });
+  }
   return (
     <div className="about_main">
       {showModal && <NotifyModal showModal={showModal} closeModal={closeModal} message={message} closebox={closebox}></NotifyModal>}
