@@ -305,4 +305,61 @@ router.post("/searchItems", async (req, res) => {
       res.status(402).send({ message: "error" });
     });
 });
+
+router.post("/changeOwnerAndOwnedNFTs", async (req, res) => {
+  let reqBuyerAccount = req.body.address;
+  let reqOpenseaId = req.body.openseaId;
+
+  //구매자를 조회하여 오브젝트 아이디 를 가져옵니다
+  User.findOne({ address: reqBuyerAccount })
+    .then((result) => {
+      console.log("this is result-================>>>>>>>>>>>", result.id);
+      return result.id;
+    })
+    .then(async (buyerObjectId) => {
+      await NFT.findOne({ openseaId: reqOpenseaId })
+        .then((result) => {
+          console.log("this is for test result !!! =====>>", result);
+          console.log("this is for test owner !!! =====>>", result.owner);
+          return result;
+        })
+        .then((itemNFT) => {
+          console.log("itemNFT ================>>>>>>>>>>>>>", itemNFT);
+          //오브젝트 아이디를 통해 판매자의 소유 NFT배열에서 빼줍니다
+          User.findOneAndUpdate({ _id: itemNFT.owner }, { $pull: { ownedNFTs: itemNFT._id } }).then((result) => {
+            console.log("this is result of pulling nft from ownedNFTs!!! ====>>>> ", result);
+          });
+        });
+
+      //NFT 의 주인을 바꾸고 구매자의 소유 NFT 배열에 넣어줍니다
+      await NFT.findOneAndUpdate({ openseaId: reqOpenseaId }, { owner: buyerObjectId })
+        .then((result) => {
+          console.log("this is final result!!!===>>> ", result);
+          return result;
+        })
+        .then((itemNFT) => {
+          User.findOneAndUpdate({ address: reqBuyerAccount }, { $addToSet: { ownedNFTs: itemNFT._id } }).then((result) => {
+            res.status(200).send({ result: result, message: "done!!!!" });
+          });
+        });
+
+      /* NFT.findOneAndUpdate({ openseaId: reqOpenseaId }, { owner: buyerObjectId })
+        .then((result) => {
+          console.log(result._id);
+
+          return result._id;
+        })
+        .then((objectId) => {
+          console.log("this is obejct ID-======>", objectId);
+          User.findOneAndUpdate({ address: reqSellerAccount }, { $pull: { ownedNFTs: objectId } }).then((result) => {
+            console.log("this is result of changeOwnerAndOwnedNFTs API!!!!=======>>", result);
+            res.status(200).send({ message: "message", result: result });
+          });
+        }); */
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(401).send({ message: "changeOwnerAndOwnedNFTs APIs Failed", result: err });
+    });
+});
 module.exports = router;
