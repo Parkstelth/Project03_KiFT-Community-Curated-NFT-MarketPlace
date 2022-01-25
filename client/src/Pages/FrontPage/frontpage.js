@@ -95,7 +95,7 @@ function FrontPage({ setfooter }) {
       <FrontStartWrap>
         <LeftSource>
           <div className="title">CURATOR ART</div>
-          <video className="video" autoPlay muted loop>
+          <video className="video2" autoPlay muted loop>
             <source src={cube} type="video/mp4" />
           </video>
           <div className="description">

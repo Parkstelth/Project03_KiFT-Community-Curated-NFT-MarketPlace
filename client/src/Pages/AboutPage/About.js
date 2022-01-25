@@ -463,8 +463,6 @@ function About({ loginAccount /* 로그인된 계정 */ }) {
 
             console.log("Before changeownerandownedNFTS ==========================");
 
-            await changeOwner();
-
             await axios
               .post("http://localhost:3001/toGiveContributePoint", {
                 address: loginAccount,
@@ -472,6 +470,8 @@ function About({ loginAccount /* 로그인된 계정 */ }) {
                 point: 10,
               })
               .then(async (result) => {
+                await changeOwner();
+                document.location.href = `/mypage/${URLparam}`;
                 console.log("contribute points done!", result);
               })
               .catch((err) => {
@@ -510,7 +510,6 @@ function About({ loginAccount /* 로그인된 계정 */ }) {
       .then((result) => {
         if (result.status === 200) {
           setMessage("Your NFT purchase Success!");
-          document.location.href = `/mypage/${URLparam}`;
         }
       })
       .catch((e) => {
