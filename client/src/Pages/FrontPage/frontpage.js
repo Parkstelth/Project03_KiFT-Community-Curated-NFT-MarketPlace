@@ -6,6 +6,7 @@ import styled from "styled-components";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import cube from "./cube.mp4";
 
 const FrontStart = styled.div`
   margin-top: 10px;
@@ -20,6 +21,7 @@ const LeftSource = styled.div`
   display: flex;
   flex-direction: column;
   padding-left: 11vw;
+  width: 28rem;
 `;
 
 const RightSource = styled.div`
@@ -77,44 +79,25 @@ function FrontPage({ setfooter }) {
         <button onClick={previous}>Previous</button> */}
         <Slider {...settings} ref={customeSlider}>
           <div>
-            {/* <img
-              src="https://miro.medium.com/max/10000/1*_GNQ_V6HjUfWFCKDKaZrgw@2x.jpeg"
-              alt=""
-            /> */}
+            <img src="https://media.discordapp.net/attachments/886537798931349554/935341218370584586/1__GNQ_V6HjUfWFCKDKaZrgw2x.jpeg" alt="" />
           </div>
           <div>
-            {/* <img
-              src="https://media.discordapp.net/attachments/886537798931349554/928206508276219954/769525b6fe6141d59bcf5982a7a74057.jpg"
-              alt=""
-            /> */}
+            <img src="https://media.discordapp.net/attachments/886537798931349554/928140644709437460/74038_12624_2915.jpeg" alt="" />
           </div>
           <div>
-            {/* <img
-              src="https://media.discordapp.net/attachments/886537798931349554/928140644709437460/74038_12624_2915.jpeg"
+            <img
+              src="https://media.discordapp.net/attachments/886537798931349554/935340818422714488/chirsties-x-open-sea-online-auction-mdj-forever-mslp-hero-1892x500.jpg"
               alt=""
-            /> */}
-          </div>
-          <div>
-            {/* <img
-              src="https://cdn.discordapp.com/attachments/886537798931349554/928140644269043742/image_1572200809025_1000.jpeg"
-              alt=""
-            /> */}
-          </div>
-          <div>
-            {/* <img
-              src="https://www.christies.com/media-library/images/salelandingpage/2021/12/christies-x-opensea/chirsties-x-open-sea-online-auction-mdj-forever-mslp-hero-1892x500.jpg"
-              alt=""
-            /> */}
+            />
           </div>
         </Slider>
       </div>
       <FrontStartWrap>
         <LeftSource>
           <div className="title">CURATOR ART</div>
-          {/* <img
-            className="introImg"
-            src="https://ipfs.pixura.io/ipfs/QmPVXTbzi83fDYHU6MNcHTJC3aYnkME5AZBvBDjeCUNnEg/Somber.jpg"
-          ></img> */}
+          <video className="video" autoPlay muted loop>
+            <source src={cube} type="video/mp4" />
+          </video>
           <div className="description">
             <div className="artist">
               <div>ARTIST</div>
@@ -128,7 +111,7 @@ function FrontPage({ setfooter }) {
         </LeftSource>
         <RightSource>
           <div className="mainstart">
-            <div className="h1">collet</div>
+            <div className="h1">collect</div>
             <div className="h1">digital art</div>
             <p className="h2">Buy and sell NFTs from the</p>
             <p className="h2">world's top artists</p>
