@@ -1,5 +1,4 @@
 .title {
-  padding-bottom: 7px;
   font-weight: bold;
 }
 .mainstart {
@@ -71,4 +70,8 @@
   height: 650px;
   width: 100%;
   object-fit: cover;
+}
+
+.linkcolor {
+  color: white;
 }

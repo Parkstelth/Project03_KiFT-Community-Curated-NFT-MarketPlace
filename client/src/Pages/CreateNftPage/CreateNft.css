@@ -49,7 +49,6 @@
 .content_start.addoption {
   position: relative;
   margin-bottom: 15px;
-  border-bottom: 1px solid rgb(229, 232, 235);
   padding-bottom: 10px;
 }
 
@@ -79,6 +78,7 @@
 .content_trait {
   font-size: 0.8rem;
   color: rgb(53, 56, 64);
+  margin-bottom: 1px;
 }
 .trait_button {
   width: 30px;
@@ -144,4 +144,8 @@ button#dropdown-basic-button2.dropdown-toggle.btn.btn-primary::after {
 
 #root > div.mainset > div.imagebox > div.contentbox > button {
   margin: 35px 0 0 0;
+}
+
+.warning {
+  color: red;
 }

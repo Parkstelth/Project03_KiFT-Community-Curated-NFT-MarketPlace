@@ -8,6 +8,8 @@ import { IconContext } from "react-icons";
 import { MdOutlineImage } from "react-icons/md";
 import Web3 from "web3";
 import dotenv from "dotenv";
+import DetailList from "./DetailList";
+import { Button } from "antd";
 dotenv.config();
 const Kift_721_Contract_Address = process.env.REACT_APP_KIFT_721_CONTRACT_ADDRESS;
 
@@ -59,6 +61,15 @@ const PreviewImageCloseButton = styled.button`
   }
 `;
 
+const CreateListDiv = styled.div`
+  width: 100%;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  border: 1px solid rgb(229, 232, 235);
+  border-radius: 7px;
+`;
+
 function CreateNft() {
   const ipfs = create({
     host: "ipfs.infura.io",
@@ -66,6 +77,7 @@ function CreateNft() {
     protocol: "https",
   });
 
+  const [countList, setCountList] = useState([0]);
   const [name, setName] = useState("");
   const [collection, setCollection] = useState("");
   const [description, setDescription] = useState("");
@@ -74,14 +86,18 @@ function CreateNft() {
   const [message, setMessage] = useState("");
   const [closebox, setClosebox] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [totalTrait, setTotalTrait] = useState({});
+  const [trait1, setTrait1] = useState("");
+  const [trait2, setTrait2] = useState("");
+  const [resultTraits, setResultTraits] = useState([]);
+
+  // function addtrait() {
+
+  // }
 
   const closeModal = () => {
     setShowModal(false);
     setClosebox(false);
-  };
-
-  const notReadyAlert = () => {
-    alert("This function comming soon!");
   };
 
   function changeName(e) {
@@ -110,6 +126,24 @@ function CreateNft() {
       fileReader.onload = (e) => {
         setImgSrc(e.target.result);
       };
+    } else {
+      setFiles("");
+    }
+  };
+
+  const onAddDetailDiv = () => {
+    let resultTrait = [];
+    let countArr = [...countList];
+    let counter = countArr.slice(-1)[0];
+    counter += 1;
+    countArr.push(counter); // index 사용 X
+    // countArr[counter] = counter	// index 사용 시 윗줄 대신 사용
+    setCountList(countArr);
+    if (trait1 !== "" && trait2 !== "") {
+      totalTrait[trait1] = trait2;
+      setTotalTrait(totalTrait);
+      resultTrait.push(totalTrait);
+      setResultTraits(resultTrait);
     }
   };
 
@@ -138,6 +172,7 @@ function CreateNft() {
               collection: collection,
               description: description,
               image: `https://ipfs.io/ipfs/${imgURI.path}`,
+              attributes: resultTraits,
             };
             const tokenUri = await ipfs.add(JSON.stringify(metadata));
             const newTokenURI = `https://ipfs.io/ipfs/${tokenUri.path}`;
@@ -218,23 +253,35 @@ function CreateNft() {
             <div className="content_start addoption">
               Properties
               <div className="content_trait">Textual traits that show up as rectangles</div>
-              <button className="trait_button" onClick={notReadyAlert}>
-                +
-              </button>
+              <CreateListDiv>
+                <DetailList countList={countList} setTrait1={setTrait1} setTrait2={setTrait2} />
+                <Button className="sell_button addoption2" onClick={onAddDetailDiv}>
+                  Add more
+                </Button>
+              </CreateListDiv>
             </div>
             <div className="content2_start">Supply</div>
             <div className="content_under">Quantities above one coming soon.</div>
             <input disabled className="input_name" placeholder=" 1" />
             <div className="content2_start">Blockchain</div>
-            <DropdownButton id="dropdown-basic-button2" class="dropdown addoption" title=" Rinkeby">
+            <DropdownButton id="dropdown-basic-button2" className="dropdown addoption" title=" Rinkeby">
               <Dropdown.Item id="blockchain_set" href="">
                 Rinkeby
               </Dropdown.Item>
             </DropdownButton>
           </div>
-          <button className="sell_button addoption2" onClick={createItem}>
-            Create
-          </button>
+          {name !== "" && files !== "" ? (
+            <button className="sell_button addoption2" onClick={createItem}>
+              Create
+            </button>
+          ) : (
+            <>
+              <button disabled onClick={createItem}>
+                Create
+              </button>
+              <div className="warning">Please Fill in the File, Name! </div>
+            </>
+          )}
         </div>
       </div>
     </div>

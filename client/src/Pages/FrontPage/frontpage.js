@@ -7,6 +7,7 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import cube from "./cube.mp4";
+import { Link } from "react-router-dom";
 
 const FrontStart = styled.div`
   margin-top: 10px;
@@ -15,6 +16,7 @@ const FrontStart = styled.div`
 const FrontStartWrap = styled.div`
   display: flex;
   justify-content: center;
+  margin-top: 75px;
 `;
 
 const LeftSource = styled.div`
@@ -78,7 +80,7 @@ function FrontPage({ setfooter }) {
         </button>
         <button onClick={previous}>Previous</button> */}
         <Slider {...settings} ref={customeSlider}>
-          <div>
+          {/* <div>
             <img src="https://media.discordapp.net/attachments/886537798931349554/935341218370584586/1__GNQ_V6HjUfWFCKDKaZrgw2x.jpeg" alt="" />
           </div>
           <div>
@@ -89,7 +91,7 @@ function FrontPage({ setfooter }) {
               src="https://media.discordapp.net/attachments/886537798931349554/935340818422714488/chirsties-x-open-sea-online-auction-mdj-forever-mslp-hero-1892x500.jpg"
               alt=""
             />
-          </div>
+          </div> */}
         </Slider>
       </div>
       <FrontStartWrap>
@@ -101,11 +103,11 @@ function FrontPage({ setfooter }) {
           <div className="description">
             <div className="artist">
               <div>ARTIST</div>
-              <div className="artist_data">{"@park-son"}</div>
+              <div className="artist_data">{"@Murat-Pak"}</div>
             </div>
             <div className="release_date">
               <div className="date_title">RELEASE DATE</div>
-              <div className="date"> {"Dec22,2021,12pm"}</div>
+              <div className="date"> {"Feb22, 2022, 12pm"}</div>
             </div>
           </div>
         </LeftSource>
@@ -115,10 +117,17 @@ function FrontPage({ setfooter }) {
             <div className="h1">digital art</div>
             <p className="h2">Buy and sell NFTs from the</p>
             <p className="h2">world's top artists</p>
-            <button className="startbutton">START COLLECTING</button>
+            <button className="startbutton">
+              <Link to="/curated" className="linkcolor">
+                START COLLECTING
+              </Link>
+            </button>
           </div>
         </RightSource>
       </FrontStartWrap>
+      <div>
+        <img className="middle_image" src="" />
+      </div>
     </FrontStart>
   );
 }
