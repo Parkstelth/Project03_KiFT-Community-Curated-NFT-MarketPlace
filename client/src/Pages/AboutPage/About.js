@@ -900,10 +900,7 @@ function About({ loginAccount /* 로그인된 계정 */ }) {
                         {"..."}
                         {String(his.from).slice(-6)}
                       </div>
-                      <div
-                        className="history_to2 addoption"
-                        onClick={() => runEtherscan2(his.to)}
-                      >
+                      <div className="history_to2 addoption">
                         {String(his.to).slice(0, 6)}
                         {"..."}
                         {String(his.to).slice(-6)}
