@@ -91,14 +91,25 @@ router.post("/NFT", async (req, res) => {
       image_url: req.body.image_url,
       openseaId: req.body.openseaId,
       traits: req.body.traits,
-      history: { minted: req.body.history },
+      $addToSet: {
+        history: {
+          event: "minted",
+          date: req.body.createdAt,
+          price: " ",
+          from: req.body.creator_address,
+          to: " ",
+        },
+      },
     },
     {
       upsert: true,
     }
   )
     .then(async () => {
-      await NFT.find({ contract_address: reqContractAddress, NFT_Token_id: reqTokenId })
+      await NFT.find({
+        contract_address: reqContractAddress,
+        NFT_Token_id: reqTokenId,
+      })
         .then((result) => {
           console.log(result);
           console.log(result[0].owner.toString());
@@ -107,7 +118,10 @@ router.post("/NFT", async (req, res) => {
         })
         .then(async (result) => {
           console.log(result);
-          await User.findOneAndUpdate({ _id: result.owner }, { $addToSet: { ownedNFTs: result._id } }).then((result) => {
+          await User.findOneAndUpdate(
+            { _id: result.owner },
+            { $addToSet: { ownedNFTs: result._id } }
+          ).then((result) => {
             console.log("this is result of NFT api", result);
             res.status(200).send(result);
           });
@@ -162,19 +176,22 @@ router.post("/regdate", async (req, res) => {
 router.get("/fetchItemsOnSale", async (req, res) => {
   NFT.find({ isSale: true })
     .then(async (result) => {
-      res.status(200).send({ message: "fetch listed Items successed!", data: result });
+      res
+        .status(200)
+        .send({ message: "fetch listed Items successed!", data: result });
     })
     .catch((err) => {
       res.status(401).send(err);
     });
 });
-
-router.post("/listItem", async (req, res) => {
+router.post("/listItemOnbuy", async (req, res) => {
   let reqOpenseaId = req.body.openseaId;
   let reqPrice = req.body.price;
   let reqIsSale = req.body.isSale;
   let reqItemIdOnBlockChain = req.body.itemIdOnBlockChain;
-
+  let buyto = req.body.to;
+  let buyfrom = req.body.from;
+  let buyprice = req.body.itemprice;
   NFT.updateOne(
     {
       openseaId: reqOpenseaId,
@@ -183,6 +200,92 @@ router.post("/listItem", async (req, res) => {
       isSale: reqIsSale,
       price: reqPrice,
       itemIdOnBlockChain: reqItemIdOnBlockChain,
+      $push: {
+        history: {
+          event: "buy",
+          date: new Date(),
+          price: buyprice,
+          from: buyfrom,
+          to: buyto,
+        },
+      },
+    } //옵션으로 upsert는 안써도 됨. 이미 존재하는걸 수정하는거니까
+  )
+    .then(async (result) => {
+      // const nft = new NFT();
+      // await nft.save();
+      console.log(result);
+      res.status(200).send({
+        message: "document successfully changed, listing item succeeded!",
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(400).send(err);
+    });
+});
+
+router.post("/listItemOnlist", async (req, res) => {
+  let reqOpenseaId = req.body.openseaId;
+  let reqPrice = req.body.price;
+  let reqIsSale = req.body.isSale;
+  let reqItemIdOnBlockChain = req.body.itemIdOnBlockChain;
+  let sellfrom = req.body.from;
+  NFT.updateOne(
+    {
+      openseaId: reqOpenseaId,
+    },
+    {
+      isSale: reqIsSale,
+      price: reqPrice,
+      itemIdOnBlockChain: reqItemIdOnBlockChain,
+      $push: {
+        history: {
+          event: "list",
+          date: new Date(),
+          price: reqPrice,
+          from: sellfrom,
+          to: " ",
+        },
+      },
+    } //옵션으로 upsert는 안써도 됨. 이미 존재하는걸 수정하는거니까
+  )
+    .then(async (result) => {
+      // const nft = new NFT();
+      // await nft.save();
+      console.log(result);
+      res.status(200).send({
+        message: "document successfully changed, listing item succeeded!",
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(400).send(err);
+    });
+});
+
+router.post("/listItemOncancel", async (req, res) => {
+  let reqOpenseaId = req.body.openseaId;
+  let reqPrice = req.body.price;
+  let reqIsSale = req.body.isSale;
+  let reqItemIdOnBlockChain = req.body.itemIdOnBlockChain;
+  let cancelfrom = req.body.from;
+  NFT.updateOne(
+    {
+      openseaId: reqOpenseaId,
+    },
+    {
+      isSale: reqIsSale,
+      price: reqPrice,
+      itemIdOnBlockChain: reqItemIdOnBlockChain,
+      $push: {
+        history: {
+          event: "unlist",
+          date: new Date(),
+          from: cancelfrom,
+          to: " ",
+        },
+      },
     } //옵션으로 upsert는 안써도 됨. 이미 존재하는걸 수정하는거니까
   )
     .then(async (result) => {
@@ -213,7 +316,9 @@ router.post("/cancleListings", async (req, res) => {
     }
   )
     .then(async (result) => {
-      res.status(200).send({ message: "Cancle listings request to server successed!" });
+      res
+        .status(200)
+        .send({ message: "Cancle listings request to server successed!" });
     })
     .catch((err) => {
       res.status(401).send(err);
@@ -228,14 +333,22 @@ router.post("/toGiveContributePoint", async (req, res) => {
 
   console.log(reqPoint);
 
-  User.findOneAndUpdate({ address: reqAddress }, { $inc: { ContributionPoionts: reqPoint } })
+  User.findOneAndUpdate(
+    { address: reqAddress },
+    { $inc: { ContributionPoionts: reqPoint } }
+  )
     .then(() => {
       User.findOne({ address: reqAddress })
         .then((result) => {
-          console.log("This is result of toGiveContributePoint========>>>>>>", result);
+          console.log(
+            "This is result of toGiveContributePoint========>>>>>>",
+            result
+          );
 
           if (reqSecondAddress === null) {
-            res.status(200).send({ result: result, message: "Sending API Successed!!" });
+            res
+              .status(200)
+              .send({ result: result, message: "Sending API Successed!!" });
           }
           return result;
         })
@@ -243,9 +356,16 @@ router.post("/toGiveContributePoint", async (req, res) => {
           console.log("test====================================");
           console.log(reqSecondAddress);
           {
-            User.findOneAndUpdate({ address: reqSecondAddress }, { $inc: { ContributionPoionts: reqPoint } }).then(() => {
+            User.findOneAndUpdate(
+              { address: reqSecondAddress },
+              { $inc: { ContributionPoionts: reqPoint } }
+            ).then(() => {
               User.findOne({ address: reqSecondAddress }).then((result) => {
-                res.status(200).send({ firstResult: firstResult, secondResult: result, message: "done" });
+                res.status(200).send({
+                  firstResult: firstResult,
+                  secondResult: result,
+                  message: "done",
+                });
               });
             });
           }
@@ -264,7 +384,9 @@ router.post("/initializePoints", async (req, res) => {
     .then(() => {
       User.findOne({ address: reqAddress })
         .then((result) => {
-          res.status(200).send({ result: result, message: "Initialize points Done!!!" });
+          res
+            .status(200)
+            .send({ result: result, message: "Initialize points Done!!!" });
         })
         .catch((err) => {
           console.log(err);
@@ -326,19 +448,31 @@ router.post("/changeOwnerAndOwnedNFTs", async (req, res) => {
         .then((itemNFT) => {
           console.log("itemNFT ================>>>>>>>>>>>>>", itemNFT);
           //오브젝트 아이디를 통해 판매자의 소유 NFT배열에서 빼줍니다
-          User.findOneAndUpdate({ _id: itemNFT.owner }, { $pull: { ownedNFTs: itemNFT._id } }).then((result) => {
-            console.log("this is result of pulling nft from ownedNFTs!!! ====>>>> ", result);
+          User.findOneAndUpdate(
+            { _id: itemNFT.owner },
+            { $pull: { ownedNFTs: itemNFT._id } }
+          ).then((result) => {
+            console.log(
+              "this is result of pulling nft from ownedNFTs!!! ====>>>> ",
+              result
+            );
           });
         });
 
       //NFT 의 주인을 바꾸고 구매자의 소유 NFT 배열에 넣어줍니다
-      await NFT.findOneAndUpdate({ openseaId: reqOpenseaId }, { owner: buyerObjectId })
+      await NFT.findOneAndUpdate(
+        { openseaId: reqOpenseaId },
+        { owner: buyerObjectId }
+      )
         .then((result) => {
           console.log("this is final result!!!===>>> ", result);
           return result;
         })
         .then((itemNFT) => {
-          User.findOneAndUpdate({ address: reqBuyerAccount }, { $addToSet: { ownedNFTs: itemNFT._id } }).then((result) => {
+          User.findOneAndUpdate(
+            { address: reqBuyerAccount },
+            { $addToSet: { ownedNFTs: itemNFT._id } }
+          ).then((result) => {
             res.status(200).send({ result: result, message: "done!!!!" });
           });
         });
@@ -359,7 +493,9 @@ router.post("/changeOwnerAndOwnedNFTs", async (req, res) => {
     })
     .catch((err) => {
       console.log(err);
-      res.status(401).send({ message: "changeOwnerAndOwnedNFTs APIs Failed", result: err });
+      res
+        .status(401)
+        .send({ message: "changeOwnerAndOwnedNFTs APIs Failed", result: err });
     });
 });
 module.exports = router;

@@ -45,7 +45,8 @@
   border: 0;
   border-radius: 0;
   overflow-anchor: none;
-  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out,
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
+    border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out,
     border-radius 0.15s ease;
 }
 @media (prefers-reduced-motion: reduce) {
@@ -122,7 +123,7 @@
   border-bottom-left-radius: 0.25rem;
 }
 .accordion-body {
-  padding: 1rem 10px;
+  /* padding: 1rem 10px; */
 }
 .accordion-flush .accordion-collapse {
   border-width: 0;
@@ -251,11 +252,16 @@
   padding: 10px;
   border-bottom: 2px solid rgb(229, 232, 235);
 }
+
+.props.addoption {
+  margin: 23px 5px !important;
+}
+
 .props {
   background-color: rgba(21, 178, 229, 0.06);
   border: 1px solid rgb(21, 178, 229);
   padding: 10px;
-  margin: 5px;
+  margin: 5px 0.55rem;
   min-height: 16px;
   max-width: 130px;
   border-radius: 6px;
@@ -283,7 +289,7 @@
 }
 
 .center_details {
-  margin: 10px 15px 0px 15px;
+  margin: 10px 15px 6px 15px;
   border: 2px solid rgb(229, 232, 235);
   border-radius: 10px;
   width: 450px;
@@ -371,4 +377,71 @@ button.accordion-button {
 
 .accord.addoption.accordion {
   margin-top: 10px;
+}
+
+/* history */
+
+.historyTitleBox {
+  display: flex;
+  border-bottom: 1px solid rgb(229, 232, 235);
+  padding: 2px 12px;
+}
+.material-icons.addoption {
+  padding-right: 6px;
+}
+.historyBox {
+  display: flex;
+  padding: 10px 10px;
+  font-size: 0.8rem;
+}
+
+.history_event {
+  width: 99px;
+}
+
+.history_price {
+  width: 100px;
+}
+
+.history_from {
+  width: 210px;
+}
+
+.history_to {
+  width: 210px;
+}
+
+.history_event2 {
+  display: flex;
+  align-items: center;
+  width: 101px;
+}
+
+.history_price2 {
+  width: 100px;
+  display: flex;
+  align-items: center;
+}
+
+.history_logo {
+  width: 15px;
+  height: 15px;
+  margin-right: 3px;
+}
+
+.history_from2 {
+  width: 212px;
+  cursor: pointer;
+  color: rgb(32, 129, 226);
+}
+
+.history_to2 {
+  width: 209px;
+  cursor: pointer;
+  color: rgb(32, 129, 226);
+}
+
+.history_to2.addoption {
+  color: black;
+  cursor: default;
 }

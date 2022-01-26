@@ -16,14 +16,12 @@ function About({ loginAccount /* 로그인된 계정 */ }) {
   const [priceSellerPut, setPrice] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [traits, setTraits] = useState([]);
+  const [history, setHistory] = useState([]);
   const [ownerAddress, setOwnerAddress] = useState(""); // 아이템의 주인
   const [message, setMessage] = useState("");
   const [closebox, setClosebox] = useState(false);
   const URLparam = document.location.href.split("mypage/")[1]; //about으로 변경준비
 
-  console.log(loginAccount);
-  console.log(ownerAddress);
-  console.log(sellitem.openseaId);
   const closeModal = () => {
     setShowModal(false);
     setClosebox(false);
@@ -38,12 +36,18 @@ function About({ loginAccount /* 로그인된 계정 */ }) {
     setMessage("");
     setShowModal(true);
 
-    if (isNaN(priceSellerPut) === false && priceSellerPut !== null && priceSellerPut !== "") {
+    if (
+      isNaN(priceSellerPut) === false &&
+      priceSellerPut !== null &&
+      priceSellerPut !== ""
+    ) {
       if (typeof window.ethereum.providers === "undefined") {
         var metamaskProvider = window.ethereum;
         console.log("메타마스크만 다운되어있는 것 처리===>", metamaskProvider);
       } else {
-        var metamaskProvider = window.ethereum.providers.find((provider) => provider.isMetaMask);
+        var metamaskProvider = window.ethereum.providers.find(
+          (provider) => provider.isMetaMask
+        );
         console.log("여러개 지갑 처리 ==>", metamaskProvider);
       }
 
@@ -66,7 +70,11 @@ function About({ loginAccount /* 로그인된 계정 */ }) {
     setMessage("");
     setShowModal(true);
 
-    if (isNaN(priceSellerPut) === false && priceSellerPut !== null && priceSellerPut !== "") {
+    if (
+      isNaN(priceSellerPut) === false &&
+      priceSellerPut !== null &&
+      priceSellerPut !== ""
+    ) {
       changeItemPrice();
     } else {
       setClosebox(true);
@@ -91,7 +99,19 @@ function About({ loginAccount /* 로그인된 계정 */ }) {
 
   function runEtherscan(e) {
     //아이템 정보에 있는 계정으로 이더스캔 들어가기
-    var win = window.open(`https://rinkeby.etherscan.io/address/${e.target.outerText}`, "_blank");
+    var win = window.open(
+      `https://rinkeby.etherscan.io/address/${e.target.outerText}`,
+      "_blank"
+    );
+    win.focus();
+  }
+
+  function runEtherscan2(e) {
+    //아이템 정보에 있는 계정으로 이더스캔 들어가기
+    var win = window.open(
+      `https://rinkeby.etherscan.io/address/${e}`,
+      "_blank"
+    );
     win.focus();
   }
 
@@ -117,6 +137,7 @@ function About({ loginAccount /* 로그인된 계정 */ }) {
         setSellitem(result.data);
         setTraits(result.data.traits);
         setOwnerAddress(result.data.owner.address);
+        setHistory(result.data.history);
       });
   }
 
@@ -126,14 +147,17 @@ function About({ loginAccount /* 로그인된 계정 */ }) {
       "Content-Type": "application/json",
       Accept: "application/json",
     };
+
     await axios
       .post(
-        "http://localhost:3001/listItem",
+        "http://localhost:3001/listItemOnlist",
         {
           openseaId: URLparam,
           price: priceSellerPut,
           isSale: true,
-          itemIdOnBlockChain: result.events.MarketItemCreated.returnValues.itemId,
+          itemIdOnBlockChain:
+            result.events.MarketItemCreated.returnValues.itemId,
+          from: result.from,
         },
         headers
       )
@@ -185,11 +209,13 @@ function About({ loginAccount /* 로그인된 계정 */ }) {
       })
       .catch((e) => {
         setClosebox(true);
-        setMessage("listItemPrice Change request failed! you can check error below");
+        setMessage(
+          "listItemPrice Change request failed! you can check error below"
+        );
       });
   }
 
-  async function CancleNFTOnTheMarket() {
+  async function CancleNFTOnTheMarket(result) {
     //리스팅 된 아이템 취소 후 기여도 1포인트 지급 (가스비 때문)
     const headers = {
       "Content-Type": "application/json",
@@ -197,11 +223,12 @@ function About({ loginAccount /* 로그인된 계정 */ }) {
     };
     await axios
       .post(
-        "http://localhost:3001/listItem",
+        "http://localhost:3001/listItemOncancel",
         {
           openseaId: URLparam,
           isSale: false,
           price: 0,
+          from: result.from,
         },
         headers
       )
@@ -225,7 +252,9 @@ function About({ loginAccount /* 로그인된 계정 */ }) {
       .catch((e) => {
         //에러를 프론트로 띄워주세요
         setClosebox(true);
-        setMessage("Cancle your NFT Item request failed! you can check error below");
+        setMessage(
+          "Cancle your NFT Item request failed! you can check error below"
+        );
       });
   }
 
@@ -238,13 +267,18 @@ function About({ loginAccount /* 로그인된 계정 */ }) {
         var metamaskProvider = window.ethereum;
         console.log("메타마스크만 다운되어있는 것 처리===>", metamaskProvider);
       } else {
-        var metamaskProvider = window.ethereum.providers.find((provider) => provider.isMetaMask);
+        var metamaskProvider = window.ethereum.providers.find(
+          (provider) => provider.isMetaMask
+        );
         console.log("여러개 지갑 처리 ==>", metamaskProvider);
       }
       try {
         const web = new Web3(metamaskProvider);
         web.eth.getAccounts().then(async (account) => {
-          let contract = await new web.eth.Contract(KiFTabi, Kift_Contract_Address);
+          let contract = await new web.eth.Contract(
+            KiFTabi,
+            Kift_Contract_Address
+          );
           await contract.methods
             .isApprovedForAll(sellitem.contract_address, Kift_Contract_Address)
             .call({
@@ -257,7 +291,10 @@ function About({ loginAccount /* 로그인된 계정 */ }) {
                 await createItem();
               } else {
                 //어프로브 시작
-                let contract = await new web.eth.Contract(erc721abi, sellitem.contract_address);
+                let contract = await new web.eth.Contract(
+                  erc721abi,
+                  sellitem.contract_address
+                );
                 await contract.methods
                   .setApprovalForAll(
                     Kift_Contract_Address, //setapproval 받을 kift.sol 배포 주소
@@ -269,7 +306,10 @@ function About({ loginAccount /* 로그인된 계정 */ }) {
                     gasPrice: "10000000000",
                   })
                   .then((result) => {
-                    setMessage("Approve to KiFT! Please sign the next one", result.blockHash);
+                    setMessage(
+                      "Approve to KiFT! Please sign the next one",
+                      result.blockHash
+                    );
                     console.log("This is success result--->>>", result);
                     console.log("This is Hash ", result.blockHash);
                     return result;
@@ -314,16 +354,24 @@ function About({ loginAccount /* 로그인된 계정 */ }) {
         var metamaskProvider = window.ethereum;
         console.log("메타마스크만 다운되어있는 것 처리===>", metamaskProvider);
       } else {
-        var metamaskProvider = window.ethereum.providers.find((provider) => provider.isMetaMask);
+        var metamaskProvider = window.ethereum.providers.find(
+          (provider) => provider.isMetaMask
+        );
         console.log("여러개 지갑 처리 ==>", metamaskProvider);
       }
       try {
         const web = new Web3(metamaskProvider);
         web.eth.getAccounts().then(async (account) => {
-          let contract = await new web.eth.Contract(KiFTabi, Kift_Contract_Address);
+          let contract = await new web.eth.Contract(
+            KiFTabi,
+            Kift_Contract_Address
+          );
 
           await contract.methods
-            .changeMarketItemPrice(sellitem.itemIdOnBlockChain, web.utils.toWei(String(priceSellerPut), "ether"))
+            .changeMarketItemPrice(
+              sellitem.itemIdOnBlockChain,
+              web.utils.toWei(String(priceSellerPut), "ether")
+            )
             .send({
               from: account[0],
               gas: 500000,
@@ -355,13 +403,18 @@ function About({ loginAccount /* 로그인된 계정 */ }) {
         var metamaskProvider = window.ethereum;
         console.log("메타마스크만 다운되어있는 것 처리===>", metamaskProvider);
       } else {
-        var metamaskProvider = window.ethereum.providers.find((provider) => provider.isMetaMask);
+        var metamaskProvider = window.ethereum.providers.find(
+          (provider) => provider.isMetaMask
+        );
         console.log("여러개 지갑 처리 ==>", metamaskProvider);
       }
       try {
         const web = new Web3(metamaskProvider);
         web.eth.getAccounts().then(async (account) => {
-          let contract = await new web.eth.Contract(KiFTabi, Kift_Contract_Address);
+          let contract = await new web.eth.Contract(
+            KiFTabi,
+            Kift_Contract_Address
+          );
 
           await contract.methods
             .soldOutMarketItem(sellitem.itemIdOnBlockChain)
@@ -370,9 +423,9 @@ function About({ loginAccount /* 로그인된 계정 */ }) {
               gas: 1500000,
               gasPrice: "2450000000",
             })
-            .then(async () => {
+            .then(async (result) => {
               await setMessage("Cancle your NFT Item Success!");
-              await CancleNFTOnTheMarket();
+              await CancleNFTOnTheMarket(result);
             })
             .catch((err) => {
               console.log("this is whole error message", err);
@@ -395,7 +448,9 @@ function About({ loginAccount /* 로그인된 계정 */ }) {
         var metamaskProvider = window.ethereum;
         console.log("메타마스크만 다운되어있는 것 처리===>", metamaskProvider);
       } else {
-        var metamaskProvider = window.ethereum.providers.find((provider) => provider.isMetaMask);
+        var metamaskProvider = window.ethereum.providers.find(
+          (provider) => provider.isMetaMask
+        );
         console.log("여러개 지갑 처리 ==>", metamaskProvider);
       }
       // window.ethereum이 있다면 여기서 window.ethereum이란 메타마스크 설치여부
@@ -403,16 +458,26 @@ function About({ loginAccount /* 로그인된 계정 */ }) {
         const web = new Web3(metamaskProvider);
 
         web.eth.getAccounts().then(async (account) => {
-          let contract = await new web.eth.Contract(KiFTabi, Kift_Contract_Address);
+          let contract = await new web.eth.Contract(
+            KiFTabi,
+            Kift_Contract_Address
+          );
           await contract.methods
-            .createMarketItem(sellitem.contract_address, sellitem.NFT_Token_id, web.utils.toWei(String(priceSellerPut), "ether"))
+            .createMarketItem(
+              sellitem.contract_address,
+              sellitem.NFT_Token_id,
+              web.utils.toWei(String(priceSellerPut), "ether")
+            )
             .send({
               from: account[0],
               gas: 500000,
               gasPrice: "2450000000",
             })
             .then(async (result) => {
-              console.log("itemId", result.events.MarketItemCreated.returnValues.itemId);
+              console.log(
+                "itemId",
+                result.events.MarketItemCreated.returnValues.itemId
+              );
               await setMessage("upload blockChain to KiFT Success!");
               await listNFTOnTheMarket(result);
             })
@@ -437,7 +502,9 @@ function About({ loginAccount /* 로그인된 계정 */ }) {
       var metamaskProvider = window.ethereum;
       console.log("메타마스크만 다운되어있는 것 처리===>", metamaskProvider);
     } else {
-      var metamaskProvider = window.ethereum.providers.find((provider) => provider.isMetaMask);
+      var metamaskProvider = window.ethereum.providers.find(
+        (provider) => provider.isMetaMask
+      );
       console.log("여러개 지갑 처리 ==>", metamaskProvider);
     }
     // window.ethereum이 있다면 여기서 window.ethereum이란 메타마스크 설치여부
@@ -445,9 +512,15 @@ function About({ loginAccount /* 로그인된 계정 */ }) {
       const web = new Web3(metamaskProvider);
 
       web.eth.getAccounts().then(async (account) => {
-        let contract = await new web.eth.Contract(KiFTabi, Kift_Contract_Address);
+        let contract = await new web.eth.Contract(
+          KiFTabi,
+          Kift_Contract_Address
+        );
         await contract.methods
-          .createMarketSale(sellitem.contract_address, sellitem.itemIdOnBlockChain)
+          .createMarketSale(
+            sellitem.contract_address,
+            sellitem.itemIdOnBlockChain
+          )
 
           .send({
             from: account[0],
@@ -456,12 +529,20 @@ function About({ loginAccount /* 로그인된 계정 */ }) {
             value: web.utils.toWei(String(sellitem.price), "ether"),
           })
           .then(async (result) => {
-            console.log("Receipt===>", result);
             await setMessage("Your purchase request Success!");
-            await soldoutNFTOnTheMarket();
-            console.log("is there ownerAddress found???? =====>>>>>>", ownerAddress);
+            await soldoutNFTOnTheMarket(
+              result.from,
+              ownerAddress,
+              sellitem.price
+            );
+            console.log(
+              "is there ownerAddress found???? =====>>>>>>",
+              ownerAddress
+            );
 
-            console.log("Before changeownerandownedNFTS ==========================");
+            console.log(
+              "Before changeownerandownedNFTS =========================="
+            );
 
             await axios
               .post("http://localhost:3001/toGiveContributePoint", {
@@ -490,20 +571,24 @@ function About({ loginAccount /* 로그인된 계정 */ }) {
     }
   }
 
-  async function soldoutNFTOnTheMarket() {
+  async function soldoutNFTOnTheMarket(to, from, itemprice) {
     //위에 buyNFT 후 디비 정보 변경
+
     const headers = {
       "Content-Type": "application/json",
       Accept: "application/json",
     };
     await axios
       .post(
-        "http://localhost:3001/listItem",
+        "http://localhost:3001/listItemOnbuy",
         {
           openseaId: URLparam,
           price: 0,
           isSale: false,
           itemIdOnBlockChain: null,
+          to: to,
+          from: from,
+          itemprice: itemprice,
         },
         headers
       )
@@ -539,12 +624,22 @@ function About({ loginAccount /* 로그인된 계정 */ }) {
         console.log("fetching changeOwnerAndOwnedNFTs API!===>>", result);
       })
       .catch((err) => {
-        console.log("fetching changeOwnerAndOwnedNFTs API FAILED!!!! ===>", err);
+        console.log(
+          "fetching changeOwnerAndOwnedNFTs API FAILED!!!! ===>",
+          err
+        );
       });
   }
   return (
     <div className="about_main">
-      {showModal && <NotifyModal showModal={showModal} closeModal={closeModal} message={message} closebox={closebox}></NotifyModal>}
+      {showModal && (
+        <NotifyModal
+          showModal={showModal}
+          closeModal={closeModal}
+          message={message}
+          closebox={closebox}
+        ></NotifyModal>
+      )}
 
       <div className="sell_bar"></div>
       <div className="middle2">
@@ -569,8 +664,16 @@ function About({ loginAccount /* 로그인된 계정 */ }) {
               loginAccount === ownerAddress ? (
                 <>
                   {" "}
-                  <input className="price" placeholder={`Current Price : ${sellitem.price} ETH`} value={priceSellerPut} onChange={onChange} />
-                  <button className="sell_button addoption" onClick={changePrice}>
+                  <input
+                    className="price"
+                    placeholder={`Current Price : ${sellitem.price} ETH`}
+                    value={priceSellerPut}
+                    onChange={onChange}
+                  />
+                  <button
+                    className="sell_button addoption"
+                    onClick={changePrice}
+                  >
                     Change Price
                   </button>
                   <button className="cancle_button" onClick={cancleItem}>
@@ -580,7 +683,10 @@ function About({ loginAccount /* 로그인된 계정 */ }) {
               ) : (
                 <>
                   <div className="price_box">
-                    <img className="eth-logo" src="https://storage.opensea.io/files/6f8e2979d428180222796ff4a33ab929.svg" />
+                    <img
+                      className="eth-logo"
+                      src="https://storage.opensea.io/files/6f8e2979d428180222796ff4a33ab929.svg"
+                    />
                     <span className="price_set">{sellitem.price}</span>
                   </div>
                   <button className="sell_button" onClick={buyNFT}>
@@ -591,7 +697,12 @@ function About({ loginAccount /* 로그인된 계정 */ }) {
             ) : (
               <>
                 {" "}
-                <input className="price" placeholder="Amount" value={priceSellerPut} onChange={onChange} />
+                <input
+                  className="price"
+                  placeholder="Amount"
+                  value={priceSellerPut}
+                  onChange={onChange}
+                />
                 <button className="sell_button" onClick={ListItem}>
                   Sell
                 </button>
@@ -602,15 +713,23 @@ function About({ loginAccount /* 로그인된 계정 */ }) {
           <div className="center_properties">
             <div className="properties_title">Properties</div>
             <div className="properties">
-              {traits.map((prop, index) => {
-                return (
-                  <div className="props" key={index}>
-                    <div className="props_1">{prop.trait_type}</div>
-                    <div className="props_2">{prop.value}</div>
-                    <div className="props_3">100% have this trait</div>
-                  </div>
-                );
-              })}
+              {traits.length === 0 ? (
+                <div className="props addoption">
+                  <div className="props_3">Empty</div>
+                </div>
+              ) : (
+                <>
+                  {traits.map((prop, index) => {
+                    return (
+                      <div className="props" key={index}>
+                        <div className="props_1">{prop.trait_type}</div>
+                        <div className="props_2">{prop.value}</div>
+                        <div className="props_3">100% have this trait</div>
+                      </div>
+                    );
+                  })}
+                </>
+              )}
             </div>
           </div>
 
@@ -619,7 +738,10 @@ function About({ loginAccount /* 로그인된 계정 */ }) {
             <div className="details">
               <div className="detail_menu">
                 <span>contract Address</span>
-                <span className="right_end addoption" onClick={(e) => runEtherscan(e)}>
+                <span
+                  className="right_end addoption"
+                  onClick={(e) => runEtherscan(e)}
+                >
                   {sellitem.contract_address}
                 </span>
               </div>
@@ -645,8 +767,184 @@ function About({ loginAccount /* 로그인된 계정 */ }) {
       </div>
       <Accordion defaultActiveKey="0" className="accord addoption">
         <Accordion.Item className="acc_item" eventKey="0">
-          <Accordion.Header className="acc_header">Price History</Accordion.Header>
-          <Accordion.Body>NOT UPDATING..</Accordion.Body>
+          <Accordion.Header className="acc_header">
+            Item History
+          </Accordion.Header>
+          <Accordion.Body>
+            <div className="historyTitleBox">
+              <div className="history_event">Event</div>
+              <div className="history_price">Price</div>
+              <div className="history_from">From</div>
+              <div className="history_to">To</div>
+              <div className="history_date">Date</div>
+            </div>
+            {/* hisory제어 */}
+            {history.map((his, index) => {
+              if (history !== []) {
+                if (his.event === "minted") {
+                  return (
+                    <div className="historyBox" key={index}>
+                      <div className="history_event2">
+                        <span className="material-icons addoption">build</span>
+                        Minted
+                      </div>
+                      <div className="history_price2">...</div>
+                      <div
+                        className="history_from2"
+                        onClick={() => runEtherscan2(his.from)}
+                      >
+                        {String(his.from).slice(0, 6)}
+                        {"..."}
+                        {String(his.from).slice(-6)}
+                      </div>
+                      <div className="history_to2 addoption">
+                        {String(his.to).slice(0, 6)}
+                        {"..."}
+                        {String(his.to).slice(-6)}
+                      </div>
+                      <div className="history_date2">
+                        {" "}
+                        {String(his.date).slice(0, 10)}{" "}
+                        {String(his.date).slice(11, 19)}
+                      </div>
+                    </div>
+                  );
+                } else if (his.event === "list") {
+                  return (
+                    <div className="historyBox" key={index}>
+                      <div className="history_event2">
+                        <span className="material-icons addoption">store</span>
+                        List
+                      </div>
+                      <div className="history_price2">
+                        <img
+                          className="history_logo"
+                          src="https://storage.opensea.io/files/6f8e2979d428180222796ff4a33ab929.svg"
+                        />
+                        {his.price}
+                      </div>
+                      <div
+                        className="history_from2"
+                        onClick={() => runEtherscan2(his.from)}
+                      >
+                        {String(his.from).slice(0, 6)}
+                        {"..."}
+                        {String(his.from).slice(-6)}
+                      </div>
+                      <div className="history_to2 addoption">
+                        {String(his.to).slice(0, 6)}
+                        {"..."}
+                        {String(his.to).slice(-6)}
+                      </div>
+                      <div className="history_date2">
+                        {" "}
+                        {String(his.date).slice(0, 10)}{" "}
+                        {String(his.date).slice(11, 19)}
+                      </div>
+                    </div>
+                  );
+                } else if (his.event === "buy") {
+                  return (
+                    <div className="historyBox" key={index}>
+                      <div className="history_event2">
+                        <span className="material-icons addoption">
+                          shopping_cart
+                        </span>
+                        Buy
+                      </div>
+                      <div className="history_price2">
+                        <img
+                          className="history_logo"
+                          src="https://storage.opensea.io/files/6f8e2979d428180222796ff4a33ab929.svg"
+                        />
+                        {his.price}
+                      </div>
+                      <div
+                        className="history_from2"
+                        onClick={() => runEtherscan2(his.from)}
+                      >
+                        {String(his.from).slice(0, 6)}
+                        {"..."}
+                        {String(his.from).slice(-6)}
+                      </div>
+                      <div
+                        className="history_to2"
+                        onClick={() => runEtherscan2(his.to)}
+                      >
+                        {String(his.to).slice(0, 6)}
+                        {"..."}
+                        {String(his.to).slice(-6)}
+                      </div>
+                      <div className="history_date2">
+                        {" "}
+                        {String(his.date).slice(0, 10)}{" "}
+                        {String(his.date).slice(11, 19)}
+                      </div>
+                    </div>
+                  );
+                } else {
+                  return (
+                    <div className="historyBox" key={index}>
+                      <div className="history_event2">
+                        <span className="material-icons addoption">
+                          help_outline
+                        </span>
+                        {his.event}
+                      </div>
+                      <div className="history_price2">
+                        <img
+                          className="history_logo"
+                          src="https://storage.opensea.io/files/6f8e2979d428180222796ff4a33ab929.svg"
+                        />
+                        {his.price}
+                      </div>
+                      <div
+                        className="history_from2"
+                        onClick={() => runEtherscan2(his.from)}
+                      >
+                        {String(his.from).slice(0, 6)}
+                        {"..."}
+                        {String(his.from).slice(-6)}
+                      </div>
+                      <div
+                        className="history_to2"
+                        onClick={() => runEtherscan2(his.to)}
+                      >
+                        {String(his.to).slice(0, 6)}
+                        {"..."}
+                        {String(his.to).slice(-6)}
+                      </div>
+                      <div className="history_date2">
+                        {" "}
+                        {String(his.date).slice(0, 10)}{" "}
+                        {String(his.date).slice(11, 19)}
+                      </div>
+                    </div>
+                  );
+                }
+              } else {
+                return (
+                  <div className="historyBox" key={index}>
+                    <div className="history_event2">
+                      <span className="material-icons addoption">store</span>
+                      NoData
+                    </div>
+
+                    <div className="history_price2">
+                      <img
+                        className="history_logo"
+                        src="https://storage.opensea.io/files/6f8e2979d428180222796ff4a33ab929.svg"
+                      />
+                      0
+                    </div>
+                    <div className="history_from2">0x0</div>
+                    <div className="history_to2">0x0</div>
+                    <div className="history_date2">NoData</div>
+                  </div>
+                );
+              }
+            })}
+          </Accordion.Body>
         </Accordion.Item>
       </Accordion>
     </div>
