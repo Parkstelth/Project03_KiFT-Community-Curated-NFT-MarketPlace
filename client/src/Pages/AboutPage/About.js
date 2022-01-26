@@ -882,6 +882,39 @@ function About({ loginAccount /* 로그인된 계정 */ }) {
                       </div>
                     </div>
                   );
+                } else if (his.event === "unlist") {
+                  return (
+                    <div className="historyBox" key={index}>
+                      <div className="history_event2">
+                        <span className="material-icons addoption">
+                          dangerous
+                        </span>
+                        {his.event}
+                      </div>
+                      <div className="history_price2">...</div>
+                      <div
+                        className="history_from2"
+                        onClick={() => runEtherscan2(his.from)}
+                      >
+                        {String(his.from).slice(0, 6)}
+                        {"..."}
+                        {String(his.from).slice(-6)}
+                      </div>
+                      <div
+                        className="history_to2 addoption"
+                        onClick={() => runEtherscan2(his.to)}
+                      >
+                        {String(his.to).slice(0, 6)}
+                        {"..."}
+                        {String(his.to).slice(-6)}
+                      </div>
+                      <div className="history_date2">
+                        {" "}
+                        {String(his.date).slice(0, 10)}{" "}
+                        {String(his.date).slice(11, 19)}
+                      </div>
+                    </div>
+                  );
                 } else {
                   return (
                     <div className="historyBox" key={index}>

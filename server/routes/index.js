@@ -282,6 +282,7 @@ router.post("/listItemOncancel", async (req, res) => {
         history: {
           event: "unlist",
           date: new Date(),
+          price: " ",
           from: cancelfrom,
           to: " ",
         },
