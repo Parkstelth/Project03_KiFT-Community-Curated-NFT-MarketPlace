@@ -60,7 +60,8 @@
 }
 .card-img-top.card_img {
   width: 100%;
-  border-radius: 15px;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
 }
 .card_body.card-body {
   padding: 0 10px;

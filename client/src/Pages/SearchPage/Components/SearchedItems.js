@@ -15,11 +15,11 @@ function Item({ searchedItems }) {
           {searchedItems.map((item) => (
             <a href={`/mypage/${item.openseaId}`} key={item.openseaId}>
               <div className="marketItem" key={item.id}>
-                <div className="imgContainer">
+                <div className="imgContainer searchedMarket_image">
                   {
                     <img
                       src={item.image_url === "" ? "https://testnets.opensea.io/static/images/placeholder.png" : item.image_url}
-                      className="market_image"
+                      className="market_image searchedMarket_image"
                       alt=""
                     />
                   }

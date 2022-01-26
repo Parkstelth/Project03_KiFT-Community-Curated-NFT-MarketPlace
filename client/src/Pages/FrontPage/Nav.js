@@ -20,8 +20,15 @@ function Nav({ isLogin }) {
             <Dropdown.Item href="/claim">Claim KiFToken</Dropdown.Item>
             <Dropdown.Item href="/create">Create NFT</Dropdown.Item>
             <Dropdown.Item href="https://app.uniswap.org/#/swap?outputCurrency=0x66595E934c056EF77c204A06Ea3FB8Bf6a92b5f6&use=v2">
-              Trade
+              Trade Token
             </Dropdown.Item>
+            <div className="SNSLogos">
+              <div className="SNSLogo">d</div>
+              <div className="SNSLogo">d</div>
+              <div className="SNSLogo">d</div>
+              <div className="SNSLogo">d</div>
+              <div className="SNSLogo">d</div>
+            </div>
           </DropdownButton>
 
           <Link to="/search" className="nav">
