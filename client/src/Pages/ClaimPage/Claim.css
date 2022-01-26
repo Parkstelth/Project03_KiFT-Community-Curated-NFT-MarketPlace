@@ -1,18 +1,60 @@
 .claimPageContainer {
-  border: 1px solid black;
+  border: 6px solid rgb(0, 0, 0);
   height: 60vh;
-  width: 100vw;
+  width: 75vw;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 auto;
+  margin-top: 3%;
+  position: relative;
+  padding-bottom: -2px;
+  
 }
 
-.claimPageBlock {
-  /* margin: 40px; */
-  border: 1px solid black;
-  height: 500px;
-  width: 500px;
-  /* width: 1000px; */
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.claimTitle {
+  font-weight: bold;
+  font-size: 3rem;
+}
+
+.account{
+  margin-top: 3%;
+  font-size: 1.6rem;
+}
+
+.amount{
+  margin-top: 2%;
+  font-size: 2rem;
+  margin-bottom: 2%;
+}
+
+.claim{
+  padding: 10px 30px;
+  font-size: 25px;
+  font-weight: bold;
+  border-radius: 10px;
+  margin-bottom: 3%;
+}
+
+.current{
+  border: 2px solid rgb(0, 0, 0);
+  border-radius: 10px;
+  background-color: rgba(220,220, 220, 0.7);
+  padding: 5px 15px;
+  position: absolute;
+  top: 0;
+  right:0;
+  margin-right: 2%;
+  margin-top: 1%;
+  font-weight: bold;
+}
+
+.image1{
+  width: 100.3%;
+  height: 101%;
+  background: url('background.jpeg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center center;
+  opacity: 95%
 }
