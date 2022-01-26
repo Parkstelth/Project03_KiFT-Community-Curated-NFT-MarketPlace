@@ -24,6 +24,7 @@
     "web3-eth-contract": "^1.6.1"
   },
   "devDependencies": {
+    "nodemon": "^2.0.15",
     "sequelize-cli": "^6.3.0"
   }
 }
