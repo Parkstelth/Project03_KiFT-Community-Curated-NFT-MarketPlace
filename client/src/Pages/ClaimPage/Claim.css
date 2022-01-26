@@ -1,5 +1,5 @@
 .claimPageContainer {
-  border: 5.5px solid rgb(0, 0, 0);
+  border: 6px solid rgb(0, 0, 0);
   height: 60vh;
   width: 75vw;
   display: flex;
@@ -7,9 +7,10 @@
   align-items: center;
   margin: 0 auto;
   margin-top: 3%;
+  position: relative;
+  padding-bottom: -2px;
   
 }
-
 
 .claimTitle {
   font-weight: bold;
@@ -35,9 +36,22 @@
   margin-bottom: 3%;
 }
 
-.image{
+.current{
+  border: 2px solid rgb(0, 0, 0);
+  border-radius: 10px;
+  background-color: rgba(220,220, 220, 0.7);
+  padding: 5px 15px;
+  position: absolute;
+  top: 0;
+  right:0;
+  margin-right: 2%;
+  margin-top: 1%;
+  font-weight: bold;
+}
+
+.image1{
   width: 100.3%;
-  height: 100.3%;
+  height: 101%;
   background: url('background.jpeg');
   background-repeat: no-repeat;
   background-size: cover;

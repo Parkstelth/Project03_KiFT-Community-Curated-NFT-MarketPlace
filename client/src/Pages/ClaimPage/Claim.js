@@ -7,12 +7,14 @@ import "./Claim.css";
 
 dotenv.config();
 var KiFTTokenabi = require("./KiFTTokenabi");
+var tokenAddress = "0x66595e934c056ef77c204a06ea3fb8bf6a92b5f6"
 
 function Claim(isLogin) {
-
+  
   const [status, setStatus] = useState("");
   const [account, setAccount] = useState("");
   const [token, setToken] = useState(0);
+  const [current, setCurrent] = useState(0);
 
   function isNumeric(n) {
     return !isNaN(parseFloat(n)) && isFinite(n);
@@ -31,12 +33,12 @@ function Claim(isLogin) {
           (provider) => provider.isMetaMask
         );
       }
-
+      const web = new Web3(metamaskProvider);
+      
       try {
-        const web = new Web3(metamaskProvider);
         const accounts = await metamaskProvider.request({
-          method: "eth_requestAccounts",
-        });
+          method: "eth_requestAccounts"
+        });        
         setAccount(accounts[0].toLowerCase());
         web.eth.getAccounts().then(async (account) => {
           await axios
@@ -56,6 +58,25 @@ function Claim(isLogin) {
       } catch (err) {
         console.log("Error: ", err);
       }
+
+      try{
+        const accounts = await metamaskProvider.request({
+          method: "eth_requestAccounts"
+        });
+        const acc = accounts[0].toLowerCase();
+
+
+        let contract = new web.eth.Contract(KiFTTokenabi, tokenAddress);
+        console.log(acc);
+        contract.methods.balanceOf(acc).call().then(function(bal){
+          const final = bal/1000000000000000000;
+          console.log(final);
+          setCurrent(final);
+        })
+      } catch (err) {
+        console.log("2nd try error: ", err)
+      }
+
     }
   }, []);
 
@@ -145,14 +166,16 @@ function Claim(isLogin) {
       }
     }
   }
-
+  console.log(current);
   return (
     <div className="claimPageContainer">
+        {isLogin ? <div className="current">{current} KFT</div>:null}
         <div className="claimTitle"> Claim Your KiFT Tokens</div>
+        
         {isLogin ? <div className="account">{"Your Address: \n" + account}</div> : null}
         <div className="amount">{status}</div>
         {token > 0 ? <button className="claim" onClick={claimKiFTToken}>Claim Tokens</button> : <button className="claim" disabled> No Claimable Tokens </button>}
-        <div className="image"></div>
+        <div className="image1"></div>
     </div>
   );
 }
