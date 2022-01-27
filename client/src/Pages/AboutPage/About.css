@@ -46,8 +46,7 @@
   border: 0;
   border-radius: 0;
   overflow-anchor: none;
-  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
-    border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out,
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out,
     border-radius 0.15s ease;
 }
 @media (prefers-reduced-motion: reduce) {
@@ -178,8 +177,9 @@
 
 .description2 {
   padding: 0 10px;
-  font-size: 0.7rem;
+  font-size: 17px;
   color: black;
+  margin: 20px 5px;
 }
 .description_address {
   color: rgb(32, 129, 226);
@@ -403,7 +403,8 @@ button.accordion-button {
 .historyTitleBox {
   display: flex;
   border-bottom: 1px solid rgb(229, 232, 235);
-  padding: 2px 12px;
+  padding: 10px 15px;
+  /* margin: 10px; */
 }
 .material-icons.addoption {
   padding-right: 6px;
@@ -475,4 +476,9 @@ button.accordion-button {
 
 .setMargin {
   height: 400px;
+}
+.card1-imgDiv {
+  /* display: flex; */
+  /* justify-content: center; */
+  /* align-items: center; */
 }

@@ -1,9 +1,9 @@
-import "./MyPage.css";
+import "./MyPage.scss";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import Web3 from "web3";
 import { Link } from "react-router-dom";
-import { Card, CardGroup } from "react-bootstrap";
+// import { Card, CardGroup } from "react-bootstrap";
 import Loading from "../../component/assets/Loading";
 import styled from "styled-components";
 
@@ -32,78 +32,72 @@ function MyPage({ setIsLogin }) {
         return account;
       })
       .then(async (account) => {
-        await axios
-          .get(`https://testnets-api.opensea.io/assets?owner=${account}`)
-          .then(async (result) => {
-            setData(result.data.assets);
-            setNowAccount(account);
-            setLoading(false);
-            console.log("opensea retrieve assets", result);
-            const headers = {
-              "Content-Type": "application/json",
-              Accept: "application/json",
-            };
-            await axios
-              .post(
-                "http://localhost:3001/findUser",
-                {
-                  address: account[0].toLowerCase(),
-                },
-                headers
-              )
-              .then(async (user) => {
-                await console.log(
-                  "this is your user's data ====>",
-                  user.data.data
-                );
-                const data = user.data.data;
-                console.log("just data ---------> ", data);
-                setRegdate(data.createdAt.slice(0, 10));
-                return data;
-              })
-              .then((data) => {
-                result.data.assets.map(async (item) => {
-                  // new Date(item.collection.created_date).getTime() - 9 * 3600000
+        await axios.get(`https://testnets-api.opensea.io/assets?owner=${account}`).then(async (result) => {
+          setData(result.data.assets);
+          setNowAccount(account);
+          setLoading(false);
+          console.log("opensea retrieve assets", result);
+          const headers = {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          };
+          await axios
+            .post(
+              "http://localhost:3001/findUser",
+              {
+                address: account[0].toLowerCase(),
+              },
+              headers
+            )
+            .then(async (user) => {
+              await console.log("this is your user's data ====>", user.data.data);
+              const data = user.data.data;
+              console.log("just data ---------> ", data);
+              setRegdate(data.createdAt.slice(0, 10));
+              return data;
+            })
+            .then((data) => {
+              result.data.assets.map(async (item) => {
+                // new Date(item.collection.created_date).getTime() - 9 * 3600000
 
-                  const headers = {
-                    "Content-Type": "application/json",
-                    Accept: "application/json",
-                  };
-                  await axios
-                    .post(
-                      "http://localhost:3001/NFT",
-                      {
-                        owner: data._id,
-                        name: item.name,
-                        contract_address: item.asset_contract.address,
-                        asset_contract_type:
-                          item.asset_contract.asset_contract_type,
-                        schema_name: item.asset_contract.schema_name,
-                        description: item.description,
-                        NFT_Token_id: item.token_id,
-                        createdAt: item.collection.created_date,
-                        image_url: item.image_url,
-                        creator_address: item.creator.address,
-                        openseaId: item.id,
-                        traits: item.traits,
-                      },
-                      headers
-                    )
-                    .then((result) => {
-                      console.log("this is result from axios/NFT ===>", result);
-                      return result;
-                    })
-                    .catch((err) => {
-                      console.log("errrrrrr ", err);
-                      return err;
-                    });
-                });
-              })
-              .catch((err) => {
-                console.log(err);
-                return err;
+                const headers = {
+                  "Content-Type": "application/json",
+                  Accept: "application/json",
+                };
+                await axios
+                  .post(
+                    "http://localhost:3001/NFT",
+                    {
+                      owner: data._id,
+                      name: item.name,
+                      contract_address: item.asset_contract.address,
+                      asset_contract_type: item.asset_contract.asset_contract_type,
+                      schema_name: item.asset_contract.schema_name,
+                      description: item.description,
+                      NFT_Token_id: item.token_id,
+                      createdAt: item.collection.created_date,
+                      image_url: item.image_url,
+                      creator_address: item.creator.address,
+                      openseaId: item.id,
+                      traits: item.traits,
+                    },
+                    headers
+                  )
+                  .then((result) => {
+                    console.log("this is result from axios/NFT ===>", result);
+                    return result;
+                  })
+                  .catch((err) => {
+                    console.log("errrrrrr ", err);
+                    return err;
+                  });
               });
-          });
+            })
+            .catch((err) => {
+              console.log(err);
+              return err;
+            });
+        });
       });
   };
 
@@ -127,11 +121,7 @@ function MyPage({ setIsLogin }) {
           </div>
         </div>
         <div className="middle">
-          <div className="address_box">
-            {String(nowAccount).slice(0, 6) +
-              "..." +
-              String(nowAccount).slice(-4)}
-          </div>
+          <div className="address_box">{String(nowAccount).slice(0, 6) + "..." + String(nowAccount).slice(-4)}</div>
           <div className="createdAt">
             joined {regdate.slice(5, 10)}
             {" , "}
@@ -150,39 +140,29 @@ function MyPage({ setIsLogin }) {
                 />
               </div>
             ) : (
-              <CardGroup className="cardGroup">
+              <div className="cardGroup">
                 {data.map((item) => {
                   return (
-                    <Card key={item.id} className="card1">
-                      <div className="item_line">
-                        <Card.Img
-                          className="card_img"
-                          variant="top"
-                          src={item.image_url}
-                        />
+                    <div key={item.id} className="card1">
+                      <div className="card_img_block">
+                        <img className="card_img" variant="top" src={item.image_url} />
                       </div>
                       <div className="card_addoption">
-                        <Card.Body className="card_body">
-                          <Card.Title className="card_title">
-                            {item.asset_contract.name}
-                          </Card.Title>
-                          <Card.Text className="card_text">
-                            {item.collection.name}
-                          </Card.Text>
-                        </Card.Body>
+                        <div className="card_body">
+                          <div className="card_title">{item.asset_contract.name}</div>
+                          <div className="card_text">{item.collection.name}</div>
+                        </div>
 
-                        <Card.Footer className="card_footer"></Card.Footer>
-
-                        <Link to={`/mypage/${item.id}`} className="button_link">
-                          <button className="sell_button addoption2">
-                            Sell
-                          </button>
-                        </Link>
+                        <div className="card_footer">
+                          <Link to={`/mypage/${item.id}`} className="button_link">
+                            <button className="sell_button addoption2">Sell</button>
+                          </Link>
+                        </div>
                       </div>
-                    </Card>
+                    </div>
                   );
                 })}
-              </CardGroup>
+              </div>
             )}
           </>
         )}
