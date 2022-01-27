@@ -136,6 +136,7 @@ function Claim(isLogin) {
                             "requesting initialize points to zero successed!!!! =====>>",
                             result
                           );
+                          document.location.href = `/claim`;
                         });
                     } else {
                       //민트 실패
@@ -168,23 +169,25 @@ function Claim(isLogin) {
   return (
     <div className="claimPageContainer">
       {isLogin ? <div className="current">{current} KFT</div> : null}
-      <div className="claimTitle"> Claim Your KiFT Tokens</div>
 
-      {isLogin ? (
-        <div className="account">{"Your Address: \n" + account}</div>
-      ) : null}
-      <div className="amount">{status}</div>
-      {token > 0 ? (
-        <button className="claim" onClick={claimKiFTToken}>
-          Claim Tokens
-        </button>
-      ) : (
-        <button className="claim" disabled>
-          {" "}
-          No Claimable Tokens{" "}
-        </button>
-      )}
-      <div className="image1"></div>
+      <div className="title_box">
+        <div className="claimTitle"> Claim Your KiFT Tokens</div>
+
+        {isLogin ? (
+          <div className="account">{"Your Address: \n" + account}</div>
+        ) : null}
+        <div className="amount">{status}</div>
+        {token > 0 ? (
+          <button className="claim" onClick={claimKiFTToken}>
+            Claim Tokens
+          </button>
+        ) : (
+          <button className="claim" disabled>
+            {" "}
+            No Claimable Tokens{" "}
+          </button>
+        )}
+      </div>
     </div>
   );
 }
