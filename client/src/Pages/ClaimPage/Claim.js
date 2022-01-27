@@ -4,13 +4,12 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import pic from "./background.jpeg";
 import "./Claim.css";
-
 dotenv.config();
+
 var KiFTTokenabi = require("./KiFTTokenabi");
-var tokenAddress = "0x66595e934c056ef77c204a06ea3fb8bf6a92b5f6"
+var tokenAddress = process.env.REACT_APP_KIFT_TOKEN_CONTRACT_ADDRESS;
 
 function Claim(isLogin) {
-  
   const [status, setStatus] = useState("");
   const [account, setAccount] = useState("");
   const [token, setToken] = useState(0);
@@ -34,24 +33,22 @@ function Claim(isLogin) {
         );
       }
       const web = new Web3(metamaskProvider);
-      
+
       try {
         const accounts = await metamaskProvider.request({
-          method: "eth_requestAccounts"
-        });        
+          method: "eth_requestAccounts",
+        });
         setAccount(accounts[0].toLowerCase());
         web.eth.getAccounts().then(async (account) => {
           await axios
             .post("http://localhost:3001/findUser", {
-              address: account[0].toLowerCase()
+              address: account[0].toLowerCase(),
             })
             .then((result) => {
-              var token = parseInt(result.data.data.points)*7;
+              var token = parseInt(result.data.data.points) * 7;
               setToken(parseInt(result.data.data.points));
               setStatus(
-                "Wallet Connected: You are eligible for "+
-                token+
-                " tokens"
+                "Wallet Connected: You are eligible for " + token + " tokens"
               );
             });
         });
@@ -59,24 +56,25 @@ function Claim(isLogin) {
         console.log("Error: ", err);
       }
 
-      try{
+      try {
         const accounts = await metamaskProvider.request({
-          method: "eth_requestAccounts"
+          method: "eth_requestAccounts",
         });
         const acc = accounts[0].toLowerCase();
 
-
         let contract = new web.eth.Contract(KiFTTokenabi, tokenAddress);
         console.log(acc);
-        contract.methods.balanceOf(acc).call().then(function(bal){
-          const final = bal/1000000000000000000;
-          console.log(final);
-          setCurrent(final);
-        })
+        contract.methods
+          .balanceOf(acc)
+          .call()
+          .then(function (bal) {
+            const final = bal / 1000000000000000000;
+            console.log(final);
+            setCurrent(final);
+          });
       } catch (err) {
-        console.log("2nd try error: ", err)
+        console.log("2nd try error: ", err);
       }
-
     }
   }, []);
 
@@ -100,7 +98,7 @@ function Claim(isLogin) {
           //계정 조회후 포인트 받아옴
           await axios
             .post("http://localhost:3001/findUser", {
-              address: account[0].toLowerCase()
+              address: account[0].toLowerCase(),
             })
             .then((result) => {
               console.log(
@@ -123,7 +121,7 @@ function Claim(isLogin) {
                   .send({
                     from: account[0],
                     gas: 100000,
-                    gasPrice: "10000000000"
+                    gasPrice: "10000000000",
                   })
                   .then(async (receipt) => {
                     console.log(receipt);
@@ -131,7 +129,7 @@ function Claim(isLogin) {
                       //민트 성공하면 디비 초기화 !!
                       await axios
                         .post("http://localhost:3001/initializePoints", {
-                          address: account[0].toLowerCase()
+                          address: account[0].toLowerCase(),
                         })
                         .then((result) => {
                           console.log(
@@ -169,13 +167,24 @@ function Claim(isLogin) {
   console.log(current);
   return (
     <div className="claimPageContainer">
-        {isLogin ? <div className="current">{current} KFT</div>:null}
-        <div className="claimTitle"> Claim Your KiFT Tokens</div>
-        
-        {isLogin ? <div className="account">{"Your Address: \n" + account}</div> : null}
-        <div className="amount">{status}</div>
-        {token > 0 ? <button className="claim" onClick={claimKiFTToken}>Claim Tokens</button> : <button className="claim" disabled> No Claimable Tokens </button>}
-        <div className="image1"></div>
+      {isLogin ? <div className="current">{current} KFT</div> : null}
+      <div className="claimTitle"> Claim Your KiFT Tokens</div>
+
+      {isLogin ? (
+        <div className="account">{"Your Address: \n" + account}</div>
+      ) : null}
+      <div className="amount">{status}</div>
+      {token > 0 ? (
+        <button className="claim" onClick={claimKiFTToken}>
+          Claim Tokens
+        </button>
+      ) : (
+        <button className="claim" disabled>
+          {" "}
+          No Claimable Tokens{" "}
+        </button>
+      )}
+      <div className="image1"></div>
     </div>
   );
 }

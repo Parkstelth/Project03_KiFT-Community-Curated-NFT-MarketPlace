@@ -104,7 +104,7 @@
   position: absolute;
   z-index: 1000;
   display: none;
-  min-width: 10rem;
+  min-width: 11rem;
   padding: 0.5rem 0;
   margin: 0;
   font-size: 1rem;
@@ -391,4 +391,10 @@
 .SNSLogos {
   display: flex;
   justify-content: space-around;
+  margin: 8px 5px 4px 5px;
+}
+
+.SNSLogo {
+  width: 15px;
+  cursor: pointer;
 }

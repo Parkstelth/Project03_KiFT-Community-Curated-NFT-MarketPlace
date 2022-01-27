@@ -9,7 +9,6 @@
   margin-top: 3%;
   position: relative;
   padding-bottom: -2px;
-  
 }
 
 .claimTitle {
@@ -17,18 +16,18 @@
   font-size: 3rem;
 }
 
-.account{
+.account {
   margin-top: 3%;
   font-size: 1.6rem;
 }
 
-.amount{
+.amount {
   margin-top: 2%;
   font-size: 2rem;
   margin-bottom: 2%;
 }
 
-.claim{
+.claim {
   padding: 10px 30px;
   font-size: 25px;
   font-weight: bold;
@@ -36,25 +35,25 @@
   margin-bottom: 3%;
 }
 
-.current{
+.current {
   border: 2px solid rgb(0, 0, 0);
   border-radius: 10px;
-  background-color: rgba(220,220, 220, 0.7);
+  background-color: rgba(220, 220, 220, 0.7);
   padding: 5px 15px;
   position: absolute;
   top: 0;
-  right:0;
+  right: 0;
   margin-right: 2%;
   margin-top: 1%;
   font-weight: bold;
 }
 
-.image1{
+.image1 {
   width: 100.3%;
   height: 101%;
-  background: url('background.jpeg');
+  background: url("./background2.jpeg");
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center center;
-  opacity: 95%
+  opacity: 95%;
 }

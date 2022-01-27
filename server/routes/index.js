@@ -175,6 +175,7 @@ router.post("/regdate", async (req, res) => {
 
 router.get("/fetchItemsOnSale", async (req, res) => {
   NFT.find({ isSale: true })
+    .sort({ _id: -1 })
     .then(async (result) => {
       res
         .status(200)
