@@ -1,3 +1,12 @@
+$--st-shadow-1: 0px 10px 20px rgba(0, 0, 0, 0.1);
+
+@mixin hoverEffect {
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: $--st-shadow-1;
+  }
+}
+
 @media (min-width: 0px) {
   .MuiContainer-maxWidth {
     padding-top: 24px;
@@ -104,6 +113,16 @@
   flex-direction: column;
   border: 1px solid #d2d2d2;
   box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
+
+  transform: scale(1);
+  -webkit-transform: scale(1);
+  transition: all 0.3s ease-in-out;
+
+  &:hover {
+    transform: scale(1.02);
+    -webkit-transform: scale(1.02);
+  }
+
   .LeftSourceCard-description {
     display: flex;
     flex-direction: row;
@@ -488,4 +507,15 @@
 }
 .MuiContainer-lastBlock-container-secondLogo-Klaytn {
   width: 100%;
+}
+
+.mainstart > a > button.startbutton {
+  @include hoverEffect;
+}
+
+button.NeverMissADrop-Email-subButton {
+  @include hoverEffect;
+}
+a.MuiContainer-item-content-button {
+  @include hoverEffect;
 }

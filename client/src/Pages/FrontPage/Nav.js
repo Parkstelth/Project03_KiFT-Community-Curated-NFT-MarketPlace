@@ -1,4 +1,4 @@
-import "./Nav.css";
+import "./Nav.scss";
 import { Link } from "react-router-dom";
 import { DropdownButton, Dropdown } from "react-bootstrap";
 function Nav({ isLogin }) {
@@ -9,10 +9,10 @@ function Nav({ isLogin }) {
           <Link to="/" className="homeNav">
             KiFT
           </Link>
-          <Link to="/market" className="nav">
+          <Link to="/market" className="nav" id="market">
             Market
           </Link>
-          <Link to="/curated" className="nav">
+          <Link to="/curated" className="nav" id="curated">
             Curated
           </Link>
 
@@ -31,12 +31,12 @@ function Nav({ isLogin }) {
             </div>
           </DropdownButton>
 
-          <Link to="/search" className="nav">
+          <Link to="/search" className="nav" id="search">
             Search
           </Link>
 
           {!isLogin ? (
-            <Link to="/signin" className="nav">
+            <Link to="/signin" className="nav" id="Signin">
               Sign in
             </Link>
           ) : (
