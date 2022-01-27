@@ -398,3 +398,18 @@
   width: 15px;
   cursor: pointer;
 }
+
+.nav {
+  &#market:hover {
+    text-decoration: underline 1px solid black;
+  }
+  &#curated:hover {
+    text-decoration: underline 1px solid black;
+  }
+  &#search:hover {
+    text-decoration: underline 1px solid black;
+  }
+  &#Signin:hover {
+    text-decoration: underline 1px solid black;
+  }
+}
