@@ -30,6 +30,7 @@
   width: 350px;
   height: 347px;
   border-radius: 10px;
+  object-fit: contain;
 }
 
 .accordion-button {
@@ -248,13 +249,31 @@
   flex-wrap: wrap;
   margin: 5px 5px;
 }
+.properties_change {
+  margin: 5px 5px;
+}
+
 .properties_title {
   padding: 10px;
   border-bottom: 2px solid rgb(229, 232, 235);
 }
 
-.props.addoption {
-  margin: 23px 5px !important;
+.props_addoption {
+  margin: 29px 5px !important;
+
+  background-color: rgba(21, 178, 229, 0.06);
+  border: 1px solid rgb(21, 178, 229);
+  padding: 10px;
+
+  min-height: 16px;
+
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.props_addoption:hover {
+  background-color: rgba(21, 178, 229, 0.17);
 }
 
 .props {
@@ -366,11 +385,11 @@ button.accordion-button {
 }
 
 .price_set {
-  font-size: 1.6rem;
+  font-size: 1.4rem;
   font-family: Euclid, Roboto, Helvetica, Arial, sans-serif;
 }
 .eth-logo {
-  width: 14px;
+  width: 13px;
   display: block;
   margin-right: 9px;
 }
@@ -444,4 +463,16 @@ button.accordion-button {
 .history_to2.addoption {
   color: black;
   cursor: default;
+}
+
+.loading {
+  position: fixed;
+  font-size: 47px;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  top: 360px;
+}
+
+.setMargin {
+  height: 400px;
 }

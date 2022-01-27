@@ -154,11 +154,13 @@ function MyPage({ setIsLogin }) {
                 {data.map((item) => {
                   return (
                     <Card key={item.id} className="card1">
-                      <Card.Img
-                        className="card_img"
-                        variant="top"
-                        src={item.image_url}
-                      />
+                      <div className="item_line">
+                        <Card.Img
+                          className="card_img"
+                          variant="top"
+                          src={item.image_url}
+                        />
+                      </div>
                       <div className="card_addoption">
                         <Card.Body className="card_body">
                           <Card.Title className="card_title">

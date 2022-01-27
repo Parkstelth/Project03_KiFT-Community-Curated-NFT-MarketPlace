@@ -2,6 +2,7 @@ import "./About.css";
 import { Accordion } from "react-bootstrap";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import Loading from "../../component/assets/Loading";
 import NotifyModal from "./Components/NotifyModal.js";
 import Web3 from "web3";
 import dotenv from "dotenv";
@@ -19,6 +20,7 @@ function About({ loginAccount /* 로그인된 계정 */ }) {
   const [history, setHistory] = useState([]);
   const [ownerAddress, setOwnerAddress] = useState(""); // 아이템의 주인
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(true);
   const [closebox, setClosebox] = useState(false);
   const URLparam = document.location.href.split("mypage/")[1]; //about으로 변경준비
 
@@ -117,7 +119,7 @@ function About({ loginAccount /* 로그인된 계정 */ }) {
 
   async function loadSellItem() {
     //어바웃 페이지의 아이템 정보 가져오기
-
+    setLoading(true);
     const headers = {
       "Content-Type": "application/json",
       Accept: "application/json",
@@ -138,6 +140,7 @@ function About({ loginAccount /* 로그인된 계정 */ }) {
         setTraits(result.data.traits);
         setOwnerAddress(result.data.owner.address);
         setHistory(result.data.history);
+        setLoading(false);
       });
   }
 
@@ -631,353 +634,373 @@ function About({ loginAccount /* 로그인된 계정 */ }) {
       });
   }
   return (
-    <div className="about_main">
-      {showModal && (
-        <NotifyModal
-          showModal={showModal}
-          closeModal={closeModal}
-          message={message}
-          closebox={closebox}
-        ></NotifyModal>
-      )}
+    <>
+      {loading ? (
+        <>
+          <div class="setMargin"></div>
+          <Loading className="loading" />
+        </>
+      ) : (
+        <div className="about_main">
+          {showModal && (
+            <NotifyModal
+              showModal={showModal}
+              closeModal={closeModal}
+              message={message}
+              closebox={closebox}
+            ></NotifyModal>
+          )}
 
-      <div className="sell_bar"></div>
-      <div className="middle2">
-        <div className="main_left">
-          <div className="nft_name_box">
-            <div className="nft_name">{sellitem.name}</div>
-            <div className="nft_owned">
-              Owned by{" "}
-              <span className="owned_address">
-                {ownerAddress.slice(0, 6)}
-                {"..."}
-                {ownerAddress.slice(-6)}
-              </span>
+          <div className="sell_bar"></div>
+          <div className="middle2">
+            <div className="main_left">
+              <div className="nft_name_box">
+                <div className="nft_name">{sellitem.name}</div>
+                <div className="nft_owned">
+                  Owned by{" "}
+                  <span className="owned_address">
+                    {ownerAddress.slice(0, 6)}
+                    {"..."}
+                    {ownerAddress.slice(-6)}
+                  </span>
+                </div>
+              </div>
+
+              <img className="nft_image" src={sellitem.image_url} />
+            </div>
+            <div className="simple_description">
+              <div className="price_input_box">
+                {sellitem.isSale ? (
+                  loginAccount === ownerAddress ? (
+                    <>
+                      {" "}
+                      <input
+                        className="price"
+                        placeholder={`Current Price : ${sellitem.price} ETH`}
+                        value={priceSellerPut}
+                        onChange={onChange}
+                      />
+                      <button
+                        className="sell_button addoption"
+                        onClick={changePrice}
+                      >
+                        Change Price
+                      </button>
+                      <button className="cancle_button" onClick={cancleItem}>
+                        Cancel Selling
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <div className="price_box">
+                        <img
+                          className="eth-logo"
+                          src="https://storage.opensea.io/files/6f8e2979d428180222796ff4a33ab929.svg"
+                        />
+                        <span className="price_set">{sellitem.price}</span>
+                      </div>
+                      <button className="sell_button" onClick={buyNFT}>
+                        BUY
+                      </button>
+                    </>
+                  )
+                ) : (
+                  <>
+                    {" "}
+                    <input
+                      className="price"
+                      placeholder="Amount"
+                      value={priceSellerPut}
+                      onChange={onChange}
+                    />
+                    <button className="sell_button" onClick={ListItem}>
+                      Sell
+                    </button>
+                  </>
+                )}
+              </div>
+
+              <div className="center_properties">
+                <div className="properties_title">Properties</div>
+
+                <div
+                  className={
+                    traits.length === 0 ? "properties_change" : "properties"
+                  }
+                >
+                  {traits.length === 0 ? (
+                    <div className="props_addoption">
+                      <div className="props_3">This Item traits empty!</div>
+                    </div>
+                  ) : (
+                    <>
+                      {traits.map((prop, index) => {
+                        return (
+                          <div className="props" key={index}>
+                            <div className="props_1">{prop.trait_type}</div>
+                            <div className="props_2">{prop.value}</div>
+                            <div className="props_3">100% have this trait</div>
+                          </div>
+                        );
+                      })}
+                    </>
+                  )}
+                </div>
+              </div>
+
+              <div className="center_details">
+                <div className="details_title">Details</div>
+                <div className="details">
+                  <div className="detail_menu">
+                    <span>contract Address</span>
+                    <span
+                      className="right_end addoption"
+                      onClick={(e) => runEtherscan(e)}
+                    >
+                      {sellitem.contract_address}
+                    </span>
+                  </div>
+                  <div className="detail_menu">
+                    <span>token id</span>
+                    <span className="right_end">{sellitem.NFT_Token_id}</span>
+                  </div>
+                  <div className="detail_menu">
+                    <span>token standard</span>
+                    <span className="right_end">{sellitem.schema_name}</span>
+                  </div>
+                  <div className="detail_menu">
+                    <span>blockchain</span>
+                    <span className="right_end">Rinkeby</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <img className="nft_image" src={sellitem.image_url} />
-        </div>
-        <div className="simple_description">
-          <div className="price_input_box">
-            {sellitem.isSale ? (
-              loginAccount === ownerAddress ? (
-                <>
-                  {" "}
-                  <input
-                    className="price"
-                    placeholder={`Current Price : ${sellitem.price} ETH`}
-                    value={priceSellerPut}
-                    onChange={onChange}
-                  />
-                  <button
-                    className="sell_button addoption"
-                    onClick={changePrice}
-                  >
-                    Change Price
-                  </button>
-                  <button className="cancle_button" onClick={cancleItem}>
-                    Cancel Selling
-                  </button>
-                </>
-              ) : (
-                <>
-                  <div className="price_box">
-                    <img
-                      className="eth-logo"
-                      src="https://storage.opensea.io/files/6f8e2979d428180222796ff4a33ab929.svg"
-                    />
-                    <span className="price_set">{sellitem.price}</span>
-                  </div>
-                  <button className="sell_button" onClick={buyNFT}>
-                    BUY
-                  </button>
-                </>
-              )
-            ) : (
-              <>
-                {" "}
-                <input
-                  className="price"
-                  placeholder="Amount"
-                  value={priceSellerPut}
-                  onChange={onChange}
-                />
-                <button className="sell_button" onClick={ListItem}>
-                  Sell
-                </button>
-              </>
-            )}
+          <div className="center_description addoption">
+            <div className="description_title">Description</div>
+            <div className="description2">{sellitem.description}</div>
           </div>
-
-          <div className="center_properties">
-            <div className="properties_title">Properties</div>
-            <div className="properties">
-              {traits.length === 0 ? (
-                <div className="props addoption">
-                  <div className="props_3">Empty</div>
+          <Accordion defaultActiveKey="0" className="accord addoption">
+            <Accordion.Item className="acc_item" eventKey="0">
+              <Accordion.Header className="acc_header">
+                Item History
+              </Accordion.Header>
+              <Accordion.Body>
+                <div className="historyTitleBox">
+                  <div className="history_event">Event</div>
+                  <div className="history_price">Price</div>
+                  <div className="history_from">From</div>
+                  <div className="history_to">To</div>
+                  <div className="history_date">Date (UTC)</div>
                 </div>
-              ) : (
-                <>
-                  {traits.map((prop, index) => {
+                {/* hisory제어 */}
+                {history.map((his, index) => {
+                  if (history !== []) {
+                    if (his.event === "minted") {
+                      return (
+                        <div className="historyBox" key={index}>
+                          <div className="history_event2">
+                            <span className="material-icons addoption">
+                              build
+                            </span>
+                            Minted
+                          </div>
+                          <div className="history_price2">...</div>
+                          <div
+                            className="history_from2"
+                            onClick={() => runEtherscan2(his.from)}
+                          >
+                            {String(his.from).slice(0, 6)}
+                            {"..."}
+                            {String(his.from).slice(-6)}
+                          </div>
+                          <div className="history_to2 addoption">
+                            {String(his.to).slice(0, 6)}
+                            {"..."}
+                            {String(his.to).slice(-6)}
+                          </div>
+                          <div className="history_date2">
+                            {" "}
+                            {String(his.date).slice(0, 10)}{" "}
+                            {String(his.date).slice(11, 19)}
+                          </div>
+                        </div>
+                      );
+                    } else if (his.event === "list") {
+                      return (
+                        <div className="historyBox" key={index}>
+                          <div className="history_event2">
+                            <span className="material-icons addoption">
+                              store
+                            </span>
+                            List
+                          </div>
+                          <div className="history_price2">
+                            <img
+                              className="history_logo"
+                              src="https://storage.opensea.io/files/6f8e2979d428180222796ff4a33ab929.svg"
+                            />
+                            {his.price}
+                          </div>
+                          <div
+                            className="history_from2"
+                            onClick={() => runEtherscan2(his.from)}
+                          >
+                            {String(his.from).slice(0, 6)}
+                            {"..."}
+                            {String(his.from).slice(-6)}
+                          </div>
+                          <div className="history_to2 addoption">
+                            {String(his.to).slice(0, 6)}
+                            {"..."}
+                            {String(his.to).slice(-6)}
+                          </div>
+                          <div className="history_date2">
+                            {" "}
+                            {String(his.date).slice(0, 10)}{" "}
+                            {String(his.date).slice(11, 19)}
+                          </div>
+                        </div>
+                      );
+                    } else if (his.event === "buy") {
+                      return (
+                        <div className="historyBox" key={index}>
+                          <div className="history_event2">
+                            <span className="material-icons addoption">
+                              shopping_cart
+                            </span>
+                            Buy
+                          </div>
+                          <div className="history_price2">
+                            <img
+                              className="history_logo"
+                              src="https://storage.opensea.io/files/6f8e2979d428180222796ff4a33ab929.svg"
+                            />
+                            {his.price}
+                          </div>
+                          <div
+                            className="history_from2"
+                            onClick={() => runEtherscan2(his.from)}
+                          >
+                            {String(his.from).slice(0, 6)}
+                            {"..."}
+                            {String(his.from).slice(-6)}
+                          </div>
+                          <div
+                            className="history_to2"
+                            onClick={() => runEtherscan2(his.to)}
+                          >
+                            {String(his.to).slice(0, 6)}
+                            {"..."}
+                            {String(his.to).slice(-6)}
+                          </div>
+                          <div className="history_date2">
+                            {" "}
+                            {String(his.date).slice(0, 10)}{" "}
+                            {String(his.date).slice(11, 19)}
+                          </div>
+                        </div>
+                      );
+                    } else if (his.event === "unlist") {
+                      return (
+                        <div className="historyBox" key={index}>
+                          <div className="history_event2">
+                            <span className="material-icons addoption">
+                              dangerous
+                            </span>
+                            {his.event}
+                          </div>
+                          <div className="history_price2">...</div>
+                          <div
+                            className="history_from2"
+                            onClick={() => runEtherscan2(his.from)}
+                          >
+                            {String(his.from).slice(0, 6)}
+                            {"..."}
+                            {String(his.from).slice(-6)}
+                          </div>
+                          <div className="history_to2 addoption">
+                            {String(his.to).slice(0, 6)}
+                            {"..."}
+                            {String(his.to).slice(-6)}
+                          </div>
+                          <div className="history_date2">
+                            {" "}
+                            {String(his.date).slice(0, 10)}{" "}
+                            {String(his.date).slice(11, 19)}
+                          </div>
+                        </div>
+                      );
+                    } else {
+                      return (
+                        <div className="historyBox" key={index}>
+                          <div className="history_event2">
+                            <span className="material-icons addoption">
+                              help_outline
+                            </span>
+                            {his.event}
+                          </div>
+                          <div className="history_price2">
+                            <img
+                              className="history_logo"
+                              src="https://storage.opensea.io/files/6f8e2979d428180222796ff4a33ab929.svg"
+                            />
+                            {his.price}
+                          </div>
+                          <div
+                            className="history_from2"
+                            onClick={() => runEtherscan2(his.from)}
+                          >
+                            {String(his.from).slice(0, 6)}
+                            {"..."}
+                            {String(his.from).slice(-6)}
+                          </div>
+                          <div
+                            className="history_to2"
+                            onClick={() => runEtherscan2(his.to)}
+                          >
+                            {String(his.to).slice(0, 6)}
+                            {"..."}
+                            {String(his.to).slice(-6)}
+                          </div>
+                          <div className="history_date2">
+                            {" "}
+                            {String(his.date).slice(0, 10)}{" "}
+                            {String(his.date).slice(11, 19)}
+                          </div>
+                        </div>
+                      );
+                    }
+                  } else {
                     return (
-                      <div className="props" key={index}>
-                        <div className="props_1">{prop.trait_type}</div>
-                        <div className="props_2">{prop.value}</div>
-                        <div className="props_3">100% have this trait</div>
+                      <div className="historyBox" key={index}>
+                        <div className="history_event2">
+                          <span className="material-icons addoption">
+                            store
+                          </span>
+                          NoData
+                        </div>
+
+                        <div className="history_price2">
+                          <img
+                            className="history_logo"
+                            src="https://storage.opensea.io/files/6f8e2979d428180222796ff4a33ab929.svg"
+                          />
+                          0
+                        </div>
+                        <div className="history_from2">0x0</div>
+                        <div className="history_to2">0x0</div>
+                        <div className="history_date2">NoData</div>
                       </div>
                     );
-                  })}
-                </>
-              )}
-            </div>
-          </div>
-
-          <div className="center_details">
-            <div className="details_title">Details</div>
-            <div className="details">
-              <div className="detail_menu">
-                <span>contract Address</span>
-                <span
-                  className="right_end addoption"
-                  onClick={(e) => runEtherscan(e)}
-                >
-                  {sellitem.contract_address}
-                </span>
-              </div>
-              <div className="detail_menu">
-                <span>token id</span>
-                <span className="right_end">{sellitem.NFT_Token_id}</span>
-              </div>
-              <div className="detail_menu">
-                <span>token standard</span>
-                <span className="right_end">{sellitem.schema_name}</span>
-              </div>
-              <div className="detail_menu">
-                <span>blockchain</span>
-                <span className="right_end">Rinkeby</span>
-              </div>
-            </div>
-          </div>
+                  }
+                })}
+              </Accordion.Body>
+            </Accordion.Item>
+          </Accordion>
         </div>
-      </div>
-      <div className="center_description addoption">
-        <div className="description_title">Description</div>
-        <div className="description2">{sellitem.description}</div>
-      </div>
-      <Accordion defaultActiveKey="0" className="accord addoption">
-        <Accordion.Item className="acc_item" eventKey="0">
-          <Accordion.Header className="acc_header">
-            Item History
-          </Accordion.Header>
-          <Accordion.Body>
-            <div className="historyTitleBox">
-              <div className="history_event">Event</div>
-              <div className="history_price">Price</div>
-              <div className="history_from">From</div>
-              <div className="history_to">To</div>
-              <div className="history_date">Date</div>
-            </div>
-            {/* hisory제어 */}
-            {history.map((his, index) => {
-              if (history !== []) {
-                if (his.event === "minted") {
-                  return (
-                    <div className="historyBox" key={index}>
-                      <div className="history_event2">
-                        <span className="material-icons addoption">build</span>
-                        Minted
-                      </div>
-                      <div className="history_price2">...</div>
-                      <div
-                        className="history_from2"
-                        onClick={() => runEtherscan2(his.from)}
-                      >
-                        {String(his.from).slice(0, 6)}
-                        {"..."}
-                        {String(his.from).slice(-6)}
-                      </div>
-                      <div className="history_to2 addoption">
-                        {String(his.to).slice(0, 6)}
-                        {"..."}
-                        {String(his.to).slice(-6)}
-                      </div>
-                      <div className="history_date2">
-                        {" "}
-                        {String(his.date).slice(0, 10)}{" "}
-                        {String(his.date).slice(11, 19)}
-                      </div>
-                    </div>
-                  );
-                } else if (his.event === "list") {
-                  return (
-                    <div className="historyBox" key={index}>
-                      <div className="history_event2">
-                        <span className="material-icons addoption">store</span>
-                        List
-                      </div>
-                      <div className="history_price2">
-                        <img
-                          className="history_logo"
-                          src="https://storage.opensea.io/files/6f8e2979d428180222796ff4a33ab929.svg"
-                        />
-                        {his.price}
-                      </div>
-                      <div
-                        className="history_from2"
-                        onClick={() => runEtherscan2(his.from)}
-                      >
-                        {String(his.from).slice(0, 6)}
-                        {"..."}
-                        {String(his.from).slice(-6)}
-                      </div>
-                      <div className="history_to2 addoption">
-                        {String(his.to).slice(0, 6)}
-                        {"..."}
-                        {String(his.to).slice(-6)}
-                      </div>
-                      <div className="history_date2">
-                        {" "}
-                        {String(his.date).slice(0, 10)}{" "}
-                        {String(his.date).slice(11, 19)}
-                      </div>
-                    </div>
-                  );
-                } else if (his.event === "buy") {
-                  return (
-                    <div className="historyBox" key={index}>
-                      <div className="history_event2">
-                        <span className="material-icons addoption">
-                          shopping_cart
-                        </span>
-                        Buy
-                      </div>
-                      <div className="history_price2">
-                        <img
-                          className="history_logo"
-                          src="https://storage.opensea.io/files/6f8e2979d428180222796ff4a33ab929.svg"
-                        />
-                        {his.price}
-                      </div>
-                      <div
-                        className="history_from2"
-                        onClick={() => runEtherscan2(his.from)}
-                      >
-                        {String(his.from).slice(0, 6)}
-                        {"..."}
-                        {String(his.from).slice(-6)}
-                      </div>
-                      <div
-                        className="history_to2"
-                        onClick={() => runEtherscan2(his.to)}
-                      >
-                        {String(his.to).slice(0, 6)}
-                        {"..."}
-                        {String(his.to).slice(-6)}
-                      </div>
-                      <div className="history_date2">
-                        {" "}
-                        {String(his.date).slice(0, 10)}{" "}
-                        {String(his.date).slice(11, 19)}
-                      </div>
-                    </div>
-                  );
-                } else if (his.event === "unlist") {
-                  return (
-                    <div className="historyBox" key={index}>
-                      <div className="history_event2">
-                        <span className="material-icons addoption">
-                          dangerous
-                        </span>
-                        {his.event}
-                      </div>
-                      <div className="history_price2">...</div>
-                      <div
-                        className="history_from2"
-                        onClick={() => runEtherscan2(his.from)}
-                      >
-                        {String(his.from).slice(0, 6)}
-                        {"..."}
-                        {String(his.from).slice(-6)}
-                      </div>
-                      <div className="history_to2 addoption">
-                        {String(his.to).slice(0, 6)}
-                        {"..."}
-                        {String(his.to).slice(-6)}
-                      </div>
-                      <div className="history_date2">
-                        {" "}
-                        {String(his.date).slice(0, 10)}{" "}
-                        {String(his.date).slice(11, 19)}
-                      </div>
-                    </div>
-                  );
-                } else {
-                  return (
-                    <div className="historyBox" key={index}>
-                      <div className="history_event2">
-                        <span className="material-icons addoption">
-                          help_outline
-                        </span>
-                        {his.event}
-                      </div>
-                      <div className="history_price2">
-                        <img
-                          className="history_logo"
-                          src="https://storage.opensea.io/files/6f8e2979d428180222796ff4a33ab929.svg"
-                        />
-                        {his.price}
-                      </div>
-                      <div
-                        className="history_from2"
-                        onClick={() => runEtherscan2(his.from)}
-                      >
-                        {String(his.from).slice(0, 6)}
-                        {"..."}
-                        {String(his.from).slice(-6)}
-                      </div>
-                      <div
-                        className="history_to2"
-                        onClick={() => runEtherscan2(his.to)}
-                      >
-                        {String(his.to).slice(0, 6)}
-                        {"..."}
-                        {String(his.to).slice(-6)}
-                      </div>
-                      <div className="history_date2">
-                        {" "}
-                        {String(his.date).slice(0, 10)}{" "}
-                        {String(his.date).slice(11, 19)}
-                      </div>
-                    </div>
-                  );
-                }
-              } else {
-                return (
-                  <div className="historyBox" key={index}>
-                    <div className="history_event2">
-                      <span className="material-icons addoption">store</span>
-                      NoData
-                    </div>
-
-                    <div className="history_price2">
-                      <img
-                        className="history_logo"
-                        src="https://storage.opensea.io/files/6f8e2979d428180222796ff4a33ab929.svg"
-                      />
-                      0
-                    </div>
-                    <div className="history_from2">0x0</div>
-                    <div className="history_to2">0x0</div>
-                    <div className="history_date2">NoData</div>
-                  </div>
-                );
-              }
-            })}
-          </Accordion.Body>
-        </Accordion.Item>
-      </Accordion>
-    </div>
+      )}
+    </>
   );
 }
 
