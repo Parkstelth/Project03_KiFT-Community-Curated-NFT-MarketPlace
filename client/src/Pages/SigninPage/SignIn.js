@@ -15,20 +15,11 @@ function SignIn({ setfooter, setLoginAccount, setIsLogin }) {
       var metamaskProvider = window.ethereum.providers.find((provider) => provider.isMetaMask);
       console.log("여러개 지갑 처리 ==>", metamaskProvider);
     }
-    //위에 두상황 테스트, 통과 후 아래 세 줄 없애기
 
-    // const metamaskProvider = window.ethereum.providers.find(
-    //   (provider) => provider.isMetaMask
-    // );
     try {
       const accounts = await metamaskProvider.request({
         method: "eth_requestAccounts",
       });
-      //아래 두 줄은 서명 요청 하려고 테스트하던 것 지워도 괜춘
-      // const rpcURL = "https://rinkeby.infura.io/v3/14e49a40e7ca44f7b4a9afb62e21c945";
-      // const web3 = await new Web3(rpcURL);
-      //db로그인 저장
-      // const web3 = await new Web3(metamaskProvider);
 
       setLoginAccount(accounts[0].toLowerCase());
 
@@ -48,33 +39,6 @@ function SignIn({ setfooter, setLoginAccount, setIsLogin }) {
       });
 
       document.location.href = "/market";
-
-      //서명 요청 이건 잘 안된다 ㅜ 없애도 괜츈
-      // await web3.eth.getBalance(accounts[0]).then(console.log);
-      // console.log("plus");
-      // let from = accounts[0];
-      // let params = [from, "This is for signature"];
-      // let method = "personal_sign";
-      // console.log(from);
-      // web3.utils.toChecksumAddress(from);
-      // try {
-      //     await web3.eth.sign(
-      //         {
-      //             method,
-      //             params,
-      //             from,
-      //         },
-      //         function (err, result) {
-      //             if (!err) {
-      //                 console.log("sometasdfasd");
-      //             } else if (err) {
-      //                 console.log(result);
-      //             }
-      //         }
-      //     );
-      // } catch (e) {
-      //     console.log(e);
-      // }
     } catch (e) {
       if (typeof window.ethereum === "undefined") {
         var win = window.open("https://metamask.io/download.html", "_blank");

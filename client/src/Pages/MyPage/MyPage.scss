@@ -46,119 +46,10 @@ $--st-shadow-1: 0px 10px 20px rgba(0, 0, 0, 0.1);
   margin-bottom: 20px;
 }
 
-// .cardGroup.card-group {
-//   display: flex;
-//   width: 100%;
-//   flex-wrap: wrap;
-//   padding: 50px 50px;
-//   justify-content: center;
-// }
-// .card.card {
-//   width: 15%;
-//   margin: 0 20px 30px 20px;
-//   border-radius: 15px;
-//   border: 0.5px solid rgb(229, 232, 235);
-//   position: relative;
-//   height: 24rem;
-// }
-// .card_img_block {
-//   display: flex;
-//   align-items: center;
-//   /* height: 24rem; */
-//   justify-content: center;
-// }
-
-// .card_addoption {
-//   position: absolute;
-//   width: 100%;
-//   bottom: 0;
-// }
-// .card-img-top.card_img {
-//   width: 86%;
-//   border-top-left-radius: 15px;
-//   border-top-right-radius: 15px;
-//   min-width: 100%;
-//   max-height: 74%;
-//   object-fit: contain;
-//   height: auto;
-// }
-
-// .card_body.card-body {
-//   padding: 0 10px;
-//   border-bottom: 1.5px solid rgb(229, 232, 235);
-// }
-// .card_title.card-title {
-//   font-size: 0.8rem;
-//   color: rgb(158, 158, 158);
-// }
-
-// .card_text.card-text {
-//   margin: 0 0;
-// }
-
-// .card_footer.card-footer {
-//   padding: 0 10px;
-// }
-
-// .sell_button {
-//   width: 237px;
-//   font-weight: bold;
-//   height: 30px;
-//   margin: 5px auto;
-//   display: block;
-//   border-color: #ffc107;
-//   color: #ffc107;
-//   background-color: transparent;
-//   text-align: center;
-//   transition: background-color 0.15s;
-//   border-radius: 11px;
-//   cursor: pointer;
-// }
-
-// .sell_button.addoption2 {
-//   margin: 10px auto;
-// }
-
-// .sell_button:hover {
-//   background-color: #ffc107;
-//   color: black;
-// }
-
-// .button_link {
-//   text-decoration: none;
-//   cursor: pointer;
-// }
-
-// .loading {
-//   position: fixed;
-//   font-size: 47px;
-//   left: 50%;
-//   transform: translate(-50%, -50%);
-//   top: 360px;
-// }
-
-// .noItem_box {
-//   margin: 40px;
-//   border: 2px solid rgb(229, 232, 235);
-//   border-radius: 5px;
-// }
-
-// .noItem {
-//   margin: auto;
-//   display: block;
-//   width: 758px;
-//   margin-top: 50px;
-// }
-// .card1 {
-//   display: flex;
-//   flex-direction: column;
-// }
-
 .cardGroup {
   padding: 30px;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(19%, auto));
-  // grid-template-rows: repeat(1, 400px);
 
   .card1 {
     margin: 30px;
@@ -202,7 +93,7 @@ $--st-shadow-1: 0px 10px 20px rgba(0, 0, 0, 0.1);
       flex: 1 1 auto;
 
       justify-content: center;
-      // align-items: center;
+
       .card_body {
         display: flex;
         flex-direction: column;
@@ -223,12 +114,9 @@ $--st-shadow-1: 0px 10px 20px rgba(0, 0, 0, 0.1);
         padding-top: 10px;
         padding-bottom: 10px;
 
-        // height: 30px;
-        // font-size: ;
         text-decoration: none;
         cursor: pointer;
 
-        // margin-top: 10px;
         .sell_button {
           font-size: 17px;
         }

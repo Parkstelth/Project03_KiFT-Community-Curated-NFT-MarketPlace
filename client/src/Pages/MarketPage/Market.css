@@ -1,52 +1,44 @@
 @media (min-width: 768px) {
-    .container {
-        width: 750px;
-    }
+  .container {
+    width: 750px;
+  }
 }
 @media (min-width: 992px) {
-    .container {
-        width: 970px;
-    }
+  .container {
+    width: 970px;
+  }
 }
 
 @media (min-width: 1200px) {
-    .container {
-        width: 1170px;
-    }
+  .container {
+    width: 1170px;
+  }
 }
-/* @media는 오름차순으로 해야한다.. 반대로 하면 작은거부터 됨 */
 .container {
-    padding-right: 15px;
-    padding-left: 15px;
-    margin-right: auto;
-    margin-left: auto;
+  padding-right: 15px;
+  padding-left: 15px;
+  margin-right: auto;
+  margin-left: auto;
 }
 
-.loading{
-    position: fixed;
-    font-size: 47px;
-    left: 50%;
-    transform: translate(-50%,-50%);
-    top:360px;
-
+.loading {
+  position: fixed;
+  font-size: 47px;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  top: 360px;
 }
 .marketTitle {
-    padding-bottom: 50px;
-    margin: 2em 0;
-    font-size: 34px;
-    text-transform: uppercase;
-    text-align: center;
+  padding-bottom: 50px;
+  margin: 2em 0;
+  font-size: 34px;
+  text-transform: uppercase;
+  text-align: center;
 }
 .divider {
-    margin-top: 20px;
-    margin-bottom: 48px;
-    border: 0;
-    border-top: 1px solid #eee;
-    width: 100%;
+  margin-top: 20px;
+  margin-bottom: 48px;
+  border: 0;
+  border-top: 1px solid #eee;
+  width: 100%;
 }
-
-/* .marketItemContainer {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    grid-auto-rows: minmax(500px, auto);
-} */

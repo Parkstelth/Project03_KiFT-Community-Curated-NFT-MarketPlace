@@ -1,7 +1,3 @@
-.searchPage {
-  /* height: 500px; */
-}
-
 .searchTitle {
   padding-bottom: 50px;
   margin: 2em 0;
@@ -32,7 +28,6 @@
 }
 
 .searchInput {
-  /* font-size: 16px; */
   color: rgba(0, 0, 0, 0.87);
   background: none;
   border: 0;
@@ -57,7 +52,7 @@
   padding-bottom: 50px;
   margin: 2em 0;
   font-size: 20px;
-  /* text-transform: uppercase; */
+
   text-align: center;
   color: rgba(52, 52, 52, 0.87);
 }
@@ -66,7 +61,7 @@
   padding-bottom: 30px;
   margin: 2em 0;
   font-size: 20px;
-  /* text-transform: uppercase; */
+
   text-align: center;
 }
 

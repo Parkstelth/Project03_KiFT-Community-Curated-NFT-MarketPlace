@@ -9,10 +9,6 @@ function Market({ setfooter }) {
   const [marketData, setMarketData] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  //   useEffect(() => {
-  //     setfooter(true);
-  //   }, []);
-
   useEffect(async () => {
     const dataLoad = async () => {
       await axios

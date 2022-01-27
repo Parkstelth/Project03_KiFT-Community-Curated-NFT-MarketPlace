@@ -2,7 +2,6 @@ import Web3 from "web3";
 import dotenv from "dotenv";
 import axios from "axios";
 import { useState, useEffect } from "react";
-import pic from "./background.jpeg";
 import "./Claim.css";
 dotenv.config();
 
@@ -21,16 +20,12 @@ function Claim(isLogin) {
 
   useEffect(async () => {
     if (typeof window.ethereum === undefined) {
-      setStatus(
-        "Wallet not connected. Please connect your Metamask wallet to browser."
-      );
+      setStatus("Wallet not connected. Please connect your Metamask wallet to browser.");
     } else {
       if (typeof window.ethereum.providers === "undefined") {
         var metamaskProvider = window.ethereum;
       } else {
-        var metamaskProvider = window.ethereum.providers.find(
-          (provider) => provider.isMetaMask
-        );
+        var metamaskProvider = window.ethereum.providers.find((provider) => provider.isMetaMask);
       }
       const web = new Web3(metamaskProvider);
 
@@ -47,9 +42,7 @@ function Claim(isLogin) {
             .then((result) => {
               var token = parseInt(result.data.data.points) * 7;
               setToken(parseInt(result.data.data.points));
-              setStatus(
-                "Wallet Connected: You are eligible for " + token + " tokens"
-              );
+              setStatus("Wallet Connected: You are eligible for " + token + " tokens");
             });
         });
       } catch (err) {
@@ -86,9 +79,7 @@ function Claim(isLogin) {
         var metamaskProvider = window.ethereum;
         console.log("메타마스크만 다운되어있는 것 처리===>", metamaskProvider);
       } else {
-        var metamaskProvider = window.ethereum.providers.find(
-          (provider) => provider.isMetaMask
-        );
+        var metamaskProvider = window.ethereum.providers.find((provider) => provider.isMetaMask);
         console.log("여러개 지갑 처리 ==>", metamaskProvider);
       }
 
@@ -101,10 +92,7 @@ function Claim(isLogin) {
               address: account[0].toLowerCase(),
             })
             .then((result) => {
-              console.log(
-                "how many got token======>>>>",
-                result.data.data.points
-              );
+              console.log("how many got token======>>>>", result.data.data.points);
               return result.data.data.points;
             })
             .then(async (point) => {
@@ -112,10 +100,7 @@ function Claim(isLogin) {
               if (point > 0) {
                 let numbersUserCanClaim = point * 7 * 1000000000000000000;
                 console.log(numbersUserCanClaim.toString());
-                let contract = await new web.eth.Contract(
-                  KiFTTokenabi,
-                  process.env.REACT_APP_KIFT_TOKEN_CONTRACT_ADDRESS
-                );
+                let contract = await new web.eth.Contract(KiFTTokenabi, process.env.REACT_APP_KIFT_TOKEN_CONTRACT_ADDRESS);
                 await contract.methods
                   .mintToken(account[0], numbersUserCanClaim.toString())
                   .send({
@@ -132,32 +117,21 @@ function Claim(isLogin) {
                           address: account[0].toLowerCase(),
                         })
                         .then((result) => {
-                          console.log(
-                            "requesting initialize points to zero successed!!!! =====>>",
-                            result
-                          );
+                          console.log("requesting initialize points to zero successed!!!! =====>>", result);
                           document.location.href = `/claim`;
                         });
                     } else {
                       //민트 실패
-                      console.log(
-                        "there's no points you got, it failed to claim Tokens"
-                      );
+                      console.log("there's no points you got, it failed to claim Tokens");
                     }
                   })
                   .catch((err) => {
-                    console.log(
-                      "Error occured when minting Tokens!!!!!======>>",
-                      err
-                    );
+                    console.log("Error occured when minting Tokens!!!!!======>>", err);
                   });
               }
             })
             .catch((err) => {
-              console.log(
-                "Error occured when sending request about POINTS!! ====>>",
-                err
-              );
+              console.log("Error occured when sending request about POINTS!! ====>>", err);
             });
         });
       } catch (err) {
@@ -173,9 +147,7 @@ function Claim(isLogin) {
       <div className="title_box">
         <div className="claimTitle"> Claim Your KiFT Tokens</div>
 
-        {isLogin ? (
-          <div className="account">{"Your Address: \n" + account}</div>
-        ) : null}
+        {isLogin ? <div className="account">{"Your Address: \n" + account}</div> : null}
         <div className="amount">{status}</div>
         {token > 0 ? (
           <button className="claim" onClick={claimKiFTToken}>

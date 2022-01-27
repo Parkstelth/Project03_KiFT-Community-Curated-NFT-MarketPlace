@@ -4,8 +4,6 @@ import axios from "axios";
 import Loading from "../../component/assets/Loading";
 import TrendingItems from "./Components/TrendingItems";
 import SearchedItems from "./Components/SearchedItems";
-// import Item from "./Components/Item";
-// import Loading from "../../component/assets/Loading";
 
 function Search() {
   const [loading, setLoading] = useState(true);
@@ -90,7 +88,6 @@ function Search() {
         <h1 className="searchTitle">Search</h1>
 
         <div className="inputContainer">
-          {/* <div className="searchLabel">Search for your favorite art or artist...</div> */}
           <input
             type="text"
             value={inputData}
@@ -108,7 +105,6 @@ function Search() {
               x="0px"
               y="0px"
               viewBox="0 0 487.95 487.95"
-              // style="enable-background:new 0 0 487.95 487.95;"
               xml="preserve"
             >
               <g>

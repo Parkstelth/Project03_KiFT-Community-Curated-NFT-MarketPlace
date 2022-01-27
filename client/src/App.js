@@ -27,25 +27,10 @@ function App() {
     setFooter(e);
   }
 
-  //메타마스크 계정 변경 디텍트 부분
-  // useEffect(() => {
-  //     async function listenMMAccount() {
-  //         window.ethereum.on("accountsChanged", async function () {
-  //             // Time to reload your interface with accounts[0]!
-  //             const metamaskProvider = window.ethereum.providers.find((provider) => provider.isMetaMask);
-  //             const web = new Web3(metamaskProvider);
-  //             const accounts = await web.eth.getAccounts();
-  //             // accounts = await web3.eth.getAccounts();
-  //             console.log(accounts);
-  //         });
-  //     }
-  //     listenMMAccount();
-  // }, []);
-
   const setAccountListner = (provider) => {
     provider.on("accountsChanged", (_) => (window.location.href = "/"));
   };
-  // document.location.href = "/market";
+
   useEffect(() => {
     if (typeof window.ethereum !== "undefined") {
       //여러 wallet 플랫폼중 metaMask로 연결

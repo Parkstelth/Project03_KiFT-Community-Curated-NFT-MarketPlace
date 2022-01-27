@@ -70,10 +70,6 @@ function FrontPage({ setfooter }) {
   return (
     <FrontStart>
       <div>
-        {/* <button class="buttonLeft" onClick={next}>
-          Next
-        </button>
-        <button onClick={previous}>Previous</button> */}
         <Slider {...settings} ref={customeSlider}>
           <div className="SliderImgContainer">
             <img src="https://media.discordapp.net/attachments/886537798931349554/935341218370584586/1__GNQ_V6HjUfWFCKDKaZrgw2x.jpeg" alt="" />
@@ -106,16 +102,6 @@ function FrontPage({ setfooter }) {
                 <div className="LeftSourceCard-description-right-date">22 Feb </div>
               </div>
             </div>
-            {/* <div className="description">
-              <div className="artist">
-                <div>ARTIST</div>
-                <div className="artist_data">{"@park-son"}</div>
-              </div>
-              <div className="release_date">
-                <div className="date_title">RELEASE DATE</div>
-                <div className="date"> {"Dec22,2021,12pm"}</div>
-              </div>
-            </div> */}
           </div>
         </LeftSource>
         <RightSource>
@@ -141,11 +127,8 @@ function FrontPage({ setfooter }) {
                 <div className="NeverMissADrop-EmailBoxLeftInside">
                   <div className="NeverMissADrop-EmailBoxLeftInside2">
                     <input type="text" className="NeverMissADrop-EmailBoxLeftInside2Input" placeholder="Email Address" />
-                    {/* <fieldset className="NeverMissADrop-EmailBoxLeftInside2Fieldset"></fieldset> */}
                   </div>
                 </div>
-                {/* <input type="text" />
-                <fieldset className="NeverMissADropEmailFieldset">asdfafasdf</fieldset> */}
               </div>
               <div className="NeverMissADrop-Email-subButtonDiv">
                 <button className="NeverMissADrop-Email-subButton">Subscribe</button>

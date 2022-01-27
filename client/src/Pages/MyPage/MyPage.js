@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import Web3 from "web3";
 import { Link } from "react-router-dom";
-// import { Card, CardGroup } from "react-bootstrap";
+
 import Loading from "../../component/assets/Loading";
 import styled from "styled-components";
 
@@ -58,8 +58,6 @@ function MyPage({ setIsLogin }) {
             })
             .then((data) => {
               result.data.assets.map(async (item) => {
-                // new Date(item.collection.created_date).getTime() - 9 * 3600000
-
                 const headers = {
                   "Content-Type": "application/json",
                   Accept: "application/json",

@@ -32,10 +32,9 @@ a {
 
 .marketItem_first-section {
   width: 95%;
-  /* display: flex; */
-  /* align-items: center; */
+
   color: black;
-  /* justify-content: space-between; */
+
   font-size: 17px;
   overflow: hidden;
   white-space: nowrap;
