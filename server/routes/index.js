@@ -238,6 +238,28 @@ router.post("/listItemOnlist", async (req, res) => {
     });
 });
 
+router.post("/listItem", async (req, res) => {
+  let reqOpenseaId = req.body.openseaId;
+  let reqPrice = req.body.price;
+  NFT.updateOne(
+    {
+      openseaId: reqOpenseaId,
+    },
+    {
+      price: reqPrice,
+    }
+  )
+    .then(async (result) => {
+      res.status(200).send({
+        message: "This Item Price change Success!",
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(400).send(err);
+    });
+});
+
 router.post("/listItemOncancel", async (req, res) => {
   let reqOpenseaId = req.body.openseaId;
   let reqPrice = req.body.price;
