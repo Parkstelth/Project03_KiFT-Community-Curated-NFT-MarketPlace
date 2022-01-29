@@ -19,7 +19,9 @@ function Nav({ isLogin }) {
           <DropdownButton className="nav" id="dropdown-basic-button" title="Community">
             <Dropdown.Item href="/claim">Claim KiFToken</Dropdown.Item>
             <Dropdown.Item href="/create">Create NFT</Dropdown.Item>
-            <Dropdown.Item href="https://app.uniswap.org/#/swap?outputCurrency=0x66595E934c056EF77c204A06Ea3FB8Bf6a92b5f6&use=v2">
+            <Dropdown.Item href="/create">Staking</Dropdown.Item>
+            <Dropdown.Item href="/create">DAO</Dropdown.Item>
+            <Dropdown.Item href="https://app.uniswap.org/#/swap?inputCurrency=0x66595E934c056EF77c204A06Ea3FB8Bf6a92b5f6&use=v2">
               Trade Token
             </Dropdown.Item>
             <div className="SNSLogos">
