@@ -58,6 +58,7 @@ function MyPage({ setIsLogin, isKaikas, setIsKaikas }) {
       .then(async (account) => {
         await axios.get(`https://testnets-api.opensea.io/assets?owner=${account}`).then(async (result) => {
           setData(result.data.assets);
+          console.log("account setting succssed!!!!!");
           setNowAccount(account);
           setLoading(false);
           console.log("opensea retrieve assets", result);
@@ -230,45 +231,42 @@ function MyPage({ setIsLogin, isKaikas, setIsKaikas }) {
   }
 
   useEffect(() => {
-    // console.log(isKaikas, "kdfj;asilefja;silefj;asjeilfjasl;efijasfl;sejfiasejfafisjelfijsef");
+    function fetchData() {
+      if (window.klaytn.selectedAddress) {
+        console.log("이거 실행되고잇는거야 ???????????");
+        const caver = new Caver(window.klaytn);
+        caver.klay.getAccounts().then((account) => {
+          console.log(
+            account[0].toLowerCase(),
+            "this is accountasefijaㅁㄴㅇㄹㅁㄴㄹㄴㅇㄹㄴㅇㄹㅇㅁ냐어;랴먼ㅇ랴;먼ㅇㄹ미;ㄴ야러;ㅁㄴㅇ;랴ㅓ;ㅣf;liasawef;oialsejf;laisjefl;ajseflasjef;lasej"
+          );
+          const headers = {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          };
+          axios.post("http://localhost:3001/klaytn/fetchNFT", { ownerAddress: account[0].toLowerCase() }, headers).then((result) => {
+            setData(result.data.result.ownedNFTs);
+            console.log(result.data.result.ownedNFTs);
+          });
 
-    async function fetchData() {
-      // await window.klaytn.enable();
-
-      // if (!isKaikas) {
-      fetchNFTs();
-      // } else {
-      //   const caver = new Caver(window.klaytn);
-      //   caver.klay.getAccounts().then((account) => {
-      //     console.log(account, "this is accountasefijaf;liasawef;oialsejf;laisjefl;ajseflasjef;lasej");
-      //     //if (account 가 잇으면){} 없으면 else {}
-      //     setNowAccount(account);
-      //     setLoading(false);
-      //     // if (account === []) {
-      //     //   console.log("여기서 안되는건가요 ?!@~@~!##~!");
-      //     // setIsKaikas(false);
-      //     //   setLoading(false);
-      //     // } else {
-      //     //   setIsKaikas(false);
-      //     // }
-      //   });
-
-      // }
+          setNowAccount(account);
+          setLoading(false);
+        });
+      } else {
+        fetchNFTs();
+      }
     }
     fetchData();
   }, []);
 
   useEffect(() => {
-    console.log(nowAccount[0], "============================");
-    console.log(nowAccount, "============================");
-    setColor(nowAccount[0].slice(-6));
+    console.log(nowAccount[0], "============================실행되는중 ㅁㄴㅇㄹ;ㅏㅣ멀;ㅣ먄덜;민댜럼;ㄴ댜리ㅓ");
+    console.log(nowAccount, "============================실행되는중 ㅁㄴㅇㄹ;ㅏㅣ멀;ㅣ먄덜;민댜럼;ㄴ댜리ㅓ");
+    // console.log(nowAccount, "============================");
 
-    // if (nowAccount !== "") {
-    //   if (nowAccount[0] == 0) {
-    //     setColor(nowAccount.slice(-6));
-    //   } else {
-    //   }
-    // }
+    if (nowAccount[0] !== undefined) {
+      setColor(nowAccount[0].slice(-6));
+    }
     console.log("this is special color=====>", specialColor);
   }, [nowAccount]);
 
@@ -303,18 +301,19 @@ function MyPage({ setIsLogin, isKaikas, setIsKaikas }) {
               <div className="cardGroup">
                 {data.map((item) => {
                   return (
-                    <div key={item.id} className="card1">
+                    <div key={isKaikas ? `${item.openseaId}` : `${item.id}`} className="card1">
                       <div className="card_img_block">
                         <img className="card_img" variant="top" src={item.image_url} />
                       </div>
                       <div className="card_addoption">
                         <div className="card_body">
-                          <div className="card_title">{item.asset_contract.name}</div>
-                          <div className="card_text">{item.collection.name}</div>
+                          {isKaikas ? <div className="card_title">KiNFT</div> : <div className="card_title">{item.asset_contract.name}</div>}
+
+                          {isKaikas ? <div className="card_text">{item.name}</div> : <div className="card_text">{item.collection.name}</div>}
                         </div>
 
                         <div className="card_footer">
-                          <Link to={`/mypage/${item.id}`} className="button_link">
+                          <Link to={isKaikas ? `/mypage/${item.openseaId}` : `/mypage/${item.id}`} className="button_link">
                             <button className="sell_button addoption2">Sell</button>
                           </Link>
                           <button className="sell_button addoption3" onClick={() => transferStart(item)}>

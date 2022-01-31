@@ -71,7 +71,7 @@ const CreateListDiv = styled.div`
   border-radius: 7px;
 `;
 
-function CreateNft() {
+function CreateNft({ isKaikas }) {
   const ipfs = create({
     host: "ipfs.infura.io",
     port: 5001,
@@ -266,11 +266,19 @@ function CreateNft() {
             <div className="content_under">Quantities above one coming soon.</div>
             <input disabled className="input_name" placeholder=" 1" />
             <div className="content2_start">Blockchain</div>
-            <DropdownButton id="dropdown-basic-button2" className="dropdown addoption" title=" Rinkeby">
-              <Dropdown.Item id="blockchain_set" href="">
-                Rinkeby
-              </Dropdown.Item>
-            </DropdownButton>
+            {isKaikas ? (
+              <DropdownButton id="dropdown-basic-button2" className="dropdown addoption" title=" Baobab">
+                <Dropdown.Item id="blockchain_set" href="">
+                  Baobab
+                </Dropdown.Item>
+              </DropdownButton>
+            ) : (
+              <DropdownButton id="dropdown-basic-button2" className="dropdown addoption" title=" Rinkeby">
+                <Dropdown.Item id="blockchain_set" href="">
+                  Rinkeby
+                </Dropdown.Item>
+              </DropdownButton>
+            )}
           </div>
           {name !== "" && files !== "" ? (
             <button className="sell_button addoption2" onClick={createItem}>

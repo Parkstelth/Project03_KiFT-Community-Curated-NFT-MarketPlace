@@ -21,7 +21,7 @@ const userSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
-    ownedNFTs: [mongoose.Schema.Types.ObjectId],
+    ownedNFTs: [{ type: mongoose.Schema.Types.ObjectId, ref: "KlayNFT" }],
   },
   {
     versionKey: false,

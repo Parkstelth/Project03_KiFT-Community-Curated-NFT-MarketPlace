@@ -44,18 +44,18 @@ function App() {
         console.log("아니 근데 이게 먹히긴합니까???????????????????????????????????");
         // //카이카스 지갑 연결이 되어있으면
 
-        // // window.klaytn.on("accountsChanged", function () {
-        // //   window.location.href = "/";
-        // // });
-        // const caver = new Caver(window.klaytn);
-        // caver.klay.getAccounts().then(async (account) => {
-        //   console.log(account, "this is accountasefijaf;liasawef;oialsejf;laisjefl;ajseflasjef;lasej");
-        //   setLoginAccount(account);
-        //   await window.klaytn.enable();
-        //   await setLoginAccount(window.klaytn.selectedAddress);
-        //   await setIsLogin(true);
-        //   await setIsKaikas(true);
+        // window.klaytn.on("accountsChanged", function () {
+        //   window.location.href = "/";
         // });
+        const caver = new Caver(window.klaytn);
+        caver.klay.getAccounts().then(async (account) => {
+          console.log(account, "this is accountasefijaf;liasawef;oialsejf;laisjefl;ajseflasjef;lasej");
+          setLoginAccount(account);
+          // await window.klaytn.enable();
+          // await setLoginAccount(window.klaytn.selectedAddress);
+          await setIsLogin(true);
+          await setIsKaikas(true);
+        });
       } else {
         //카이카스 지갑 연결이 되어있지 않으면
 
@@ -118,7 +118,7 @@ function App() {
       <Routes>
         <Route exact path="/" element={<FrontPage setfooter={setfooter} />} />
         <Route path="/market" element={<Market setfooter={setfooter} />} />
-        {/* 로그인 시 마켓으로 이동하게 해놨음! 다른 곳으로 원하면
+        {/* 로그인 시 마켓으로 이동하게 해놨음! 다른 곳으로 원하면 
                 바꿔도 됨*/}
         <Route path="/curated" element={<Curated />} />
         <Route
@@ -128,9 +128,9 @@ function App() {
           }
         />
         <Route path="/mypage" element={<Mypage setIsLogin={setIsLogin} isKaikas={isKaikas} setIsKaikas={setIsKaikas} />} />
-        <Route path="mypage/:id" element={<About loginAccount={loginAccount} />} />
+        <Route path="mypage/:id" element={<About loginAccount={loginAccount} isKaikas={isKaikas} />} />
         <Route path="/claim" element={<Claim />} />
-        <Route path="/create" element={<CreateNft />} />
+        <Route path="/create" element={<CreateNft isKaikas={isKaikas} />} />
         <Route path="/search" element={<Search />} />
         <Route path=":id" element={<NotFound />} />
       </Routes>
