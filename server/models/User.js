@@ -14,6 +14,9 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "https://naver.com",
     },
+    Chain: {
+      type: String,
+    },
     ContributionPoionts: {
       type: Number,
       default: 0,

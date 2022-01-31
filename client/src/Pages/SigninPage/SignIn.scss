@@ -1,0 +1,40 @@
+.signInPageContainer {
+  padding: 0px auto;
+  display: flex;
+  justify-content: center;
+}
+.signInPage {
+  /* max-width: 370px; */
+  text-align: center;
+  margin: 110px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.signInTitle {
+  font-size: 46px;
+  max-width: 370px;
+}
+.signInButton {
+  background-color: rgb(243, 111, 21);
+  border-radius: 17px;
+  padding: 20px;
+
+  width: 250px;
+  /* width: 50%; */
+  font-size: 30px;
+  cursor: pointer;
+  color: white;
+  font-family: "Poppins";
+  border-color: rgb(243, 111, 21);
+  margin: auto 15px;
+  &.kaikasButton {
+    background: rgb(62, 55, 47);
+    border-color: rgb(62, 55, 47);
+  }
+}
+.signContainer {
+  display: flex;
+  justify-content: space-around;
+}

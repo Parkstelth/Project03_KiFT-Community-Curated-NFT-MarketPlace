@@ -111,10 +111,7 @@ router.post("/NFT", async (req, res) => {
           return result[0];
         })
         .then(async (result) => {
-          await User.findOneAndUpdate(
-            { _id: result.owner },
-            { $addToSet: { ownedNFTs: result._id } }
-          ).then((result) => {
+          await User.findOneAndUpdate({ _id: result.owner }, { $addToSet: { ownedNFTs: result._id } }).then((result) => {
             res.status(200).send(result);
           });
         })
@@ -156,9 +153,7 @@ router.get("/fetchItemsOnSale", async (req, res) => {
   NFT.find({ isSale: true })
     .sort({ _id: -1 })
     .then(async (result) => {
-      res
-        .status(200)
-        .send({ message: "fetch listed Items successed!", data: result });
+      res.status(200).send({ message: "fetch listed Items successed!", data: result });
     })
     .catch((err) => {
       res.status(401).send(err);
@@ -287,9 +282,7 @@ router.post("/cancleListings", async (req, res) => {
     }
   )
     .then(async (result) => {
-      res
-        .status(200)
-        .send({ message: "Cancle listings request to server successed!" });
+      res.status(200).send({ message: "Cancle listings request to server successed!" });
     })
     .catch((err) => {
       res.status(401).send(err);
@@ -301,26 +294,18 @@ router.post("/toGiveContributePoint", async (req, res) => {
   let reqSecondAddress = req.body.secondAddress;
   let reqPoint = req.body.point;
 
-  User.findOneAndUpdate(
-    { address: reqAddress },
-    { $inc: { ContributionPoionts: reqPoint } }
-  )
+  User.findOneAndUpdate({ address: reqAddress }, { $inc: { ContributionPoionts: reqPoint } })
     .then(() => {
       User.findOne({ address: reqAddress })
         .then((result) => {
           if (reqSecondAddress === null) {
-            res
-              .status(200)
-              .send({ result: result, message: "Sending API Successed!!" });
+            res.status(200).send({ result: result, message: "Sending API Successed!!" });
           }
           return result;
         })
         .then((firstResult) => {
           {
-            User.findOneAndUpdate(
-              { address: reqSecondAddress },
-              { $inc: { ContributionPoionts: reqPoint } }
-            ).then(() => {
+            User.findOneAndUpdate({ address: reqSecondAddress }, { $inc: { ContributionPoionts: reqPoint } }).then(() => {
               User.findOne({ address: reqSecondAddress }).then((result) => {
                 res.status(200).send({
                   firstResult: firstResult,
@@ -345,9 +330,7 @@ router.post("/initializePoints", async (req, res) => {
     .then(() => {
       User.findOne({ address: reqAddress })
         .then((result) => {
-          res
-            .status(200)
-            .send({ result: result, message: "Initialize points Done!!!" });
+          res.status(200).send({ result: result, message: "Initialize points Done!!!" });
         })
         .catch((err) => {
           console.log(err);
@@ -393,34 +376,23 @@ router.post("/changeOwnerAndOwnedNFTs", async (req, res) => {
         })
         .then((itemNFT) => {
           //오브젝트 아이디를 통해 판매자의 소유 NFT배열에서 빼줍니다
-          User.findOneAndUpdate(
-            { _id: itemNFT.owner },
-            { $pull: { ownedNFTs: itemNFT._id } }
-          ).then((result) => {});
+          User.findOneAndUpdate({ _id: itemNFT.owner }, { $pull: { ownedNFTs: itemNFT._id } }).then((result) => {});
         });
 
       //NFT 의 주인을 바꾸고 구매자의 소유 NFT 배열에 넣어줍니다
-      await NFT.findOneAndUpdate(
-        { openseaId: reqOpenseaId },
-        { owner: buyerObjectId }
-      )
+      await NFT.findOneAndUpdate({ openseaId: reqOpenseaId }, { owner: buyerObjectId })
         .then((result) => {
           return result;
         })
         .then((itemNFT) => {
-          User.findOneAndUpdate(
-            { address: reqBuyerAccount },
-            { $addToSet: { ownedNFTs: itemNFT._id } }
-          ).then((result) => {
+          User.findOneAndUpdate({ address: reqBuyerAccount }, { $addToSet: { ownedNFTs: itemNFT._id } }).then((result) => {
             res.status(200).send({ result: result, message: "done!!!!" });
           });
         });
     })
     .catch((err) => {
       console.log(err);
-      res
-        .status(401)
-        .send({ message: "changeOwnerAndOwnedNFTs APIs Failed", result: err });
+      res.status(401).send({ message: "changeOwnerAndOwnedNFTs APIs Failed", result: err });
     });
 });
 module.exports = router;

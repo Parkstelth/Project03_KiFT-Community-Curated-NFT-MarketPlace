@@ -4,6 +4,27 @@ var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 const cors = require("cors");
+const CaverExtKAS = require("caver-js-ext-kas");
+
+//카스 테스트
+/* const accessKeyId = "KASKGXY61FBDCS5DG3H4X9QF";
+const secretAccessKey = "fdQtUVnPBvQRKHc2h5JnixThYZ_kKKasdM8zIMRk";
+const chainId = 1001;
+
+const caver = new CaverExtKAS();
+caver.initKASAPI(chainId, accessKeyId, secretAccessKey);
+
+const contractAddress = "0x1ac133cd73dd754e51dd40102ed3ea7e786f83f2";
+const ownerAddress = "0xd23cd63b84e294b304548b9758f647ceb7724241";
+const query = {
+  size: 100,
+};
+const result = caver.kas.tokenHistory.getNFTListByOwner(contractAddress, ownerAddress, query);
+result.then(console.log);
+
+var url = require("url");
+var queryData = url.parse("https://ipfs.io/ipfs/QmcSDaUtxdug64dGrbjrnqnpyLgLWEjWYL5UoUYwtnXAtU", true);
+console.log(queryData); */
 
 const mongoose = require("mongoose");
 mongoose
