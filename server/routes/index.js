@@ -251,7 +251,74 @@ router.post("/listItem", async (req, res) => {
   )
     .then(async (result) => {
       res.status(200).send({
+        message: "This Item Success!",
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(400).send(err);
+    });
+});
+
+router.post("/listItemOnchange", async (req, res) => {
+  let reqOpenseaId = req.body.openseaId;
+  let reqPrice = req.body.price;
+  let changefrom = req.body.from;
+  NFT.updateOne(
+    {
+      openseaId: reqOpenseaId,
+    },
+    {
+      price: reqPrice,
+      $push: {
+        history: {
+          event: "PriceChange",
+          date: new Date(),
+          price: reqPrice,
+          from: changefrom,
+          to: " ",
+        },
+      },
+    }
+  )
+    .then(async (result) => {
+      res.status(200).send({
         message: "This Item Price change Success!",
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(400).send(err);
+    });
+});
+
+router.post("/listItemOntransfer", async (req, res) => {
+  let reqOpenseaId = req.body.openseaId;
+  let reqfrom = req.body.from;
+  let reqto = req.body.to;
+
+  NFT.updateOne(
+    {
+      openseaId: reqOpenseaId,
+    },
+    {
+      price: 0,
+      isSale: false,
+      itemIdOnBlockChain: null,
+      $push: {
+        history: {
+          event: "Transfer",
+          date: new Date(),
+          price: " ",
+          from: reqfrom,
+          to: reqto,
+        },
+      },
+    }
+  )
+    .then(async (result) => {
+      res.status(200).send({
+        message: "This NFT Item transfer Success!",
       });
     })
     .catch((err) => {
