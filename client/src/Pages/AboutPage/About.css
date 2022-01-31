@@ -46,7 +46,8 @@
   border: 0;
   border-radius: 0;
   overflow-anchor: none;
-  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out,
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
+    border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out,
     border-radius 0.15s ease;
 }
 @media (prefers-reduced-motion: reduce) {
@@ -201,6 +202,8 @@
   border: 1px solid rgb(32, 129, 226);
   width: 100px;
   transition: background-color 0.15s;
+  cursor: pointer;
+  height: 1.9rem;
 }
 
 .sell_button.addoption {
