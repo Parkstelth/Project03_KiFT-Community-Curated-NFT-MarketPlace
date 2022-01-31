@@ -234,32 +234,26 @@ function MyPage({ setIsLogin, isKaikas, setIsKaikas }) {
 
     async function fetchData() {
       // await window.klaytn.enable();
-      const caver = new Caver(window.klaytn);
 
-      caver.klay.getAccounts().then((account) => {
-        console.log(account, "this is accountasefijaf;liasawef;oialsejf;laisjefl;ajseflasjef;lasej");
-        if (account === []) {
-          setIsKaikas(false); //여기서 걸리는건데 ...
-          setLoading(false);
-        } else {
-          setNowAccount(account);
-          setIsKaikas(false);
-        }
-      });
-      // console.log(window.kaikas, "a;lsjief;ailsjef;lasijf;laisfjasl;efailsej");
-      // console.log(isKaikas, "why is it saying false??????????????");
+      // if (!isKaikas) {
+      fetchNFTs();
+      // } else {
+      //   const caver = new Caver(window.klaytn);
+      //   caver.klay.getAccounts().then((account) => {
+      //     console.log(account, "this is accountasefijaf;liasawef;oialsejf;laisjefl;ajseflasjef;lasej");
+      //     //if (account 가 잇으면){} 없으면 else {}
+      //     setNowAccount(account);
+      //     setLoading(false);
+      //     // if (account === []) {
+      //     //   console.log("여기서 안되는건가요 ?!@~@~!##~!");
+      //     // setIsKaikas(false);
+      //     //   setLoading(false);
+      //     // } else {
+      //     //   setIsKaikas(false);
+      //     // }
+      //   });
 
-      // console.log(isKaikas, "why is it saying false??????????????");
-
-      if (!isKaikas) {
-        await fetchNFTs();
-      } else {
-        console.log("뭘 해야할지 고민");
-
-        await setIsLogin(true);
-        await setLoading(false);
-        // setData;z
-      }
+      // }
     }
     fetchData();
   }, []);
@@ -273,7 +267,6 @@ function MyPage({ setIsLogin, isKaikas, setIsKaikas }) {
     //   if (nowAccount[0] == 0) {
     //     setColor(nowAccount.slice(-6));
     //   } else {
-    //     // setColor(nowAccount[0].slice(-6));
     //   }
     // }
     console.log("this is special color=====>", specialColor);

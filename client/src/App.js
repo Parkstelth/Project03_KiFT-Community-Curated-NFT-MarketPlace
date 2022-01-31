@@ -15,6 +15,7 @@ import Footer from "./Pages/FrontPage/Footer";
 import { useState, useEffect } from "react";
 import Web3 from "web3";
 import axios from "axios";
+import Caver from "caver-js";
 
 function App() {
   const [footer, setFooter] = useState(true);
@@ -39,20 +40,22 @@ function App() {
 
     async function fetchData() {
       console.log(isKaikas, "==========================================");
-      if (isKaikas === true) {
-        //카이카스 지갑 연결이 되어있으면
+      if (window.klaytn.selectedAddress !== undefined) {
+        console.log("아니 근데 이게 먹히긴합니까???????????????????????????????????");
+        // //카이카스 지갑 연결이 되어있으면
 
-        // window.klaytn.on("accountsChanged", function () {
-        //   window.location.href = "/";
+        // // window.klaytn.on("accountsChanged", function () {
+        // //   window.location.href = "/";
+        // // });
+        // const caver = new Caver(window.klaytn);
+        // caver.klay.getAccounts().then(async (account) => {
+        //   console.log(account, "this is accountasefijaf;liasawef;oialsejf;laisjefl;ajseflasjef;lasej");
+        //   setLoginAccount(account);
+        //   await window.klaytn.enable();
+        //   await setLoginAccount(window.klaytn.selectedAddress);
+        //   await setIsLogin(true);
+        //   await setIsKaikas(true);
         // });
-        await window.klaytn.enable();
-        console.log(window.klaytn);
-        if (window.klaytn.selectedAddress) {
-          await setLoginAccount(window.klaytn.selectedAddress);
-          await setIsLogin(true);
-          await setIsKaikas(true);
-          console.log("setting is kaikas done!!!!!!!!!!!!!");
-        }
       } else {
         //카이카스 지갑 연결이 되어있지 않으면
 
