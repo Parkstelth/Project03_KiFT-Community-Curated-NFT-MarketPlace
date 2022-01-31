@@ -65,9 +65,14 @@ $--st-shadow-1: 0px 10px 20px rgba(0, 0, 0, 0.1);
 
 .cardGroup {
   padding: 30px;
-  display: flex;
-  justify-content: center;
-  grid-template-columns: repeat(auto-fill, minmax(19%, auto));
+  //준영님 수정해놓으셨던 것
+  // display: flex;
+  // justify-content: center;
+  // flex-wrap: wrap;
+  // grid-template-columns: repeat(auto-fill, minmax(19%, auto));
+
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(24%, auto));
 
   .card1 {
     margin: 30px;

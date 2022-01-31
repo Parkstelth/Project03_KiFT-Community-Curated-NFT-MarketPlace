@@ -13,7 +13,7 @@ router.post("/sign", async (req, res) => {
   // 포스트맨에서 userName, password를 넣으면
 
   // user에서 find로 userName을 찾고,
-
+  console.log(req.body.Chain, "this is chain!!!=========");
   let reqAddress = req.body.loginAddress;
 
   User.findOne({
@@ -24,6 +24,7 @@ router.post("/sign", async (req, res) => {
         const user = new User({
           address: req.body.loginAddress, //주소가 들어가게
           createdAt: new Date(),
+          Chain: req.body.Chain,
           ownedNFTs: [],
         });
         await user.save();

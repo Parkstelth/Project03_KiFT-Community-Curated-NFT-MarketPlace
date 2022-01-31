@@ -1,4 +1,4 @@
-const axios = require("axios").default;
+/* const axios = require("axios").default;
 
 const api = {
   toGiveContributePoint: async (account, point) => {
@@ -23,3 +23,4 @@ const api = {
 };
 
 module.exports = api;
+ */

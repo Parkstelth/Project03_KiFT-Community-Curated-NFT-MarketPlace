@@ -23,6 +23,8 @@ function App() {
   const [isKaikas, setIsKaikas] = useState(false);
 
   console.log("now account ===>", loginAccount);
+  console.log("now account ===>", isKaikas);
+  console.log("now account ===>", isLogin);
   <auto></auto>;
   function setfooter(e) {
     setFooter(e);
@@ -34,107 +36,77 @@ function App() {
 
   useEffect(() => {
     console.log("이게체크해야할것", window.klaytn.selectedAddress);
-    if (window.klaytn.selectedAddress !== undefined) {
-      //카이카스 지갑 연결이 되어있으면
-      setLoginAccount(window.klaytn.selectedAddress);
-      setIsLogin(true);
-      setIsKaikas(true);
-    } else {
-      //카이카스 지갑 연결이 되어있지 않으면
 
-      if (typeof window.ethereum !== "undefined") {
-        //여러 wallet 플랫폼중 metaMask로 연결
+    async function fetchData() {
+      console.log(isKaikas, "==========================================");
+      if (isKaikas === true) {
+        //카이카스 지갑 연결이 되어있으면
 
-        if (typeof window.ethereum.providers === "undefined") {
-          var metamaskProvider = window.ethereum;
-          console.log("메타마스크만 다운되어있는 것 처리===>", metamaskProvider);
-        } else {
-          var metamaskProvider = window.ethereum.providers.find((provider) => provider.isMetaMask);
-          console.log("여러개 지갑 처리 ==>", metamaskProvider);
-        }
-        console.log("ethereum provider=====>>>>", metamaskProvider);
-        // window.ethereum이 있다면 여기서 window.ethereum이란 메타마스크 설치여부
-        setAccountListner(metamaskProvider); //  지갑 감지 변화
-        try {
-          //메타마스크 지갑 처리
-          const web = new Web3(metamaskProvider);
-          web.eth.getAccounts().then(async (account) => {
-            if (account.length === 0) {
-              setLoginAccount("");
-              setIsLogin(false);
-            } else {
-              setLoginAccount(account[0].toLowerCase());
-              setIsLogin(true);
-
-              const headers = {
-                "Content-Type": "application/x-www-form-urlencoded",
-                Accept: "*/*",
-              };
-              const params = new URLSearchParams();
-              params.append("loginAddress", account[0].toLowerCase());
-
-              await axios.post("http://localhost:3001/sign", params, { headers }).then((res) => {
-                console.log(res);
-              });
-            }
-          });
-        } catch (err) {
-          console.log(err);
+        // window.klaytn.on("accountsChanged", function () {
+        //   window.location.href = "/";
+        // });
+        await window.klaytn.enable();
+        console.log(window.klaytn);
+        if (window.klaytn.selectedAddress) {
+          await setLoginAccount(window.klaytn.selectedAddress);
+          await setIsLogin(true);
+          await setIsKaikas(true);
+          console.log("setting is kaikas done!!!!!!!!!!!!!");
         }
       } else {
-        var win = window.open("https://metamask.io/download.html", "_blank");
-        win.focus();
+        //카이카스 지갑 연결이 되어있지 않으면
 
-        setLoginAccount("");
-        setIsLogin(false);
+        if (typeof window.ethereum !== "undefined") {
+          //여러 wallet 플랫폼중 metaMask로 연결
+
+          if (typeof window.ethereum.providers === "undefined") {
+            var metamaskProvider = window.ethereum;
+            console.log("메타마스크만 다운되어있는 것 처리===>", metamaskProvider);
+          } else {
+            var metamaskProvider = window.ethereum.providers.find((provider) => provider.isMetaMask);
+            console.log("여러개 지갑 처리 ==>", metamaskProvider);
+          }
+          console.log("ethereum provider=====>>>>", metamaskProvider);
+          // window.ethereum이 있다면 여기서 window.ethereum이란  메타마스크 설치여부
+          await setAccountListner(metamaskProvider); //  지갑 감지 변화
+          try {
+            //메타마스크 지갑 처리
+            const web = new Web3(metamaskProvider);
+            web.eth.getAccounts().then(async (account) => {
+              if (account.length === 0) {
+                setLoginAccount("");
+                setIsLogin(false);
+              } else {
+                setLoginAccount(account[0].toLowerCase());
+                setIsLogin(true);
+
+                const headers = {
+                  "Content-Type": "application/x-www-form-urlencoded",
+                  Accept: "*/*",
+                };
+                const params = new URLSearchParams();
+                params.append("loginAddress", account[0].toLowerCase());
+
+                await axios.post("http://localhost:3001/sign", params, { headers }).then((res) => {
+                  console.log(res);
+                });
+              }
+            });
+          } catch (err) {
+            console.log(err);
+          }
+        } else {
+          var win = window.open("https://metamask.io/download.html", "_blank");
+          win.focus();
+
+          setLoginAccount("");
+          setIsLogin(false);
+        }
       }
     }
-    // if (typeof window.ethereum !== "undefined") {
-    //   //여러 wallet 플랫폼중 metaMask로 연결
-
-    //   if (typeof window.ethereum.providers === "undefined") {
-    //     var metamaskProvider = window.ethereum;
-    //     console.log("메타마스크만 다운되어있는 것 처리===>", metamaskProvider);
-    //   } else {
-    //     var metamaskProvider = window.ethereum.providers.find((provider) => provider.isMetaMask);
-    //     console.log("여러개 지갑 처리 ==>", metamaskProvider);
-    //   }
-    //   console.log("ethereum provider=====>>>>", metamaskProvider);
-    //   // window.ethereum이 있다면 여기서 window.ethereum이란 메타마스크 설치여부
-    //   setAccountListner(metamaskProvider); //  지갑 감지 변화
-    //   try {
-    //     //메타마스크 지갑 처리
-    //     const web = new Web3(metamaskProvider);
-    //     web.eth.getAccounts().then(async (account) => {
-    //       if (account.length === 0) {
-    //         setLoginAccount("");
-    //         setIsLogin(false);
-    //       } else {
-    //         setLoginAccount(account[0].toLowerCase());
-    //         setIsLogin(true);
-
-    //         const headers = {
-    //           "Content-Type": "application/x-www-form-urlencoded",
-    //           Accept: "*/*",
-    //         };
-    //         const params = new URLSearchParams();
-    //         params.append("loginAddress", account[0].toLowerCase());
-
-    //         await axios.post("http://localhost:3001/sign", params, { headers }).then((res) => {
-    //           console.log(res);
-    //         });
-    //       }
-    //     });
-    //   } catch (err) {
-    //     console.log(err);
-    //   }
-    // } else {
-    //   var win = window.open("https://metamask.io/download.html", "_blank");
-    //   win.focus();
-
-    //   setLoginAccount("");
-    //   setIsLogin(false);
-    // }
+    fetchData();
+    console.log(isKaikas, "alisjeflaifjailsefjasil;eajsef;ilajse;asifeja;sefilj");
+    console.log(loginAccount, "a;skjf;laisejf;laisjeflsiajec;alisejf;ilasejf;lasijef");
   }, []);
 
   return (
@@ -152,7 +124,7 @@ function App() {
             <SignIn setfooter={setfooter} setIsLogin={setIsLogin} setLoginAccount={setLoginAccount} setIsKaikas={setIsKaikas} isKaikas={isKaikas} />
           }
         />
-        <Route path="/mypage" element={<Mypage setIsLogin={setIsLogin} isKaikas={isKaikas} />} />
+        <Route path="/mypage" element={<Mypage setIsLogin={setIsLogin} isKaikas={isKaikas} setIsKaikas={setIsKaikas} />} />
         <Route path="mypage/:id" element={<About loginAccount={loginAccount} />} />
         <Route path="/claim" element={<Claim />} />
         <Route path="/create" element={<CreateNft />} />

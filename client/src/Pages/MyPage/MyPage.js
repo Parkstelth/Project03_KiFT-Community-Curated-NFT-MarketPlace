@@ -6,9 +6,10 @@ import { Link } from "react-router-dom";
 import { Spinner } from "react-bootstrap";
 import Loading from "../../component/assets/Loading";
 import styled from "styled-components";
+import Caver from "caver-js";
 var erc721abi = require("./erc721abi");
 
-function MyPage({ setIsLogin }) {
+function MyPage({ setIsLogin, isKaikas, setIsKaikas }) {
   const [data, setData] = useState([]);
   const [nowAccount, setNowAccount] = useState("");
   const [loading, setLoading] = useState(true);
@@ -18,6 +19,8 @@ function MyPage({ setIsLogin }) {
   const [message, setMessage] = useState("");
   const [inputbox, setInputbox] = useState(false);
   const [transloading, setTransloading] = useState(false);
+
+  // console.log(isKaikas, "laisjef;laiefj;alsiefj;alsfjl;aseifjasliefjail;sjf;ailsejfi;");
 
   const ProfileCircle = styled.div`
     background-color: #${specialColor};
@@ -34,11 +37,7 @@ function MyPage({ setIsLogin }) {
   async function transferStart(item) {
     setInputbox(true);
 
-    if (
-      transTo !== "" &&
-      transTo.slice(0, 2) === "0x" &&
-      transTo.length === 42
-    ) {
+    if (transTo !== "" && transTo.slice(0, 2) === "0x" && transTo.length === 42) {
       await setTransloading(true);
       await transferTo(item);
       await setMessage(`Please wait until "Success!"`);
@@ -57,76 +56,70 @@ function MyPage({ setIsLogin }) {
         return account;
       })
       .then(async (account) => {
-        await axios
-          .get(`https://testnets-api.opensea.io/assets?owner=${account}`)
-          .then(async (result) => {
-            setData(result.data.assets);
-            setNowAccount(account);
-            setLoading(false);
-            console.log("opensea retrieve assets", result);
-            const headers = {
-              "Content-Type": "application/json",
-              Accept: "application/json",
-            };
-            await axios
-              .post(
-                "http://localhost:3001/findUser",
-                {
-                  address: account[0].toLowerCase(),
-                },
-                headers
-              )
-              .then(async (user) => {
-                await console.log(
-                  "this is your user's data ====>",
-                  user.data.data
-                );
-                const data = user.data.data;
-                console.log("just data ---------> ", data);
-                setRegdate(data.createdAt.slice(0, 10));
-                return data;
-              })
-              .then((data) => {
-                result.data.assets.map(async (item) => {
-                  const headers = {
-                    "Content-Type": "application/json",
-                    Accept: "application/json",
-                  };
-                  await axios
-                    .post(
-                      "http://localhost:3001/NFT",
-                      {
-                        owner: data._id,
-                        name: item.name,
-                        contract_address: item.asset_contract.address,
-                        asset_contract_type:
-                          item.asset_contract.asset_contract_type,
-                        schema_name: item.asset_contract.schema_name,
-                        description: item.description,
-                        NFT_Token_id: item.token_id,
-                        createdAt: item.collection.created_date,
-                        image_url: item.image_url,
-                        creator_address: item.creator.address,
-                        openseaId: item.id,
-                        traits: item.traits,
-                      },
-                      headers
-                    )
-                    .then((result) => {
-                      console.log("this is result from axios/NFT ===>", result);
-                      return result;
-                    })
-                    .catch((err) => {
-                      console.log("errrrrrr ", err);
-                      return err;
-                    });
-                });
-              })
-              .catch((err) => {
-                console.log(err);
-                return err;
+        await axios.get(`https://testnets-api.opensea.io/assets?owner=${account}`).then(async (result) => {
+          setData(result.data.assets);
+          setNowAccount(account);
+          setLoading(false);
+          console.log("opensea retrieve assets", result);
+          const headers = {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          };
+          await axios
+            .post(
+              "http://localhost:3001/findUser",
+              {
+                address: account[0].toLowerCase(),
+              },
+              headers
+            )
+            .then(async (user) => {
+              await console.log("this is your user's data ====>", user.data.data);
+              const data = user.data.data;
+              console.log("just data ---------> ", data);
+              setRegdate(data.createdAt.slice(0, 10));
+              return data;
+            })
+            .then((data) => {
+              result.data.assets.map(async (item) => {
+                const headers = {
+                  "Content-Type": "application/json",
+                  Accept: "application/json",
+                };
+                await axios
+                  .post(
+                    "http://localhost:3001/NFT",
+                    {
+                      owner: data._id,
+                      name: item.name,
+                      contract_address: item.asset_contract.address,
+                      asset_contract_type: item.asset_contract.asset_contract_type,
+                      schema_name: item.asset_contract.schema_name,
+                      description: item.description,
+                      NFT_Token_id: item.token_id,
+                      createdAt: item.collection.created_date,
+                      image_url: item.image_url,
+                      creator_address: item.creator.address,
+                      openseaId: item.id,
+                      traits: item.traits,
+                    },
+                    headers
+                  )
+                  .then((result) => {
+                    console.log("this is result from axios/NFT ===>", result);
+                    return result;
+                  })
+                  .catch((err) => {
+                    console.log("errrrrrr ", err);
+                    return err;
+                  });
               });
-          });
+            })
+            .catch((err) => {
+              console.log(err);
+              return err;
+            });
+        });
       });
   };
 
@@ -140,9 +133,7 @@ function MyPage({ setIsLogin }) {
         var metamaskProvider = window.ethereum;
         console.log("메타마스크만 다운되어있는 것 처리===>", metamaskProvider);
       } else {
-        var metamaskProvider = window.ethereum.providers.find(
-          (provider) => provider.isMetaMask
-        );
+        var metamaskProvider = window.ethereum.providers.find((provider) => provider.isMetaMask);
         console.log("여러개 지갑 처리 ==>", metamaskProvider);
       }
 
@@ -152,10 +143,7 @@ function MyPage({ setIsLogin }) {
         web.eth
           .getAccounts()
           .then(async (account) => {
-            let contract = await new web.eth.Contract(
-              erc721abi,
-              item.asset_contract.address
-            );
+            let contract = await new web.eth.Contract(erc721abi, item.asset_contract.address);
             await contract.methods
               .transferFrom(account[0], transTo, item.token_id)
               .send({
@@ -211,9 +199,7 @@ function MyPage({ setIsLogin }) {
       })
       .catch((e) => {
         //에러를 프론트로 띄워주세요
-        setMessage(
-          "Your NFT Item transfer log DB failed! You can check error below"
-        );
+        setMessage("Your NFT Item transfer log DB failed! You can check error below");
       });
   }
 
@@ -239,21 +225,57 @@ function MyPage({ setIsLogin }) {
       })
       .catch((err) => {
         setTransloading(false);
-        console.log(
-          "fetching changeOwnerAndOwnedNFTs API FAILED!!!! ===>",
-          err
-        );
+        console.log("fetching changeOwnerAndOwnedNFTs API FAILED!!!! ===>", err);
       });
   }
 
   useEffect(() => {
-    fetchNFTs();
+    // console.log(isKaikas, "kdfj;asilefja;silefj;asjeilfjasl;efijasfl;sejfiasejfafisjelfijsef");
+
+    async function fetchData() {
+      // await window.klaytn.enable();
+      const caver = new Caver(window.klaytn);
+
+      caver.klay.getAccounts().then((account) => {
+        console.log(account, "this is accountasefijaf;liasawef;oialsejf;laisjefl;ajseflasjef;lasej");
+        if (account === []) {
+          setIsKaikas(false); //여기서 걸리는건데 ...
+          setLoading(false);
+        } else {
+          setNowAccount(account);
+          setIsKaikas(false);
+        }
+      });
+      // console.log(window.kaikas, "a;lsjief;ailsjef;lasijf;laisfjasl;efailsej");
+      // console.log(isKaikas, "why is it saying false??????????????");
+
+      // console.log(isKaikas, "why is it saying false??????????????");
+
+      if (!isKaikas) {
+        await fetchNFTs();
+      } else {
+        console.log("뭘 해야할지 고민");
+
+        await setIsLogin(true);
+        await setLoading(false);
+        // setData;z
+      }
+    }
+    fetchData();
   }, []);
 
   useEffect(() => {
-    if (nowAccount !== "") {
-      setColor(nowAccount[0].slice(-6));
-    }
+    console.log(nowAccount[0], "============================");
+    console.log(nowAccount, "============================");
+    setColor(nowAccount[0].slice(-6));
+
+    // if (nowAccount !== "") {
+    //   if (nowAccount[0] == 0) {
+    //     setColor(nowAccount.slice(-6));
+    //   } else {
+    //     // setColor(nowAccount[0].slice(-6));
+    //   }
+    // }
     console.log("this is special color=====>", specialColor);
   }, [nowAccount]);
 
@@ -266,11 +288,7 @@ function MyPage({ setIsLogin }) {
           </div>
         </div>
         <div className="middle">
-          <div className="address_box">
-            {String(nowAccount).slice(0, 6) +
-              "..." +
-              String(nowAccount).slice(-4)}
-          </div>
+          <div className="address_box">{String(nowAccount).slice(0, 6) + "..." + String(nowAccount).slice(-4)}</div>
           <div className="createdAt">
             joined {regdate.slice(5, 10)}
             {" , "}
@@ -294,52 +312,28 @@ function MyPage({ setIsLogin }) {
                   return (
                     <div key={item.id} className="card1">
                       <div className="card_img_block">
-                        <img
-                          className="card_img"
-                          variant="top"
-                          src={item.image_url}
-                        />
+                        <img className="card_img" variant="top" src={item.image_url} />
                       </div>
                       <div className="card_addoption">
                         <div className="card_body">
-                          <div className="card_title">
-                            {item.asset_contract.name}
-                          </div>
-                          <div className="card_text">
-                            {item.collection.name}
-                          </div>
+                          <div className="card_title">{item.asset_contract.name}</div>
+                          <div className="card_text">{item.collection.name}</div>
                         </div>
 
                         <div className="card_footer">
-                          <Link
-                            to={`/mypage/${item.id}`}
-                            className="button_link"
-                          >
-                            <button className="sell_button addoption2">
-                              Sell
-                            </button>
+                          <Link to={`/mypage/${item.id}`} className="button_link">
+                            <button className="sell_button addoption2">Sell</button>
                           </Link>
-                          <button
-                            className="sell_button addoption3"
-                            onClick={() => transferStart(item)}
-                          >
+                          <button className="sell_button addoption3" onClick={() => transferStart(item)}>
                             Send
                           </button>
                           {inputbox ? (
                             <>
-                              <input
-                                className="sendInput"
-                                onChange={(e) => transferToInput(e)}
-                                placeholder=" To Address"
-                              />
+                              <input className="sendInput" onChange={(e) => transferToInput(e)} placeholder=" To Address" />
                               {transloading ? (
                                 <>
                                   <div className="trasnferMessage">
-                                    <Spinner
-                                      animation="border"
-                                      variant="primary"
-                                      className="transferSpinner"
-                                    />
+                                    <Spinner animation="border" variant="primary" className="transferSpinner" />
                                     {message}
                                   </div>
                                 </>

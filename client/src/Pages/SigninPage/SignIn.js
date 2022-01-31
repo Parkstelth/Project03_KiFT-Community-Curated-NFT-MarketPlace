@@ -38,6 +38,7 @@ function SignIn({ setfooter, setLoginAccount, setIsLogin, setIsKaikas, isKaikas 
         console.log(res);
       });
 
+      setIsKaikas(false);
       document.location.href = "/market";
     } catch (e) {
       if (typeof window.ethereum === "undefined") {
@@ -50,9 +51,9 @@ function SignIn({ setfooter, setLoginAccount, setIsLogin, setIsKaikas, isKaikas 
   };
 
   const connectKaikas = async () => {
+    await window.klaytn.enable();
     console.log(window.klaytn);
     console.log(window.klaytn.selectedAddress);
-    await window.klaytn.enable();
 
     setLoginAccount(window.klaytn.selectedAddress);
     setIsLogin(true);
