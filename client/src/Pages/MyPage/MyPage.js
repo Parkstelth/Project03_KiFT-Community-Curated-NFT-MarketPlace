@@ -258,6 +258,9 @@ function MyPage({ setIsLogin, isKaikas, setIsKaikas }) {
             if (result === true) {
               const caver = new Caver(window.klaytn);
               caver.klay.getAccounts().then((account) => {
+                console.log("nopwacc", account[0].toLowerCase());
+                console.log("nopwacc2", window.klaytn.selectedAddress);
+
                 const headers = {
                   "Content-Type": "application/json",
                   Accept: "application/json",
@@ -269,6 +272,7 @@ function MyPage({ setIsLogin, isKaikas, setIsKaikas }) {
                     headers
                   )
                   .then((result) => {
+                    console.log("result??", result);
                     setRegdate(result.data.result.createdAt.slice(0, 10));
                     setData(result.data.result.ownedNFTs);
                     console.log(result.data.result.ownedNFTs);

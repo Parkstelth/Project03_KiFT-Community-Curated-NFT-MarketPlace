@@ -15,18 +15,6 @@ const chainId = 1001;
 const caver = new CaverExtKAS();
 caver.initKASAPI(chainId, accessKeyId, secretAccessKey);
 
-const contractAddress = "0x1ac133cd73dd754e51dd40102ed3ea7e786f83f2";
-const ownerAddress = "0xd23cd63b84e294b304548b9758f647ceb7724241";
-const query = {
-  size: 100,
-};
-const result = caver.kas.tokenHistory.getNFTListByOwner(
-  contractAddress,
-  ownerAddress,
-  query
-);
-result.then(console.log);
-
 router.get("/", function (req, res) {
   res.status(200).send("welcome");
 });
@@ -34,18 +22,16 @@ router.get("/", function (req, res) {
 router.post("/fetchNFT", async (req, res) => {
   //결과로 유저의 정보 빼와줌
   let reqOwnerAddress = req.body.ownerAddress;
-  const contractAddress = "0xA5F33389DA5496f585a7Ea5f8Ca365363e800e65";
+  let mintedDate;
+  const contractAddress = "0xDD80ed1937e840dD2266667772bA460d37150392";
   const query = {
     size: 100,
   };
-  const result = caver.kas.tokenHistory.getNFTListByOwner(
-    contractAddress,
-    reqOwnerAddress,
-    query
-  );
+  const result = caver.kas.tokenHistory.getNFTListByOwner(contractAddress, reqOwnerAddress, query);
   result
     .then((result) => {
       result.items.map((item) => {
+        mintedDate = new Date(item.createdAt * 1000);
         KlayNFT.findOneAndUpdate(
           {
             NFT_Token_id: item.tokenId,
@@ -56,7 +42,7 @@ router.post("/fetchNFT", async (req, res) => {
             NFT_Token_id: item.tokenId,
             tokenUri: item.tokenUri,
             transactionHash: item.transacitonHash,
-            createdAt: item.createdAt,
+            createdAt: new Date(item.createdAt * 1000),
           },
           {
             upsert: true,
@@ -66,7 +52,6 @@ router.post("/fetchNFT", async (req, res) => {
         });
         //URI들어가서 정보빼오기
         User.findOne({ address: reqOwnerAddress }).then((owner) => {
-          console.log(owner._id, " this is id!!!!!!@!@!@!@#!@#@!!@#");
           axios.get(item.tokenUri).then((result) => {
             KlayNFT.findOneAndUpdate(
               { NFT_Token_id: item.tokenId, contract_address: contractAddress },
@@ -80,7 +65,7 @@ router.post("/fetchNFT", async (req, res) => {
                 $addToSet: {
                   history: {
                     event: "minted",
-                    date: "2022-01-26T01:28:27.337617", //어떻게 해야할지 모르겠어서 일단 이렇게 해둠
+                    date: mintedDate, //어떻게 해야할지 모르겠어서 일단 이렇게 해둠
                     price: "",
                     from: "",
                     to: reqOwnerAddress,
@@ -88,13 +73,10 @@ router.post("/fetchNFT", async (req, res) => {
                 },
               }
             ).then((result) => {
-              console.log(result);
+              console.log("tesult@@@", result);
               console.log(result._id);
-              User.findOneAndUpdate(
-                { ownerAddress: reqOwnerAddress },
-                { $addToSet: { ownedNFTs: result._id } }
-              ).then((result) => {
-                console.log(result);
+              User.findOneAndUpdate({ address: reqOwnerAddress }, { $addToSet: { ownedNFTs: result._id } }).then((result) => {
+                console.log("tsult!@#@!##", result);
               });
             });
           });
@@ -103,12 +85,10 @@ router.post("/fetchNFT", async (req, res) => {
       User.findOne({ address: reqOwnerAddress })
         .populate("ownedNFTs")
         .then((result) => {
-          res
-            .status(200)
-            .send({
-              result: result,
-              message: "adding NFTs to ownedNFTs in user DB",
-            });
+          res.status(200).send({
+            result: result,
+            message: "adding NFTs to ownedNFTs in user DB",
+          });
         })
         .catch((err) => {
           console.log(err, "this is errererjoerierjoerioejriojeriojerojerio");

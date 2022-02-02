@@ -3,9 +3,9 @@ const mongoose = require("mongoose");
 const KlayNFTSchema = new mongoose.Schema(
   {
     owner: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-    ownerAddress: { type: String },
-    itemIdOnBlockChain: { type: Number },
-    isSale: { type: Boolean, default: false },
+    ownerAddress: { type: String }, //
+    itemIdOnBlockChain: { type: Number }, //
+    isSale: { type: Boolean, default: false }, //
     collectionName: { type: String },
     price: { type: Number, default: 0 },
     openseaId: { type: Number, default: Math.floor(Math.random() * 10000000) },
