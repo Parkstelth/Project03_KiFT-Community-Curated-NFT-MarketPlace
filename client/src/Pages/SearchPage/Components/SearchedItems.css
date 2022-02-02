@@ -15,3 +15,8 @@
 .searchedMarket_image {
   height: 330px;
 }
+
+.market_image_2 {
+  width: 100%;
+  object-fit: contain;
+}

@@ -256,13 +256,8 @@ function MyPage({ setIsLogin, isKaikas, setIsKaikas }) {
         if (result === true) {
           await window.klaytn._kaikas.isApproved().then((result) => {
             if (result === true) {
-              console.log("이거 실행되고잇는거야 ???????????");
               const caver = new Caver(window.klaytn);
               caver.klay.getAccounts().then((account) => {
-                console.log(
-                  account[0].toLowerCase(),
-                  "this is accountasefijaㅁㄴㅇㄹㅁㄴㄹㄴㅇㄹㄴㅇㄹㅇㅁ냐어;랴먼ㅇ랴;먼ㅇㄹ미;ㄴ야러;ㅁㄴㅇ;랴ㅓ;ㅣf;liasawef;oialsejf;laisjefl;ajseflasjef;lasej"
-                );
                 const headers = {
                   "Content-Type": "application/json",
                   Accept: "application/json",
@@ -274,6 +269,7 @@ function MyPage({ setIsLogin, isKaikas, setIsKaikas }) {
                     headers
                   )
                   .then((result) => {
+                    setRegdate(result.data.result.createdAt.slice(0, 10));
                     setData(result.data.result.ownedNFTs);
                     console.log(result.data.result.ownedNFTs);
                   });
@@ -294,14 +290,6 @@ function MyPage({ setIsLogin, isKaikas, setIsKaikas }) {
   }, []);
 
   useEffect(() => {
-    console.log(
-      nowAccount[0],
-      "============================실행되는중 ㅁㄴㅇㄹ;ㅏㅣ멀;ㅣ먄덜;민댜럼;ㄴ댜리ㅓ"
-    );
-    console.log(
-      nowAccount,
-      "============================실행되는중 ㅁㄴㅇㄹ;ㅏㅣ멀;ㅣ먄덜;민댜럼;ㄴ댜리ㅓ"
-    );
     // console.log(nowAccount, "============================");
 
     if (nowAccount[0] !== undefined) {

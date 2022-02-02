@@ -18,8 +18,12 @@ function Item({ searchedItems }) {
                 <div className="imgContainer searchedMarket_image">
                   {
                     <img
-                      src={item.image_url === "" ? "https://testnets.opensea.io/static/images/placeholder.png" : item.image_url}
-                      className="market_image searchedMarket_image"
+                      src={
+                        item.image_url === ""
+                          ? "https://testnets.opensea.io/static/images/placeholder.png"
+                          : item.image_url
+                      }
+                      className="market_image_2 searchedMarket_image"
                       alt=""
                     />
                   }

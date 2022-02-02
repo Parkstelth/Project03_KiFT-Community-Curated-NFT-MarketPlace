@@ -15,6 +15,7 @@ import Footer from "./Pages/FrontPage/Footer";
 import { useState, useEffect } from "react";
 import Web3 from "web3";
 import axios from "axios";
+import Caver from "caver-js";
 
 function App() {
   const [footer, setFooter] = useState(true);
@@ -33,16 +34,18 @@ function App() {
   };
 
   useEffect(() => {
-    console.log("이게체크해야할것0", window.klaytn);
     console.log("이게체크해야할것", window.klaytn.selectedAddress);
 
     window.klaytn._kaikas.isUnlocked().then(async (result) => {
       if (result === true) {
         await window.klaytn._kaikas.isApproved().then((result) => {
           if (result === true) {
-            setLoginAccount(window.klaytn.selectedAddress);
-            setIsLogin(true);
-            setIsKaikas(true);
+            const caver = new Caver(window.klaytn);
+            caver.klay.getAccounts().then((account) => {
+              setLoginAccount(account[0].toLowerCase());
+              setIsLogin(true);
+              setIsKaikas(true);
+            });
           } else {
             if (typeof window.ethereum !== "undefined") {
               //여러 wallet 플랫폼중 metaMask로 연결

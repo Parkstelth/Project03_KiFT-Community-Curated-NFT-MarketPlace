@@ -248,7 +248,7 @@
 .properties {
   display: flex;
   flex-wrap: wrap;
-  margin: 5px 5px;
+  margin: 5px 4px;
 }
 .properties_change {
   margin: 5px 5px;

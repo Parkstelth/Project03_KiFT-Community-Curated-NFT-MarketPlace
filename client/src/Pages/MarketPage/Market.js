@@ -25,13 +25,7 @@ function Market({ setfooter }) {
 
       await axios
         .get(
-          `https://api.opensea.io/api/v1/assets?order_direction=desc&offset=0&limit=21`,
-          {
-            headers: {
-              Accept: "application/json",
-              "Access-Control-Allow-Origin": "*",
-            },
-          }
+          `https://api.opensea.io/api/v1/assets?order_direction=desc&limit=21`
         )
         .then((result) => {
           console.log("== 오픈씨 데이터 가져오기 완료 ==");
