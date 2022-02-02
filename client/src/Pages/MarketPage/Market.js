@@ -12,7 +12,7 @@ function Market({ setfooter }) {
   useEffect(async () => {
     const dataLoad = async () => {
       await axios
-        .get("http://localhost:3001/fetchItemsonsale")
+        .get("http://3.37.89.170:3001/fetchItemsonsale")
         .then((result) => {
           console.log("==유저들의 리스팅 토큰 갖고오기 완료 ==");
           console.log(result.data.data);
@@ -24,9 +24,7 @@ function Market({ setfooter }) {
         });
 
       await axios
-        .get(
-          `https://api.opensea.io/api/v1/assets?order_direction=desc&limit=21`
-        )
+        .get(`https://api.opensea.io/api/v1/assets?order_direction=desc&limit=21`)
         .then((result) => {
           console.log("== 오픈씨 데이터 가져오기 완료 ==");
           console.log(result.data.assets);
@@ -51,11 +49,7 @@ function Market({ setfooter }) {
         <div className="row">
           <hr className="divider" />
         </div>
-        {loading ? (
-          <Loading className="loading" />
-        ) : (
-          <Item marketData={marketData} userMarketData={userMarketData}></Item>
-        )}
+        {loading ? <Loading className="loading" /> : <Item marketData={marketData} userMarketData={userMarketData}></Item>}
       </div>
     </div>
   );

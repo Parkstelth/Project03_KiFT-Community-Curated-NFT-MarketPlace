@@ -3,13 +3,7 @@ import { useEffect } from "react";
 import axios from "axios";
 import Caver from "caver-js";
 
-function SignIn({
-  setfooter,
-  setLoginAccount,
-  setIsLogin,
-  setIsKaikas,
-  isKaikas,
-}) {
+function SignIn({ setfooter, setLoginAccount, setIsLogin, setIsKaikas, isKaikas }) {
   useEffect(() => {
     setfooter(false);
   }, []);
@@ -19,9 +13,7 @@ function SignIn({
       var metamaskProvider = window.ethereum;
       console.log("메타마스크만 다운되어있는 것 처리===>", metamaskProvider);
     } else {
-      var metamaskProvider = window.ethereum.providers.find(
-        (provider) => provider.isMetaMask
-      );
+      var metamaskProvider = window.ethereum.providers.find((provider) => provider.isMetaMask);
       console.log("여러개 지갑 처리 ==>", metamaskProvider);
     }
 
@@ -43,11 +35,9 @@ function SignIn({
       const params = new URLSearchParams();
       params.append("loginAddress", accounts[0].toLowerCase());
 
-      await axios
-        .post("http://localhost:3001/sign", params, { headers })
-        .then((res) => {
-          console.log(res);
-        });
+      await axios.post("http://3.37.89.170:3001/sign", params, { headers }).then((res) => {
+        console.log(res);
+      });
 
       setIsKaikas(false);
       document.location.href = "/market";
@@ -80,11 +70,9 @@ function SignIn({
       params.append("loginAddress", account[0].toLowerCase());
       params.append("Chain", "baobab");
 
-      await axios
-        .post("http://localhost:3001/sign", params, { headers })
-        .then((res) => {
-          console.log(res);
-        });
+      await axios.post("http://3.37.89.170:3001/sign", params, { headers }).then((res) => {
+        console.log(res);
+      });
 
       document.location.href = "/";
     });
@@ -92,18 +80,13 @@ function SignIn({
   return (
     <div className="signInPageContainer">
       <div className="signInPage">
-        <h2 className="signInTitle">
-          Sign in with your wallet for connecting KiFT
-        </h2>
+        <h2 className="signInTitle">Sign in with your wallet for connecting KiFT</h2>
         <div>
           <div className="signContainer">
             <button className="signInButton" onClick={() => connectWallet()}>
               Metamask
             </button>
-            <button
-              className="signInButton kaikasButton"
-              onClick={connectKaikas}
-            >
+            <button className="signInButton kaikasButton" onClick={connectKaikas}>
               Kaikas
             </button>
           </div>

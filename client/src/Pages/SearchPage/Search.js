@@ -40,7 +40,7 @@ function Search() {
 
   async function fetchItem(searchQuery) {
     await axios
-      .post("http://localhost:3001/searchItems", {
+      .post("http://3.37.89.170:3001/searchItems", {
         nameOfItem: searchQuery,
       })
       .then((result) => {
@@ -67,9 +67,7 @@ function Search() {
   useEffect(async () => {
     const dataLoad = async () => {
       await axios
-        .get(
-          `https://api.opensea.io/api/v1/assets?order_direction=desc&limit=9`
-        )
+        .get(`https://api.opensea.io/api/v1/assets?order_direction=desc&limit=9`)
         .then((result) => {
           console.log("== 오픈씨 데이터 가져오기 완료 ==");
           console.log(result.data.assets);
@@ -133,11 +131,7 @@ function Search() {
 
         <div className="trendingItems">
           <div className="trendingItemsTitle">Trending NFTs</div>
-          {loading ? (
-            <Loading className="loading" />
-          ) : (
-            <TrendingItems trendingItems={trendingItems}></TrendingItems>
-          )}
+          {loading ? <Loading className="loading" /> : <TrendingItems trendingItems={trendingItems}></TrendingItems>}
         </div>
       </div>
     </div>
