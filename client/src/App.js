@@ -34,13 +34,13 @@ function App() {
   };
 
   useEffect(() => {
-    console.log("이게체크해야할것", window.klaytn.selectedAddress);
-
     window.klaytn._kaikas.isUnlocked().then(async (result) => {
       if (result === true) {
         await window.klaytn._kaikas.isApproved().then((result) => {
           if (result === true) {
             const caver = new Caver(window.klaytn);
+            window.klaytn.on("accountsChanged", (_) => (window.location.href = "/"));
+
             caver.klay.getAccounts().then((account) => {
               setLoginAccount(account[0].toLowerCase());
               setIsLogin(true);
@@ -52,14 +52,9 @@ function App() {
 
               if (typeof window.ethereum.providers === "undefined") {
                 var metamaskProvider = window.ethereum;
-                console.log(
-                  "메타마스크만 다운되어있는 것 처리===>",
-                  metamaskProvider
-                );
+                console.log("메타마스크만 다운되어있는 것 처리===>", metamaskProvider);
               } else {
-                var metamaskProvider = window.ethereum.providers.find(
-                  (provider) => provider.isMetaMask
-                );
+                var metamaskProvider = window.ethereum.providers.find((provider) => provider.isMetaMask);
                 console.log("여러개 지갑 처리 ==>", metamaskProvider);
               }
               console.log("ethereum provider=====>>>>", metamaskProvider);
@@ -96,10 +91,7 @@ function App() {
                 console.log(err);
               }
             } else {
-              var win = window.open(
-                "https://metamask.io/download.html",
-                "_blank"
-              );
+              var win = window.open("https://metamask.io/download.html", "_blank");
               win.focus();
 
               setLoginAccount("");
@@ -113,14 +105,9 @@ function App() {
 
           if (typeof window.ethereum.providers === "undefined") {
             var metamaskProvider = window.ethereum;
-            console.log(
-              "메타마스크만 다운되어있는 것 처리===>",
-              metamaskProvider
-            );
+            console.log("메타마스크만 다운되어있는 것 처리===>", metamaskProvider);
           } else {
-            var metamaskProvider = window.ethereum.providers.find(
-              (provider) => provider.isMetaMask
-            );
+            var metamaskProvider = window.ethereum.providers.find((provider) => provider.isMetaMask);
             console.log("여러개 지갑 처리 ==>", metamaskProvider);
           }
           console.log("ethereum provider=====>>>>", metamaskProvider);
@@ -144,11 +131,9 @@ function App() {
                 const params = new URLSearchParams();
                 params.append("loginAddress", account[0].toLowerCase());
 
-                await axios
-                  .post("http://localhost:3001/sign", params, { headers })
-                  .then((res) => {
-                    console.log(res);
-                  });
+                await axios.post("http://localhost:3001/sign", params, { headers }).then((res) => {
+                  console.log(res);
+                });
               }
             });
           } catch (err) {
@@ -177,25 +162,13 @@ function App() {
         <Route
           path="/signin"
           element={
-            <SignIn
-              setfooter={setfooter}
-              setIsLogin={setIsLogin}
-              setLoginAccount={setLoginAccount}
-              setIsKaikas={setIsKaikas}
-              isKaikas={isKaikas}
-            />
+            <SignIn setfooter={setfooter} setIsLogin={setIsLogin} setLoginAccount={setLoginAccount} setIsKaikas={setIsKaikas} isKaikas={isKaikas} />
           }
         />
-        <Route
-          path="/mypage"
-          element={<Mypage setIsLogin={setIsLogin} isKaikas={isKaikas} />}
-        />
-        <Route
-          path="mypage/:id"
-          element={<About loginAccount={loginAccount} />}
-        />
+        <Route path="/mypage" element={<Mypage setIsLogin={setIsLogin} isKaikas={isKaikas} />} />
+        <Route path="mypage/:id" element={<About loginAccount={loginAccount} isKaikas={isKaikas} />} />
         <Route path="/claim" element={<Claim />} />
-        <Route path="/create" element={<CreateNft />} />
+        <Route path="/create" element={<CreateNft setIsKaikas={setIsKaikas} isKaikas={isKaikas} />} />
         <Route path="/search" element={<Search />} />
         <Route path=":id" element={<NotFound />} />
       </Routes>

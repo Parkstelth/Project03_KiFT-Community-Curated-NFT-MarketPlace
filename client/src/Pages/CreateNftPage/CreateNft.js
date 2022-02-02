@@ -2,7 +2,7 @@ import "./CreateNft.css";
 import { DropdownButton, Dropdown } from "react-bootstrap";
 import { create } from "ipfs-http-client";
 import NotifyModal from "./Components/NotifyModal.js";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { IconContext } from "react-icons";
 import { MdOutlineImage } from "react-icons/md";
@@ -10,10 +10,15 @@ import Web3 from "web3";
 import dotenv from "dotenv";
 import DetailList from "./DetailList";
 import { Button } from "antd";
+import Caver from "caver-js";
+
 dotenv.config();
 const Kift_721_Contract_Address = process.env.REACT_APP_KIFT_721_CONTRACT_ADDRESS;
-
+const Kift_721_Klaytn_Contract_Address = process.env.REACT_APP_KIFT_721_KLAYTN_CONTRACT_ADDRESS;
+console.log(Kift_721_Contract_Address, "this is first one");
+console.log(Kift_721_Klaytn_Contract_Address, "yo tes it !!!!@#!#!@");
 var KiFT721abi = require("./KiFT721abi");
+var KiFTNFT721Klaytnabi = require("./KiFTNFT721-Klaytn");
 
 const InputImage = styled.input`
   display: none;
@@ -71,12 +76,24 @@ const CreateListDiv = styled.div`
   border-radius: 7px;
 `;
 
-function CreateNft({ isKaikas }) {
+function CreateNft({ isKaikas, setIsKaikas }) {
   const ipfs = create({
     host: "ipfs.infura.io",
     port: 5001,
     protocol: "https",
   });
+
+  useEffect(async () => {
+    window.klaytn._kaikas.isUnlocked().then(async (result) => {
+      if (result === true) {
+        await window.klaytn._kaikas.isApproved().then(async (result) => {
+          if (result === true) {
+            setIsKaikas(true);
+          }
+        });
+      }
+    });
+  }, []);
 
   const [countList, setCountList] = useState([0]);
   const [name, setName] = useState("");
@@ -207,6 +224,68 @@ function CreateNft({ isKaikas }) {
     }
   };
 
+  const createItemForKlaytn = async () => {
+    setMessage(`Please wait until "Success!"`);
+    setShowModal(true);
+
+    window.klaytn._kaikas.isUnlocked().then(async (result) => {
+      if (result === true) {
+        await window.klaytn._kaikas.isApproved().then(async (result) => {
+          if (result === true) {
+            try {
+              const caver = new Caver(window.klaytn);
+
+              caver.klay.getAccounts().then(async (account) => {
+                if (account.length === 0) {
+                  setClosebox(true);
+                  setMessage("Please log in to Kaikas");
+                } else {
+                  const imgURI = await ipfs.add(files);
+                  const metadata = {
+                    name: name,
+                    collection: collection,
+                    description: description,
+                    image: `https://ipfs.io/ipfs/${imgURI.path}`,
+                    attributes: resultTraits,
+                  };
+                  const tokenUri = await ipfs.add(JSON.stringify(metadata));
+                  const newTokenURI = `https://ipfs.io/ipfs/${tokenUri.path}`;
+                  console.log("test", newTokenURI);
+                  console.log(Kift_721_Klaytn_Contract_Address, "this is contract address we need!@#!#!@@#");
+                  let contract = await new caver.klay.Contract(KiFTNFT721Klaytnabi, Kift_721_Klaytn_Contract_Address, {
+                    from: account[0],
+                    to: Kift_721_Klaytn_Contract_Address,
+                    gas: 5000000,
+                    gasPrice: "25000000000",
+                  });
+
+                  await contract.methods
+                    .mintNFT(newTokenURI)
+                    .send({
+                      from: account[0],
+                      gas: 5000000,
+                      gasPrice: "25000000000",
+                    })
+                    .then(async () => {
+                      await setMessage("Create your NFT Success!");
+                      document.location.href = `/create`;
+                    })
+                    .catch((err) => {
+                      setClosebox(true);
+                      setMessage(err.message);
+                    });
+                }
+              });
+            } catch (err) {
+              setClosebox(true);
+              setMessage("Unknow error!");
+            }
+          }
+        });
+      }
+    });
+  };
+
   return (
     <div className="mainset">
       {showModal && <NotifyModal showModal={showModal} closeModal={closeModal} message={message} closebox={closebox}></NotifyModal>}
@@ -281,9 +360,15 @@ function CreateNft({ isKaikas }) {
             )}
           </div>
           {name !== "" && files !== "" ? (
-            <button className="sell_button addoption2" onClick={createItem}>
-              Create
-            </button>
+            isKaikas ? (
+              <button className="sell_button addoption2" onClick={createItemForKlaytn}>
+                Create-K
+              </button>
+            ) : (
+              <button className="sell_button addoption2" onClick={createItem}>
+                Create
+              </button>
+            )
           ) : (
             <>
               <button disabled onClick={createItem}>
