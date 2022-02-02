@@ -37,7 +37,11 @@ function MyPage({ setIsLogin, isKaikas, setIsKaikas }) {
   async function transferStart(item) {
     setInputbox(true);
 
-    if (transTo !== "" && transTo.slice(0, 2) === "0x" && transTo.length === 42) {
+    if (
+      transTo !== "" &&
+      transTo.slice(0, 2) === "0x" &&
+      transTo.length === 42
+    ) {
       await setTransloading(true);
       await transferTo(item);
       await setMessage(`Please wait until "Success!"`);
@@ -56,71 +60,77 @@ function MyPage({ setIsLogin, isKaikas, setIsKaikas }) {
         return account;
       })
       .then(async (account) => {
-        await axios.get(`https://testnets-api.opensea.io/assets?owner=${account}`).then(async (result) => {
-          setData(result.data.assets);
-          console.log("account setting succssed!!!!!");
-          setNowAccount(account);
-          setLoading(false);
-          console.log("opensea retrieve assets", result);
-          const headers = {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          };
-          await axios
-            .post(
-              "http://localhost:3001/findUser",
-              {
-                address: account[0].toLowerCase(),
-              },
-              headers
-            )
-            .then(async (user) => {
-              await console.log("this is your user's data ====>", user.data.data);
-              const data = user.data.data;
-              console.log("just data ---------> ", data);
-              setRegdate(data.createdAt.slice(0, 10));
-              return data;
-            })
-            .then((data) => {
-              result.data.assets.map(async (item) => {
-                const headers = {
-                  "Content-Type": "application/json",
-                  Accept: "application/json",
-                };
-                await axios
-                  .post(
-                    "http://localhost:3001/NFT",
-                    {
-                      owner: data._id,
-                      name: item.name,
-                      contract_address: item.asset_contract.address,
-                      asset_contract_type: item.asset_contract.asset_contract_type,
-                      schema_name: item.asset_contract.schema_name,
-                      description: item.description,
-                      NFT_Token_id: item.token_id,
-                      createdAt: item.collection.created_date,
-                      image_url: item.image_url,
-                      creator_address: item.creator.address,
-                      openseaId: item.id,
-                      traits: item.traits,
-                    },
-                    headers
-                  )
-                  .then((result) => {
-                    console.log("this is result from axios/NFT ===>", result);
-                    return result;
-                  })
-                  .catch((err) => {
-                    console.log("errrrrrr ", err);
-                    return err;
-                  });
+        await axios
+          .get(`https://testnets-api.opensea.io/assets?owner=${account}`)
+          .then(async (result) => {
+            setData(result.data.assets);
+            console.log("account setting succssed!!!!!");
+            setNowAccount(account);
+            setLoading(false);
+            console.log("opensea retrieve assets", result);
+            const headers = {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            };
+            await axios
+              .post(
+                "http://localhost:3001/findUser",
+                {
+                  address: account[0].toLowerCase(),
+                },
+                headers
+              )
+              .then(async (user) => {
+                await console.log(
+                  "this is your user's data ====>",
+                  user.data.data
+                );
+                const data = user.data.data;
+                console.log("just data ---------> ", data);
+                setRegdate(data.createdAt.slice(0, 10));
+                return data;
+              })
+              .then((data) => {
+                result.data.assets.map(async (item) => {
+                  const headers = {
+                    "Content-Type": "application/json",
+                    Accept: "application/json",
+                  };
+                  await axios
+                    .post(
+                      "http://localhost:3001/NFT",
+                      {
+                        owner: data._id,
+                        name: item.name,
+                        contract_address: item.asset_contract.address,
+                        asset_contract_type:
+                          item.asset_contract.asset_contract_type,
+                        schema_name: item.asset_contract.schema_name,
+                        description: item.description,
+                        NFT_Token_id: item.token_id,
+                        createdAt: item.collection.created_date,
+                        image_url: item.image_url,
+                        creator_address: item.creator.address,
+                        openseaId: item.id,
+                        traits: item.traits,
+                      },
+                      headers
+                    )
+                    .then((result) => {
+                      console.log("this is result from axios/NFT ===>", result);
+                      return result;
+                    })
+                    .catch((err) => {
+                      console.log("errrrrrr ", err);
+                      return err;
+                    });
+                });
+              })
+              .catch((err) => {
+                console.log(err);
+                return err;
               });
-            })
-            .catch((err) => {
-              console.log(err);
-              return err;
-            });
-        });
+          });
       });
   };
 
@@ -134,7 +144,9 @@ function MyPage({ setIsLogin, isKaikas, setIsKaikas }) {
         var metamaskProvider = window.ethereum;
         console.log("메타마스크만 다운되어있는 것 처리===>", metamaskProvider);
       } else {
-        var metamaskProvider = window.ethereum.providers.find((provider) => provider.isMetaMask);
+        var metamaskProvider = window.ethereum.providers.find(
+          (provider) => provider.isMetaMask
+        );
         console.log("여러개 지갑 처리 ==>", metamaskProvider);
       }
 
@@ -144,7 +156,10 @@ function MyPage({ setIsLogin, isKaikas, setIsKaikas }) {
         web.eth
           .getAccounts()
           .then(async (account) => {
-            let contract = await new web.eth.Contract(erc721abi, item.asset_contract.address);
+            let contract = await new web.eth.Contract(
+              erc721abi,
+              item.asset_contract.address
+            );
             await contract.methods
               .transferFrom(account[0], transTo, item.token_id)
               .send({
@@ -200,7 +215,9 @@ function MyPage({ setIsLogin, isKaikas, setIsKaikas }) {
       })
       .catch((e) => {
         //에러를 프론트로 띄워주세요
-        setMessage("Your NFT Item transfer log DB failed! You can check error below");
+        setMessage(
+          "Your NFT Item transfer log DB failed! You can check error below"
+        );
       });
   }
 
@@ -226,42 +243,65 @@ function MyPage({ setIsLogin, isKaikas, setIsKaikas }) {
       })
       .catch((err) => {
         setTransloading(false);
-        console.log("fetching changeOwnerAndOwnedNFTs API FAILED!!!! ===>", err);
+        console.log(
+          "fetching changeOwnerAndOwnedNFTs API FAILED!!!! ===>",
+          err
+        );
       });
   }
 
   useEffect(() => {
     function fetchData() {
-      if (window.klaytn.selectedAddress) {
-        console.log("이거 실행되고잇는거야 ???????????");
-        const caver = new Caver(window.klaytn);
-        caver.klay.getAccounts().then((account) => {
-          console.log(
-            account[0].toLowerCase(),
-            "this is accountasefijaㅁㄴㅇㄹㅁㄴㄹㄴㅇㄹㄴㅇㄹㅇㅁ냐어;랴먼ㅇ랴;먼ㅇㄹ미;ㄴ야러;ㅁㄴㅇ;랴ㅓ;ㅣf;liasawef;oialsejf;laisjefl;ajseflasjef;lasej"
-          );
-          const headers = {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          };
-          axios.post("http://localhost:3001/klaytn/fetchNFT", { ownerAddress: account[0].toLowerCase() }, headers).then((result) => {
-            setData(result.data.result.ownedNFTs);
-            console.log(result.data.result.ownedNFTs);
-          });
+      window.klaytn._kaikas.isUnlocked().then(async (result) => {
+        if (result === true) {
+          await window.klaytn._kaikas.isApproved().then((result) => {
+            if (result === true) {
+              console.log("이거 실행되고잇는거야 ???????????");
+              const caver = new Caver(window.klaytn);
+              caver.klay.getAccounts().then((account) => {
+                console.log(
+                  account[0].toLowerCase(),
+                  "this is accountasefijaㅁㄴㅇㄹㅁㄴㄹㄴㅇㄹㄴㅇㄹㅇㅁ냐어;랴먼ㅇ랴;먼ㅇㄹ미;ㄴ야러;ㅁㄴㅇ;랴ㅓ;ㅣf;liasawef;oialsejf;laisjefl;ajseflasjef;lasej"
+                );
+                const headers = {
+                  "Content-Type": "application/json",
+                  Accept: "application/json",
+                };
+                axios
+                  .post(
+                    "http://localhost:3001/klaytn/fetchNFT",
+                    { ownerAddress: account[0].toLowerCase() },
+                    headers
+                  )
+                  .then((result) => {
+                    setData(result.data.result.ownedNFTs);
+                    console.log(result.data.result.ownedNFTs);
+                  });
 
-          setNowAccount(account);
-          setLoading(false);
-        });
-      } else {
-        fetchNFTs();
-      }
+                setNowAccount(account);
+                setLoading(false);
+              });
+            } else {
+              fetchNFTs();
+            }
+          });
+        } else {
+          fetchNFTs();
+        }
+      });
     }
     fetchData();
   }, []);
 
   useEffect(() => {
-    console.log(nowAccount[0], "============================실행되는중 ㅁㄴㅇㄹ;ㅏㅣ멀;ㅣ먄덜;민댜럼;ㄴ댜리ㅓ");
-    console.log(nowAccount, "============================실행되는중 ㅁㄴㅇㄹ;ㅏㅣ멀;ㅣ먄덜;민댜럼;ㄴ댜리ㅓ");
+    console.log(
+      nowAccount[0],
+      "============================실행되는중 ㅁㄴㅇㄹ;ㅏㅣ멀;ㅣ먄덜;민댜럼;ㄴ댜리ㅓ"
+    );
+    console.log(
+      nowAccount,
+      "============================실행되는중 ㅁㄴㅇㄹ;ㅏㅣ멀;ㅣ먄덜;민댜럼;ㄴ댜리ㅓ"
+    );
     // console.log(nowAccount, "============================");
 
     if (nowAccount[0] !== undefined) {
@@ -279,7 +319,11 @@ function MyPage({ setIsLogin, isKaikas, setIsKaikas }) {
           </div>
         </div>
         <div className="middle">
-          <div className="address_box">{String(nowAccount).slice(0, 6) + "..." + String(nowAccount).slice(-4)}</div>
+          <div className="address_box">
+            {String(nowAccount).slice(0, 6) +
+              "..." +
+              String(nowAccount).slice(-4)}
+          </div>
           <div className="createdAt">
             joined {regdate.slice(5, 10)}
             {" , "}
@@ -301,31 +345,70 @@ function MyPage({ setIsLogin, isKaikas, setIsKaikas }) {
               <div className="cardGroup">
                 {data.map((item) => {
                   return (
-                    <div key={isKaikas ? `${item.openseaId}` : `${item.id}`} className="card1">
+                    <div
+                      key={isKaikas ? `${item.openseaId}` : `${item.id}`}
+                      className="card1"
+                    >
                       <div className="card_img_block">
-                        <img className="card_img" variant="top" src={item.image_url} />
+                        <img
+                          className="card_img"
+                          variant="top"
+                          src={item.image_url}
+                        />
                       </div>
                       <div className="card_addoption">
                         <div className="card_body">
-                          {isKaikas ? <div className="card_title">KiNFT</div> : <div className="card_title">{item.asset_contract.name}</div>}
+                          {isKaikas ? (
+                            <div className="card_title">KiNFT</div>
+                          ) : (
+                            <div className="card_title">
+                              {item.asset_contract.name}
+                            </div>
+                          )}
 
-                          {isKaikas ? <div className="card_text">{item.name}</div> : <div className="card_text">{item.collection.name}</div>}
+                          {isKaikas ? (
+                            <div className="card_text">{item.name}</div>
+                          ) : (
+                            <div className="card_text">
+                              {item.collection.name}
+                            </div>
+                          )}
                         </div>
 
                         <div className="card_footer">
-                          <Link to={isKaikas ? `/mypage/${item.openseaId}` : `/mypage/${item.id}`} className="button_link">
-                            <button className="sell_button addoption2">Sell</button>
+                          <Link
+                            to={
+                              isKaikas
+                                ? `/mypage/${item.openseaId}`
+                                : `/mypage/${item.id}`
+                            }
+                            className="button_link"
+                          >
+                            <button className="sell_button addoption2">
+                              Sell
+                            </button>
                           </Link>
-                          <button className="sell_button addoption3" onClick={() => transferStart(item)}>
+                          <button
+                            className="sell_button addoption3"
+                            onClick={() => transferStart(item)}
+                          >
                             Send
                           </button>
                           {inputbox ? (
                             <>
-                              <input className="sendInput" onChange={(e) => transferToInput(e)} placeholder=" To Address" />
+                              <input
+                                className="sendInput"
+                                onChange={(e) => transferToInput(e)}
+                                placeholder=" To Address"
+                              />
                               {transloading ? (
                                 <>
                                   <div className="trasnferMessage">
-                                    <Spinner animation="border" variant="primary" className="transferSpinner" />
+                                    <Spinner
+                                      animation="border"
+                                      variant="primary"
+                                      className="transferSpinner"
+                                    />
                                     {message}
                                   </div>
                                 </>

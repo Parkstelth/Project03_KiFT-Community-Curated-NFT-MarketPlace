@@ -24,7 +24,15 @@ function Market({ setfooter }) {
         });
 
       await axios
-        .get(`https://api.opensea.io/api/v1/assets?order_direction=desc&offset=0&limit=21`)
+        .get(
+          `https://api.opensea.io/api/v1/assets?order_direction=desc&offset=0&limit=21`,
+          {
+            headers: {
+              Accept: "application/json",
+              "Access-Control-Allow-Origin": "*",
+            },
+          }
+        )
         .then((result) => {
           console.log("== 오픈씨 데이터 가져오기 완료 ==");
           console.log(result.data.assets);
@@ -49,7 +57,11 @@ function Market({ setfooter }) {
         <div className="row">
           <hr className="divider" />
         </div>
-        {loading ? <Loading className="loading" /> : <Item marketData={marketData} userMarketData={userMarketData}></Item>}
+        {loading ? (
+          <Loading className="loading" />
+        ) : (
+          <Item marketData={marketData} userMarketData={userMarketData}></Item>
+        )}
       </div>
     </div>
   );

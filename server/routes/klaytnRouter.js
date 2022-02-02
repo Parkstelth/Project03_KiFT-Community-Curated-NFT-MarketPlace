@@ -20,7 +20,11 @@ const ownerAddress = "0xd23cd63b84e294b304548b9758f647ceb7724241";
 const query = {
   size: 100,
 };
-const result = caver.kas.tokenHistory.getNFTListByOwner(contractAddress, ownerAddress, query);
+const result = caver.kas.tokenHistory.getNFTListByOwner(
+  contractAddress,
+  ownerAddress,
+  query
+);
 result.then(console.log);
 
 router.get("/", function (req, res) {
@@ -34,7 +38,11 @@ router.post("/fetchNFT", async (req, res) => {
   const query = {
     size: 100,
   };
-  const result = caver.kas.tokenHistory.getNFTListByOwner(contractAddress, reqOwnerAddress, query);
+  const result = caver.kas.tokenHistory.getNFTListByOwner(
+    contractAddress,
+    reqOwnerAddress,
+    query
+  );
   result
     .then((result) => {
       result.items.map((item) => {
@@ -82,17 +90,25 @@ router.post("/fetchNFT", async (req, res) => {
             ).then((result) => {
               console.log(result);
               console.log(result._id);
-              User.findOneAndUpdate({ ownerAddress: reqOwnerAddress }, { $addToSet: { ownedNFTs: result._id } }).then((result) => {
+              User.findOneAndUpdate(
+                { ownerAddress: reqOwnerAddress },
+                { $addToSet: { ownedNFTs: result._id } }
+              ).then((result) => {
                 console.log(result);
               });
             });
           });
         });
       });
-      User.findOne({ ownerAddress: reqOwnerAddress })
+      User.findOne({ address: reqOwnerAddress })
         .populate("ownedNFTs")
         .then((result) => {
-          res.status(200).send({ result: result, message: "adding NFTs to ownedNFTs in user DB" });
+          res
+            .status(200)
+            .send({
+              result: result,
+              message: "adding NFTs to ownedNFTs in user DB",
+            });
         })
         .catch((err) => {
           console.log(err, "this is errererjoerierjoerioejriojeriojerojerio");
