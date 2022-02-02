@@ -2,7 +2,7 @@ var express = require("express");
 var router = express.Router();
 const User = require("../models/User");
 const NFT = require("../models/NFT");
-const KlayNFT = require("../models/KlaynFT");
+
 // const { default: Item } = require("../../client/src/component/Item");
 
 /* GET home page. */
