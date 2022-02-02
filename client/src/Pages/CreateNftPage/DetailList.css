@@ -33,15 +33,30 @@
   font-size: 0.8rem;
 }
 
-#root > div.mainset > div.imagebox > div.contentbox > div > div.content_start.addoption > div.sc-kDTinF.ixZaki > button {
+#root
+  > div.mainset
+  > div.imagebox
+  > div.contentbox
+  > div
+  > div.content_start.addoption
+  > div.sc-kDTinF.ixZaki
+  > button {
   font-weight: normal;
   border-radius: 5px;
   background-color: rgb(255, 255, 255);
   border: 1px solid rgb(32, 129, 226);
   color: rgb(32, 129, 226);
+  margin-bottom: 11px;
 }
 
-#root > div.mainset > div.imagebox > div.contentbox > div > div.content_start.addoption > div.sc-kDTinF.ixZaki > button:focus-within {
+#root
+  > div.mainset
+  > div.imagebox
+  > div.contentbox
+  > div
+  > div.content_start.addoption
+  > div.sc-kDTinF.ixZaki
+  > button:focus-within {
   color: inherit;
   box-shadow: rgb(4 17 29 / 25%) 0px 0px 8px 0px;
   z-index: 1;
