@@ -41,7 +41,27 @@ function App() {
             const caver = new Caver(window.klaytn);
             window.klaytn.on("accountsChanged", (_) => (window.location.href = "/"));
 
-            caver.klay.getAccounts().then((account) => {
+            caver.klay.getAccounts().then(async (account) => {
+              const headers = {
+                "Content-Type": "application/x-www-form-urlencoded",
+                Accept: "*/*",
+              };
+              const params = new URLSearchParams();
+              params.append("address", account[0].toLowerCase());
+
+              await axios
+                .post("http://localhost:3001/klaytn/sign", params, {
+                  headers,
+                })
+                .then((result) => {
+                  console.log(result);
+
+                  console.log("왜 안돼 ?");
+                })
+                .catch((err) => {
+                  console.log(err);
+                });
+
               setLoginAccount(account[0].toLowerCase());
               setIsLogin(true);
               setIsKaikas(true);
