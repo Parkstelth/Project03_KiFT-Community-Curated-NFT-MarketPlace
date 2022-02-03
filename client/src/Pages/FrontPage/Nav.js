@@ -16,16 +16,29 @@ function Nav({ isLogin, isKaikas }) {
             Curated
           </Link>
 
-          <DropdownButton
-            className="nav"
-            id="dropdown-basic-button"
-            title="Community"
-          >
-            <Dropdown.Item href="/claim">Claim KiFToken</Dropdown.Item>
-            <Dropdown.Item href="/create">Create NFT</Dropdown.Item>
-            <Dropdown.Item href="/">Staking</Dropdown.Item>
-            <Dropdown.Item href="/">DAO</Dropdown.Item>
-            <Dropdown.Item href="https://app.uniswap.org/#/swap?inputCurrency=0x66595E934c056EF77c204A06Ea3FB8Bf6a92b5f6&use=v2">
+          <DropdownButton className="nav" id="dropdown-basic-button" title="Community">
+            <Dropdown.Item>
+              <Link to="/claim" className="noneDeco">
+                Claim KiFToken
+              </Link>
+            </Dropdown.Item>
+            <Dropdown.Item>
+              <Link to="create" className="noneDeco">
+                Create NFT
+              </Link>
+            </Dropdown.Item>
+            <Dropdown.Item>
+              <Link to="/" className="noneDeco">
+                Staking
+              </Link>
+            </Dropdown.Item>
+            <Dropdown.Item>
+              <Link to="/" className="noneDeco">
+                DAO
+              </Link>
+            </Dropdown.Item>
+
+            <Dropdown.Item href={`https://app.uniswap.org/#/swap?inputCurrency=0x66595E934c056EF77c204A06Ea3FB8Bf6a92b5f6&use=v2`}>
               Trade Token
             </Dropdown.Item>
             <div className="SNSLogos">
@@ -145,22 +158,10 @@ function Nav({ isLogin, isKaikas }) {
               >
                 {/* <style type="text/css">.st0{`fill:#4F473B`}</style> */}
                 <g>
-                  <path
-                    className="st0"
-                    d="M1047.4,982.5l683.3,678.3c359.1-380.9,359.1-975.7,0-1356.6"
-                  />
-                  <path
-                    className="st0"
-                    d="M997.5,1027.4l-673.3,668.3l673.3,279.3l673.3-279.3"
-                  />
-                  <path
-                    className="st0"
-                    d="M972.6,957.6l698.3-693.3L1027.4,0L389,1541.2L972.6,957.6z"
-                  />
-                  <path
-                    className="st0"
-                    d="M0,982.5c-0.5,252.3,95.9,495.1,269.3,678.3l668.3-1611"
-                  />
+                  <path className="st0" d="M1047.4,982.5l683.3,678.3c359.1-380.9,359.1-975.7,0-1356.6" />
+                  <path className="st0" d="M997.5,1027.4l-673.3,668.3l673.3,279.3l673.3-279.3" />
+                  <path className="st0" d="M972.6,957.6l698.3-693.3L1027.4,0L389,1541.2L972.6,957.6z" />
+                  <path className="st0" d="M0,982.5c-0.5,252.3,95.9,495.1,269.3,678.3l668.3-1611" />
                 </g>
               </svg>
             </Link>

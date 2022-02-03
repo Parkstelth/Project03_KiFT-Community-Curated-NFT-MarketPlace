@@ -49,6 +49,16 @@
   text-decoration: none;
   color: black;
 }
+
+.noneDeco {
+  text-decoration: none;
+  color: #1e2125;
+}
+
+.noneDeco:focus {
+  color: #e9ecef;
+}
+
 #dropdown-basic-button {
   border: none !important;
   background-color: white !important;

@@ -1,11 +1,12 @@
 import "./Item.css";
+import { Link } from "react-router-dom";
 
 function Item({ marketData, userMarketData }) {
   return (
     /* 페이지 넘길 수 있게하거나 혹은 스크롤 밑으로 내리면서 아이템 볼 수 있게 만들어주기! */
     <div className="marketItemContainer">
       {userMarketData.map((item) => (
-        <a href={`/mypage/${item.openseaId}`} className="marketItem" key={item.openseaId}>
+        <Link to={`/mypage/${item.openseaId}`} className="marketItem" key={item.openseaId}>
           <div className="imgContainer">
             {
               <img
@@ -33,7 +34,7 @@ function Item({ marketData, userMarketData }) {
               </div>
             </div>
           </div>
-        </a>
+        </Link>
       ))}
 
       {marketData.map((item) => (
