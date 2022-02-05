@@ -68,7 +68,7 @@ function MyPage({ setIsLogin, isKaikas, setIsKaikas }) {
           };
           await axios
             .post(
-              "http://ec2-3-36-70-55.ap-northeast-2.compute.amazonaws.com:3001/findUser",
+              "https://thekift.shop/findUser",
               {
                 address: account[0].toLowerCase(),
               },
@@ -89,7 +89,7 @@ function MyPage({ setIsLogin, isKaikas, setIsKaikas }) {
                 };
                 await axios
                   .post(
-                    "http://ec2-3-36-70-55.ap-northeast-2.compute.amazonaws.com:3001/NFT",
+                    "https://thekift.shop/NFT",
                     {
                       owner: data._id,
                       name: item.name,
@@ -185,7 +185,7 @@ function MyPage({ setIsLogin, isKaikas, setIsKaikas }) {
     };
     await axios
       .post(
-        "http://ec2-3-36-70-55.ap-northeast-2.compute.amazonaws.com:3001/listItemOntransfer",
+        "https://thekift.shop/listItemOntransfer",
         {
           openseaId: item.id,
           to: to,
@@ -211,7 +211,7 @@ function MyPage({ setIsLogin, isKaikas, setIsKaikas }) {
     };
     await axios
       .post(
-        "http://ec2-3-36-70-55.ap-northeast-2.compute.amazonaws.com:3001/changeOwnerAndOwnedNFTs",
+        "https://thekift.shop/changeOwnerAndOwnedNFTs",
         {
           address: transTo.toLowerCase(),
           openseaId: item.id,
@@ -245,18 +245,12 @@ function MyPage({ setIsLogin, isKaikas, setIsKaikas }) {
                   "Content-Type": "application/json",
                   Accept: "application/json",
                 };
-                axios
-                  .post(
-                    "http://ec2-3-36-70-55.ap-northeast-2.compute.amazonaws.com:3001/klaytn/fetchNFT",
-                    { ownerAddress: account[0].toLowerCase() },
-                    headers
-                  )
-                  .then((result) => {
-                    console.log("result??", result);
-                    setRegdate(result.data.result.createdAt.slice(0, 10));
-                    setData(result.data.result.ownedNFTs);
-                    console.log(result.data.result.ownedNFTs);
-                  });
+                axios.post("https://thekift.shop/klaytn/fetchNFT", { ownerAddress: account[0].toLowerCase() }, headers).then((result) => {
+                  console.log("result??", result);
+                  setRegdate(result.data.result.createdAt.slice(0, 10));
+                  setData(result.data.result.ownedNFTs);
+                  console.log(result.data.result.ownedNFTs);
+                });
 
                 setNowAccount(account);
                 setLoading(false);

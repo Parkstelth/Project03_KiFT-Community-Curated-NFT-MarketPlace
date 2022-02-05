@@ -50,7 +50,7 @@ function App() {
               params.append("address", account[0].toLowerCase());
 
               await axios
-                .post("http://ec2-3-36-70-55.ap-northeast-2.compute.amazonaws.com:3001/klaytn/sign", params, {
+                .post("https://thekift.shop/klaytn/sign", params, {
                   headers,
                 })
                 .then((result) => {
@@ -99,7 +99,7 @@ function App() {
                     params.append("loginAddress", account[0].toLowerCase());
 
                     await axios
-                      .post("http://ec2-3-36-70-55.ap-northeast-2.compute.amazonaws.com:3001/sign", params, {
+                      .post("https://thekift.shop/sign", params, {
                         headers,
                       })
                       .then((res) => {
@@ -151,7 +151,7 @@ function App() {
                 const params = new URLSearchParams();
                 params.append("loginAddress", account[0].toLowerCase());
 
-                await axios.post("http://ec2-3-36-70-55.ap-northeast-2.compute.amazonaws.com:3001/sign", params, { headers }).then((res) => {
+                await axios.post("https://thekift.shop/sign", params, { headers }).then((res) => {
                   console.log(res);
                 });
               }

@@ -150,7 +150,7 @@ function About({ loginAccount, isKaikas /* 로그인된 계정 */ }) {
     //데이터베이스에서 NFT 조회 후 받아온 정보로 페이지 구성
     await axios
       .post(
-        "http://ec2-3-36-70-55.ap-northeast-2.compute.amazonaws.com:3001/searchNFT",
+        "https://thekift.shop/searchNFT",
         {
           openseaId: URLparam,
         },
@@ -175,7 +175,7 @@ function About({ loginAccount, isKaikas /* 로그인된 계정 */ }) {
     //데이터베이스에서 NFT 조회 후 받아온 정보로 페이지 구성
     await axios
       .post(
-        "http://ec2-3-36-70-55.ap-northeast-2.compute.amazonaws.com:3001/klaytn/searchNFT",
+        "https://thekift.shop/klaytn/searchNFT",
         {
           openseaId: URLparam,
         },
@@ -203,7 +203,7 @@ function About({ loginAccount, isKaikas /* 로그인된 계정 */ }) {
 
     await axios
       .post(
-        "http://ec2-3-36-70-55.ap-northeast-2.compute.amazonaws.com:3001/listItemOnlist",
+        "https://thekift.shop/listItemOnlist",
         {
           openseaId: URLparam,
           price: priceSellerPut,
@@ -218,7 +218,7 @@ function About({ loginAccount, isKaikas /* 로그인된 계정 */ }) {
           setMessage("Upload your NFT Success!");
 
           await axios
-            .post("http://ec2-3-36-70-55.ap-northeast-2.compute.amazonaws.com:3001/toGiveContributePoint", {
+            .post("https://thekift.shop/toGiveContributePoint", {
               address: loginAccount,
               point: 1,
             })
@@ -246,7 +246,7 @@ function About({ loginAccount, isKaikas /* 로그인된 계정 */ }) {
     };
     await axios
       .post(
-        "http://ec2-3-36-70-55.ap-northeast-2.compute.amazonaws.com:3001/listItemOnchange",
+        "https://thekift.shop/listItemOnchange",
         {
           openseaId: URLparam,
           price: priceSellerPut,
@@ -274,7 +274,7 @@ function About({ loginAccount, isKaikas /* 로그인된 계정 */ }) {
     };
     await axios
       .post(
-        "http://ec2-3-36-70-55.ap-northeast-2.compute.amazonaws.com:3001/listItemOncancel",
+        "https://thekift.shop/listItemOncancel",
         {
           openseaId: URLparam,
           isSale: false,
@@ -287,7 +287,7 @@ function About({ loginAccount, isKaikas /* 로그인된 계정 */ }) {
         if (result.status === 200) {
           setMessage("Cancle your NFT Item Success!");
           await axios
-            .post("http://ec2-3-36-70-55.ap-northeast-2.compute.amazonaws.com:3001/toGiveContributePoint", {
+            .post("https://thekift.shop/toGiveContributePoint", {
               address: loginAccount,
               point: 1,
             })
@@ -541,7 +541,7 @@ function About({ loginAccount, isKaikas /* 로그인된 계정 */ }) {
             console.log("Before changeownerandownedNFTS ==========================");
 
             await axios
-              .post("http://ec2-3-36-70-55.ap-northeast-2.compute.amazonaws.com:3001/toGiveContributePoint", {
+              .post("https://thekift.shop/toGiveContributePoint", {
                 address: loginAccount,
                 secondAddress: ownerAddress,
                 point: 10,
@@ -576,7 +576,7 @@ function About({ loginAccount, isKaikas /* 로그인된 계정 */ }) {
     };
     await axios
       .post(
-        "http://ec2-3-36-70-55.ap-northeast-2.compute.amazonaws.com:3001/listItemOnbuy",
+        "https://thekift.shop/listItemOnbuy",
         {
           openseaId: URLparam,
           price: 0,
@@ -607,7 +607,7 @@ function About({ loginAccount, isKaikas /* 로그인된 계정 */ }) {
     };
     await axios
       .post(
-        "http://ec2-3-36-70-55.ap-northeast-2.compute.amazonaws.com:3001/changeOwnerAndOwnedNFTs",
+        "https://thekift.shop/changeOwnerAndOwnedNFTs",
         {
           address: loginAccount,
           openseaId: sellitem.openseaId,
