@@ -3,10 +3,30 @@ import dotenv from "dotenv";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import "./Claim.css";
+import styled from "styled-components";
+import claimMountain from "./background2.jpeg";
 dotenv.config();
 
 var KiFTTokenabi = require("./KiFTTokenabi");
 var tokenAddress = process.env.REACT_APP_KIFT_TOKEN_CONTRACT_ADDRESS;
+
+const ClaimContainer = styled.div`
+  ::after {
+    background: url(${claimMountain});
+    background-repeat: no-repeat;
+    background-size: 100%;
+    /* background-position: 0px -260px; */
+    opacity: 45% !important;
+    top: 35px;
+    left: 0px;
+    position: absolute;
+    z-index: -1;
+    content: "";
+    width: 100%;
+    height: 111%;
+    /* object-fit: contain; */
+  }
+`;
 
 function Claim(isLogin) {
   const [status, setStatus] = useState("");
@@ -36,7 +56,7 @@ function Claim(isLogin) {
         setAccount(accounts[0].toLowerCase());
         web.eth.getAccounts().then(async (account) => {
           await axios
-            .post("http://localhost:3001/findUser", {
+            .post("http://ec2-3-36-70-55.ap-northeast-2.compute.amazonaws.com:3001/findUser", {
               address: account[0].toLowerCase(),
             })
             .then((result) => {
@@ -88,7 +108,7 @@ function Claim(isLogin) {
         web.eth.getAccounts().then(async (account) => {
           //계정 조회후 포인트 받아옴
           await axios
-            .post("http://localhost:3001/findUser", {
+            .post("http://ec2-3-36-70-55.ap-northeast-2.compute.amazonaws.com:3001/findUser", {
               address: account[0].toLowerCase(),
             })
             .then((result) => {
@@ -113,7 +133,7 @@ function Claim(isLogin) {
                     if (receipt.blockHash) {
                       //민트 성공하면 디비 초기화 !!
                       await axios
-                        .post("http://localhost:3001/initializePoints", {
+                        .post("http://ec2-3-36-70-55.ap-northeast-2.compute.amazonaws.com:3001/initializePoints", {
                           address: account[0].toLowerCase(),
                         })
                         .then((result) => {
@@ -141,7 +161,7 @@ function Claim(isLogin) {
   }
   console.log(current);
   return (
-    <div className="claimPageContainer">
+    <ClaimContainer className="claimPageContainer">
       {isLogin ? <div className="current">{current} KFT</div> : null}
 
       <div className="title_box">
@@ -160,7 +180,7 @@ function Claim(isLogin) {
           </button>
         )}
       </div>
-    </div>
+    </ClaimContainer>
   );
 }
 

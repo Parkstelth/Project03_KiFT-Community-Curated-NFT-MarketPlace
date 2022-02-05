@@ -29,6 +29,7 @@ router.post("/sign", async (req, res) => {
           ownedNFTs: [],
         });
         await user.save();
+        res.header("Access-Control-Allow-Origin", "*");
         res.status(200).send("새로운 계정 DB 생성");
       } else {
         res.status(200).send("기존 계정 DB 존재");
@@ -59,6 +60,7 @@ router.post("/findUser", async (req, res) => {
     })
     .catch((err) => {
       console.log(err);
+      res.header("Access-Control-Allow-Origin", "*");
       res.status(401).send({
         message: "something has problem",
         data: err,
