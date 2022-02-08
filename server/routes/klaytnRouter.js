@@ -4,7 +4,8 @@ const User = require("../models/User");
 const NFT = require("../models/NFT");
 const KlayNFT = require("../models/KlayNFT");
 const CaverExtKAS = require("caver-js-ext-kas");
-
+const puppeteer = require("puppeteer");
+const cheerio = require("cheerio");
 const axios = require("axios");
 
 //카스 테스트
@@ -19,18 +20,59 @@ router.get("/", function (req, res) {
   res.status(200).send("welcome");
 });
 
+router.post("/crolling", async function (req, res) {
+  // 브라우저를 실행한다.
+  // 옵션으로 headless모드를 끌 수 있다.
+  let account = req.body.account;
+  const browser = await puppeteer.launch({
+    headless: true,
+  });
+
+  // 새로운 페이지를 연다.
+  const page = await browser.newPage();
+  // 페이지의 크기를 설정한다.
+
+  await page.goto(`https://baobab.scope.klaytn.com/account/${account}`);
+
+  try {
+    await page.click(
+      "#root > div > div.SidebarTemplate > div.SidebarTemplate__main > div > div > div.DetailPageTableTemplate > div > div.Tab__tabItemList > div:nth-child(4)"
+    );
+    await page.waitForSelector(
+      "#root > div > div.SidebarTemplate > div.SidebarTemplate__main > div > div > div.DetailPageTableTemplate > div > div.Tab__content > section > article.TokenBalancesList__body > div > div.Table__tbody"
+    );
+    const content = await page.content();
+    let list = [];
+    const $ = cheerio.load(content);
+    const $bodyList = $(
+      "div.Table__td.TokenBalancesListDesktop.TokenBalancesListDesktop__kip17-balance__name.TokenBalancesListDesktop.TokenBalancesListDesktop__kip17-balance__nameTd > a"
+    );
+    for (let i = 0; i < $bodyList.length; i++) {
+      list.push($bodyList[i].attribs.href.slice(5));
+    }
+    await browser.close();
+    res.status(200).send(list);
+  } catch (e) {
+    await browser.close();
+    res.status(200).send("false");
+  }
+});
+
 router.post("/fetchNFT", async (req, res) => {
   //결과로 유저의 정보 빼와줌
   let reqOwnerAddress = req.body.ownerAddress;
   let mintedDate;
-  const contractAddress = "0xDD80ed1937e840dD2266667772bA460d37150392";
+  let thisContract = req.body.thisContract;
+  const contractAddress = thisContract;
   const query = {
     size: 100,
   };
   const result = caver.kas.tokenHistory.getNFTListByOwner(contractAddress, reqOwnerAddress, query);
+
   result
     .then((result) => {
       result.items.map((item) => {
+        let randomNum = Math.floor(Math.random() * 10000000);
         mintedDate = new Date(item.createdAt * 1000);
         KlayNFT.findOneAndUpdate(
           {
@@ -43,13 +85,12 @@ router.post("/fetchNFT", async (req, res) => {
             tokenUri: item.tokenUri,
             transactionHash: item.transacitonHash,
             createdAt: new Date(item.createdAt * 1000),
+            openseaId: randomNum,
           },
           {
             upsert: true,
           }
-        ).then((result) => {
-          console.log(result);
-        });
+        ).then((result) => {});
         //URI들어가서 정보빼오기
         User.findOne({ address: reqOwnerAddress }).then((owner) => {
           axios.get(item.tokenUri).then((result) => {
@@ -73,11 +114,8 @@ router.post("/fetchNFT", async (req, res) => {
                 },
               }
             ).then((result) => {
-              console.log("tesult@@@", result);
-              console.log(result._id);
-              User.findOneAndUpdate({ address: reqOwnerAddress }, { $addToSet: { ownedNFTs: result._id } }).then((result) => {
-                console.log("tsult!@#@!##", result);
-              });
+              // console.log(result._id);
+              User.findOneAndUpdate({ address: reqOwnerAddress }, { $addToSet: { ownedNFTs: result._id } }).then((result) => {});
             });
           });
         });

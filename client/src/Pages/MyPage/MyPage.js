@@ -20,8 +20,7 @@ function MyPage({ setIsLogin, isKaikas, setIsKaikas }) {
   const [inputbox, setInputbox] = useState(false);
   const [transloading, setTransloading] = useState(false);
 
-  // console.log(isKaikas, "laisjef;laiefj;alsiefj;alsfjl;aseifjasliefjail;sjf;ailsejfi;");
-
+  console.log("???", data);
   const ProfileCircle = styled.div`
     background-color: #${specialColor};
     border: 8px solid white;
@@ -29,6 +28,26 @@ function MyPage({ setIsLogin, isKaikas, setIsKaikas }) {
     width: 7rem;
     border-radius: 43%;
   `;
+
+  async function getKaikas_AllNft(account) {
+    let contracts = [];
+    const headers = {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    };
+    await axios
+      .post(
+        "http://localhost:3001/klaytn/crolling",
+        {
+          account: account,
+        },
+        headers
+      )
+      .then(async (result) => {
+        contracts = result.data;
+      });
+    return contracts;
+  }
 
   function transferToInput(e) {
     setTransTo(e.target.value);
@@ -56,7 +75,7 @@ function MyPage({ setIsLogin, isKaikas, setIsKaikas }) {
         return account;
       })
       .then(async (account) => {
-        await axios.get(`https://testnets-api.opensea.io/api/v1/assets?owner=${account}`).then(async (result) => {
+        await axios.get(`https://testnets-api.opensea.io/assets?owner=${account}`).then(async (result) => {
           setData(result.data.assets);
           console.log("account setting succssed!!!!!");
           setNowAccount(account);
@@ -68,7 +87,7 @@ function MyPage({ setIsLogin, isKaikas, setIsKaikas }) {
           };
           await axios
             .post(
-              "https://thekift.shop/findUser",
+              "http://localhost:3001/findUser",
               {
                 address: account[0].toLowerCase(),
               },
@@ -89,7 +108,7 @@ function MyPage({ setIsLogin, isKaikas, setIsKaikas }) {
                 };
                 await axios
                   .post(
-                    "https://thekift.shop/NFT",
+                    "http://localhost:3001/NFT",
                     {
                       owner: data._id,
                       name: item.name,
@@ -185,7 +204,7 @@ function MyPage({ setIsLogin, isKaikas, setIsKaikas }) {
     };
     await axios
       .post(
-        "https://thekift.shop/listItemOntransfer",
+        "http://localhost:3001/listItemOntransfer",
         {
           openseaId: item.id,
           to: to,
@@ -211,7 +230,7 @@ function MyPage({ setIsLogin, isKaikas, setIsKaikas }) {
     };
     await axios
       .post(
-        "https://thekift.shop/changeOwnerAndOwnedNFTs",
+        "http://localhost:3001/changeOwnerAndOwnedNFTs",
         {
           address: transTo.toLowerCase(),
           openseaId: item.id,
@@ -237,20 +256,34 @@ function MyPage({ setIsLogin, isKaikas, setIsKaikas }) {
           await window.klaytn._kaikas.isApproved().then((result) => {
             if (result === true) {
               const caver = new Caver(window.klaytn);
-              caver.klay.getAccounts().then((account) => {
-                console.log("nopwacc", account[0].toLowerCase());
-                console.log("nopwacc2", window.klaytn.selectedAddress);
-
-                const headers = {
-                  "Content-Type": "application/json",
-                  Accept: "application/json",
-                };
-                axios.post("https://thekift.shop/klaytn/fetchNFT", { ownerAddress: account[0].toLowerCase() }, headers).then((result) => {
-                  console.log("result??", result);
-                  setRegdate(result.data.result.createdAt.slice(0, 10));
-                  setData(result.data.result.ownedNFTs);
-                  console.log(result.data.result.ownedNFTs);
-                });
+              caver.klay.getAccounts().then(async (account) => {
+                await getKaikas_AllNft(account[0].toLowerCase()).then(async (contracts) => {
+                  console.log("?", contracts);
+                  if (contracts === false) {
+                    const headers = {
+                      "Content-Type": "application/json",
+                      Accept: "application/json",
+                    };
+                    await axios.post("http://localhost:3001/regdate", { address: account[0].toLowerCase() }, headers).then(async (result) => {
+                      await setRegdate(result.data.createdAt.slice(0, 10));
+                      await setData([]);
+                    });
+                  } else {
+                    contracts.map(async (contract) => {
+                      const headers = {
+                        "Content-Type": "application/json",
+                        Accept: "application/json",
+                      };
+                      await axios
+                        .post("http://localhost:3001/klaytn/fetchNFT", { ownerAddress: account[0].toLowerCase(), thisContract: contract }, headers)
+                        .then(async (result) => {
+                          console.log("result??", result);
+                          await setRegdate(result.data.result.createdAt.slice(0, 10));
+                          await setData(result.data.result.ownedNFTs);
+                        });
+                    });
+                  }
+                }); //kip-17 소유 nft 컨트랙트 다받아오기
 
                 setNowAccount(account);
                 setLoading(false);
@@ -307,7 +340,7 @@ function MyPage({ setIsLogin, isKaikas, setIsKaikas }) {
               <div className="cardGroup">
                 {data.map((item) => {
                   return (
-                    <div key={isKaikas ? `${item.openseaId}` : `${item.id}`} className="card1">
+                    <div className="card1">
                       <div className="card_img_block">
                         <img className="card_img" variant="top" src={item.image_url} />
                       </div>
