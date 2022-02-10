@@ -129,7 +129,6 @@ router.post("/fetchNFT", async (req, res) => {
           });
         })
         .catch((err) => {
-          console.log(err, "this is errererjoerierjoerioejriojeriojerojerio");
           res.status(401).send({ result: err, message: "something's wrong" });
         });
     })

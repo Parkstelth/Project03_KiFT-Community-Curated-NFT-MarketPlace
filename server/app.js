@@ -5,10 +5,6 @@ var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 const cors = require("cors");
 
-// var url = require("url");
-// var queryData = url.parse("https://ipfs.io/ipfs/QmcSDaUtxdug64dGrbjrnqnpyLgLWEjWYL5UoUYwtnXAtU", true);
-// console.log(queryData);
-
 const mongoose = require("mongoose");
 mongoose
   .connect("mongodb+srv://kiftmaster:root1234@kift.q7pbt.mongodb.net/testDB?retryWrites=true&w=majority", {

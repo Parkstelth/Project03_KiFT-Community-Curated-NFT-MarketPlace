@@ -12,7 +12,7 @@ function Market({ setfooter }) {
   useEffect(async () => {
     const dataLoad = async () => {
       await axios
-        .get("https://thekift.shop/fetchItemsonsale")
+        .get("http://localhost:3001/fetchItemsonsale")
         .then((result) => {
           console.log("==유저들의 리스팅 토큰 갖고오기 완료 ==");
           console.log(result.data.data);
