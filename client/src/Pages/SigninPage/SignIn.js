@@ -71,10 +71,8 @@ function SignIn({ setfooter, setLoginAccount, setIsLogin, setIsKaikas, isKaikas 
       params.append("Chain", "baobab");
 
       await axios.post("http://localhost:3001/sign", params, { headers }).then((res) => {
-        console.log(res);
+        document.location.href = "/";
       });
-
-      document.location.href = "/";
     });
   };
   return (
