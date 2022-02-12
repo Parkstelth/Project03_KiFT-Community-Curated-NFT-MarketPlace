@@ -186,6 +186,7 @@ function CreateNft({ isKaikas, setIsKaikas }) {
             setMessage("Please log in to MetaMask");
           } else {
             const imgURI = await ipfs.add(files);
+            console.log("test1", imgURI);
             const metadata = {
               name: name,
               collection: collection,

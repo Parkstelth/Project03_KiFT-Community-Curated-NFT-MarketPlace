@@ -46,8 +46,7 @@
   border: 0;
   border-radius: 0;
   overflow-anchor: none;
-  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
-    border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out,
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out,
     border-radius 0.15s ease;
 }
 @media (prefers-reduced-motion: reduce) {
@@ -462,6 +461,12 @@ button.accordion-button {
 .history_to2.addoption {
   color: black;
   cursor: default;
+}
+
+.history_to2.url {
+  width: 209px;
+  cursor: pointer;
+  color: rgb(32, 129, 226);
 }
 
 .loading {

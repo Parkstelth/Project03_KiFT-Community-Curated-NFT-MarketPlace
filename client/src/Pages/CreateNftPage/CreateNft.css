@@ -146,3 +146,7 @@ button#dropdown-basic-button2.dropdown-toggle.btn.btn-primary::after {
 .warning {
   color: red;
 }
+
+.ant-btn.sell_button.addoption2 {
+  margin-bottom: 11px;
+}

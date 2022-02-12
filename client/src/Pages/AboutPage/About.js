@@ -12,7 +12,7 @@ const Kift_Contract_Address = process.env.REACT_APP_KIFT_CONTRACT_ADDRESS;
 var KiFTabi = require("./KiFTabi");
 var erc721abi = require("./erc721abi");
 
-function About({ loginAccount, isKaikas /* 로그인된 계정 */ }) {
+function About({ loginAccount /* 로그인된 계정 */ }) {
   const [sellitem, setSellitem] = useState([]);
   const [priceSellerPut, setPrice] = useState("");
   const [showModal, setShowModal] = useState(false);
@@ -22,6 +22,7 @@ function About({ loginAccount, isKaikas /* 로그인된 계정 */ }) {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(true);
   const [closebox, setClosebox] = useState(false);
+  const [isKaikas, setIsKaikas] = useState(false);
   const URLparam = document.location.href.split("mypage/")[1]; //about으로 변경준비
 
   const closeModal = () => {
@@ -90,12 +91,14 @@ function About({ loginAccount, isKaikas /* 로그인된 계정 */ }) {
       if (result === true) {
         await window.klaytn._kaikas.isApproved().then(async (result) => {
           if (result === true) {
+            await setIsKaikas(true);
             await loadSellItemOnKlay();
           } else {
             await loadSellItem();
           }
         });
       } else {
+        await setIsKaikas(false);
         await loadSellItem();
       }
     });
@@ -729,7 +732,7 @@ function About({ loginAccount, isKaikas /* 로그인된 계정 */ }) {
                   </div>
                   <div className="detail_menu">
                     <span>blockchain</span>
-                    <span className="right_end">Rinkeby</span>
+                    <span className="right_end">{isKaikas ? "Baobab" : "Rinkeby"}</span>
                   </div>
                 </div>
               </div>
@@ -761,16 +764,32 @@ function About({ loginAccount, isKaikas /* 로그인된 계정 */ }) {
                             Minted
                           </div>
                           <div className="history_price2">...</div>
-                          <div className="history_from2" onClick={() => runEtherscan2(his.from)}>
-                            {String(his.from).slice(0, 6)}
-                            {"..."}
-                            {String(his.from).slice(-6)}
-                          </div>
-                          <div className="history_to2 addoption">
-                            {String(his.to).slice(0, 6)}
-                            {"..."}
-                            {String(his.to).slice(-6)}
-                          </div>
+                          {isKaikas ? (
+                            <div className="history_from">
+                              {String(his.from).slice(0, 6)}
+                              {"..."}
+                              {String(his.from).slice(-6)}
+                            </div>
+                          ) : (
+                            <div className="history_from2" onClick={() => runEtherscan2(his.from)}>
+                              {String(his.from).slice(0, 6)}
+                              {"..."}
+                              {String(his.from).slice(-6)}
+                            </div>
+                          )}
+                          {isKaikas ? (
+                            <div className="history_to2 url" onClick={() => runEtherscan2(his.to)}>
+                              {String(his.to).slice(0, 6)}
+                              {"..."}
+                              {String(his.to).slice(-6)}
+                            </div>
+                          ) : (
+                            <div className="history_to2 addoption">
+                              {String(his.to).slice(0, 6)}
+                              {"..."}
+                              {String(his.to).slice(-6)}
+                            </div>
+                          )}
                           <div className="history_date2">
                             {" "}
                             {String(his.date).slice(0, 10)} {String(his.date).slice(11, 19)}
@@ -871,7 +890,7 @@ function About({ loginAccount, isKaikas /* 로그인된 계정 */ }) {
                             {"..."}
                             {String(his.from).slice(-6)}
                           </div>
-                          <div className="history_to2" onClick={() => runEtherscan2(his.to)}>
+                          <div className="history_to">
                             {String(his.to).slice(0, 6)}
                             {"..."}
                             {String(his.to).slice(-6)}

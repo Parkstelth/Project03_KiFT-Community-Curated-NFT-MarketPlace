@@ -34,9 +34,8 @@ function App() {
   };
 
   useEffect(() => {
-    // if (isKaikas === true) {
     console.log(window.klaytn);
-    if (window.klaytn !== undefined) {
+    if (window.klaytn !== undefined && window.ethereum !== undefined) {
       window.klaytn._kaikas.isUnlocked().then(async (result) => {
         if (result === true) {
           await window.klaytn._kaikas.isApproved().then((result) => {
@@ -58,7 +57,6 @@ function App() {
                   })
                   .then((result) => {
                     console.log(result);
-                    console.log("왜 안돼 ?");
                   })
                   .catch((err) => {
                     console.log(err);
@@ -161,6 +159,82 @@ function App() {
           }
         }
       });
+    } else if (window.klaytn !== undefined && window.ethereum === undefined) {
+      window.klaytn._kaikas.isUnlocked().then(async (result) => {
+        if (result === true) {
+          await window.klaytn._kaikas.isApproved().then((result) => {
+            if (result === true) {
+              window.klaytn.on("accountsChanged", () => {
+                window.location.href = "/";
+              });
+              const caver = new Caver(window.klaytn);
+              caver.klay.getAccounts().then(async (account) => {
+                const headers = {
+                  "Content-Type": "application/x-www-form-urlencoded",
+                  Accept: "*/*",
+                };
+                const params = new URLSearchParams();
+                params.append("address", account[0].toLowerCase());
+                await axios
+                  .post("http://localhost:3001/klaytn/sign", params, {
+                    headers,
+                  })
+                  .then((result) => {
+                    console.log(result);
+                  })
+                  .catch((err) => {
+                    console.log(err);
+                  });
+                setLoginAccount(account[0].toLowerCase());
+                setIsLogin(true);
+                setIsKaikas(true);
+              });
+            } else {
+              alert(`Please log in from our "Sign-in"`);
+              window.location.href = "/signin";
+            }
+          });
+        }
+      });
+    } else if (window.klaytn === undefined && window.ethereum !== undefined) {
+      if (typeof window.ethereum.providers === "undefined") {
+        var metamaskProvider = window.ethereum;
+        console.log("메타마스크만 다운되어있는 것 처리===>", metamaskProvider);
+      } else {
+        var metamaskProvider = window.ethereum.providers.find((provider) => provider.isMetaMask);
+        console.log("여러개 지갑 처리 ==>", metamaskProvider);
+      }
+      console.log("ethereum provider=====>>>>", metamaskProvider);
+      // window.ethereum이 있다면 여기서 window.ethereum이란 메타마스크 설치여부
+      setAccountListner(metamaskProvider); //  지갑 감지 변화
+      try {
+        //메타마스크 지갑 처리
+        const web = new Web3(metamaskProvider);
+        web.eth.getAccounts().then(async (account) => {
+          if (account.length === 0) {
+            setLoginAccount("");
+            setIsLogin(false);
+          } else {
+            setLoginAccount(account[0].toLowerCase());
+            setIsLogin(true);
+            const headers = {
+              "Content-Type": "application/x-www-form-urlencoded",
+              Accept: "*/*",
+            };
+            const params = new URLSearchParams();
+            params.append("loginAddress", account[0].toLowerCase());
+            await axios
+              .post("http://localhost:3001/sign", params, {
+                headers,
+              })
+              .then((res) => {
+                console.log(res);
+              });
+          }
+        });
+      } catch (err) {
+        console.log(err);
+      }
     } else {
       alert("Please download both Metamask and Kaikas Wallet");
     }

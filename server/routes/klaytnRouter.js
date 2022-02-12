@@ -92,8 +92,9 @@ router.post("/fetchNFT", async (req, res) => {
           }
         ).then((result) => {});
         //URI들어가서 정보빼오기
-        User.findOne({ address: reqOwnerAddress }).then((owner) => {
-          axios.get(item.tokenUri).then((result) => {
+        User.findOne({ address: reqOwnerAddress }).then(async (owner) => {
+          console.log("??@@@?@??", item.tokenUri);
+          await axios.get(item.tokenUri).then((result) => {
             KlayNFT.findOneAndUpdate(
               { NFT_Token_id: item.tokenId, contract_address: contractAddress },
               {
