@@ -197,12 +197,24 @@ router.post("/sign", async (req, res) => {
         user.save();
         res.status(200).send("새로운 계정 DB 생성");
       } else {
-        res.status(408).send("기존 계정 DB 존재");
+        res.status(208).send("기존 계정 DB 존재");
       }
     })
     .catch((err) => {
       console.log(err);
       res.status(409).send({ message: e });
+    });
+});
+
+router.get("/fetchItemsOnSale", async (req, res) => {
+  KlayNFT.find({ isSale: true })
+    .sort({ _id: -1 })
+    .then(async (result) => {
+      res.status(200).send({ message: "fetch listed Items Successed!", data: result });
+      console.log(result, "succeeded!");
+    })
+    .catch((err) => {
+      res.status(401).send(err);
     });
 });
 
