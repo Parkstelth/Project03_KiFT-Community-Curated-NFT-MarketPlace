@@ -206,4 +206,182 @@ router.post("/sign", async (req, res) => {
     });
 });
 
+router.post("/listItemOnlist", async (req, res) => {
+  let reqOpenseaId = req.body.openseaId;
+  let reqPrice = req.body.price;
+  let reqIsSale = req.body.isSale;
+  let reqItemIdOnBlockChain = req.body.itemIdOnBlockChain;
+  let sellfrom = req.body.from;
+  KlayNFT.updateOne(
+    {
+      openseaId: reqOpenseaId,
+    },
+    {
+      isSale: reqIsSale,
+      price: reqPrice,
+      itemIdOnBlockChain: reqItemIdOnBlockChain,
+      $push: {
+        history: {
+          event: "list",
+          date: new Date(),
+          price: reqPrice,
+          from: sellfrom,
+          to: " ",
+        },
+      },
+    }
+  )
+    .then(async (result) => {
+      res.status(200).send({
+        message: "document successfully changed, listing item succeeded!",
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(400).send(err);
+    });
+});
+
+router.post("/listItemOnchange", async (req, res) => {
+  let reqOpenseaId = req.body.openseaId;
+  let reqPrice = req.body.price;
+  let changefrom = req.body.from;
+  KlayNFT.updateOne(
+    {
+      openseaId: reqOpenseaId,
+    },
+    {
+      price: reqPrice,
+      $push: {
+        history: {
+          event: "PriceChange",
+          date: new Date(),
+          price: reqPrice,
+          from: changefrom,
+          to: " ",
+        },
+      },
+    }
+  )
+    .then(async (result) => {
+      res.status(200).send({
+        message: "This Item Price change Success!",
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(400).send(err);
+    });
+});
+
+router.post("/listItemOncancel", async (req, res) => {
+  let reqOpenseaId = req.body.openseaId;
+  let reqPrice = req.body.price;
+  let reqIsSale = req.body.isSale;
+  let reqItemIdOnBlockChain = req.body.itemIdOnBlockChain;
+  let cancelfrom = req.body.from;
+  KlayNFT.updateOne(
+    {
+      openseaId: reqOpenseaId,
+    },
+    {
+      isSale: reqIsSale,
+      price: reqPrice,
+      itemIdOnBlockChain: reqItemIdOnBlockChain,
+      $push: {
+        history: {
+          event: "unlist",
+          date: new Date(),
+          price: " ",
+          from: cancelfrom,
+          to: " ",
+        },
+      },
+    }
+  )
+    .then(async (result) => {
+      res.status(200).send({
+        message: "document successfully changed, listing item succeeded!",
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(400).send(err);
+    });
+});
+
+router.post("/listItemOnbuy", async (req, res) => {
+  let reqOpenseaId = req.body.openseaId;
+  let reqPrice = req.body.price;
+  let reqIsSale = req.body.isSale;
+  let reqItemIdOnBlockChain = req.body.itemIdOnBlockChain;
+  let buyto = req.body.to;
+  let buyfrom = req.body.from;
+  let buyprice = req.body.itemprice;
+  KlayNFT.updateOne(
+    {
+      openseaId: reqOpenseaId,
+    },
+    {
+      isSale: reqIsSale,
+      price: reqPrice,
+      itemIdOnBlockChain: reqItemIdOnBlockChain,
+      $push: {
+        history: {
+          event: "buy",
+          date: new Date(),
+          price: buyprice,
+          from: buyfrom,
+          to: buyto,
+        },
+      },
+    }
+  )
+    .then(async (result) => {
+      res.status(200).send({
+        message: "document successfully changed, listing item succeeded!",
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(400).send(err);
+    });
+});
+
+router.post("/changeOwnerAndOwnedNFTs", async (req, res) => {
+  let reqBuyerAccount = req.body.address;
+  let reqOpenseaId = req.body.openseaId;
+
+  //구매자를 조회하여 오브젝트 아이디 를 가져옵니다
+  User.findOne({ address: reqBuyerAccount })
+    .then((result) => {
+      return result.id;
+    })
+    .then(async (buyerObjectId) => {
+      await KlayNFT.findOne({ openseaId: reqOpenseaId })
+        .then((result) => {
+          return result;
+        })
+        .then((itemNFT) => {
+          //오브젝트 아이디를 통해 판매자의 소유 NFT배열에서 빼줍니다
+          User.findOneAndUpdate({ _id: itemNFT.owner }, { $pull: { ownedNFTs: itemNFT._id } }).then((result) => {});
+        });
+
+      //NFT 의 주인을 바꾸고 구매자의 소유 NFT 배열에 넣어줍니다
+      await KlayNFT.findOneAndUpdate({ openseaId: reqOpenseaId }, { owner: buyerObjectId })
+        .then((result) => {
+          return result;
+        })
+        .then((itemNFT) => {
+          User.findOneAndUpdate({ address: reqBuyerAccount }, { $addToSet: { ownedNFTs: itemNFT._id } }).then((result) => {
+            res.status(200).send({ result: result, message: "done!!!!" });
+          });
+        });
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(401).send({ message: "changeOwnerAndOwnedNFTs APIs Failed", result: err });
+    });
+});
+
 module.exports = router;

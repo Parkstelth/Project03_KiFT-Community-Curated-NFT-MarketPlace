@@ -19,8 +19,9 @@ function MyPage({ setIsLogin, isKaikas, setIsKaikas }) {
   const [message, setMessage] = useState("");
   const [inputbox, setInputbox] = useState(false);
   const [transloading, setTransloading] = useState(false);
+  // const [isKaikas, setIsKaikas] = useState(false);
+  console.log("iska", isKaikas);
 
-  console.log("???", data);
   const ProfileCircle = styled.div`
     background-color: #${specialColor};
     border: 8px solid white;
@@ -253,8 +254,9 @@ function MyPage({ setIsLogin, isKaikas, setIsKaikas }) {
     function fetchData() {
       window.klaytn._kaikas.isUnlocked().then(async (result) => {
         if (result === true) {
-          await window.klaytn._kaikas.isApproved().then((result) => {
+          await window.klaytn._kaikas.isApproved().then(async (result) => {
             if (result === true) {
+              // await setIsKaikas(true);
               const caver = new Caver(window.klaytn);
               caver.klay.getAccounts().then(async (account) => {
                 await getKaikas_AllNft(account[0].toLowerCase()).then(async (contracts) => {
@@ -301,7 +303,15 @@ function MyPage({ setIsLogin, isKaikas, setIsKaikas }) {
   }, []);
 
   useEffect(() => {
-    // console.log(nowAccount, "============================");
+    // window.klaytn._kaikas.isUnlocked().then(async (result) => {
+    //   if (result === true) {
+    //     await window.klaytn._kaikas.isApproved().then(async (result) => {
+    //       if (result === true) {
+    //         await setIsKaikas(true);
+    //       }
+    //     });
+    //   }
+    // });
 
     if (nowAccount[0] !== undefined) {
       setColor(nowAccount[0].slice(-6));
