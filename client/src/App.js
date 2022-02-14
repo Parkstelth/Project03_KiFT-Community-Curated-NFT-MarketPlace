@@ -35,14 +35,14 @@ function App() {
 
   useEffect(() => {
     console.log(window.klaytn);
+    window.klaytn.on("accountsChanged", () => {
+      window.location.href = "/";
+    });
     if (window.klaytn !== undefined && window.ethereum !== undefined) {
       window.klaytn._kaikas.isUnlocked().then(async (result) => {
         if (result === true) {
           await window.klaytn._kaikas.isApproved().then((result) => {
             if (result === true) {
-              window.klaytn.on("accountsChanged", () => {
-                window.location.href = "/";
-              });
               const caver = new Caver(window.klaytn);
               caver.klay.getAccounts().then(async (account) => {
                 const headers = {
@@ -59,7 +59,7 @@ function App() {
                     console.log(result);
                   })
                   .catch((err) => {
-                    console.log(err);
+                    console.log(err, "is this what you want?");
                   });
                 setLoginAccount(account[0].toLowerCase());
                 setIsLogin(true);
