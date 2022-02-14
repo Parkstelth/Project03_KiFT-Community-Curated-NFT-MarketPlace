@@ -71,7 +71,6 @@ router.post("/fetchNFT", async (req, res) => {
 
   result
     .then((result) => {
-      console.log("new@@@@@@@", result);
       result.items.map((item) => {
         let randomNum = Math.floor(Math.random() * 10000000);
         mintedDate = new Date(item.createdAt * 1000);
@@ -97,16 +96,10 @@ router.post("/fetchNFT", async (req, res) => {
           console.log("??@@@?@??", item.tokenUri.slice(0, 4));
 
           if (item.tokenUri.slice(0, 4) === "http") {
-            await axios.get(item.tokenUri).then((result) => {
-              KlayNFT.findOneAndUpdate(
-                { NFT_Token_id: item.tokenId, contract_address: contractAddress },
+            await axios.get(item.tokenUri).then(async (result) => {
+              await KlayNFT.findOneAndUpdate(
+                { NFT_Token_id: item.tokenId, contract_address: contractAddress, history: null },
                 {
-                  name: result.data.name,
-                  collection: result.data.collection,
-                  description: result.data.description,
-                  image_url: result.data.image,
-                  traits: result.data.attributes,
-                  owner: owner._id,
                   $addToSet: {
                     history: {
                       event: "minted",
@@ -117,14 +110,50 @@ router.post("/fetchNFT", async (req, res) => {
                     },
                   },
                 }
+              );
+
+              await KlayNFT.findOneAndUpdate(
+                { NFT_Token_id: item.tokenId, contract_address: contractAddress },
+                {
+                  name: result.data.name,
+                  collection: result.data.collection,
+                  description: result.data.description,
+                  image_url: result.data.image,
+                  traits: result.data.attributes,
+                  owner: owner._id,
+                  /* $addToSet: {
+                    history: {
+                      event: "minted",
+                      date: mintedDate, //어떻게 해야할지 모르겠어서 일단 이렇게 해둠
+                      price: "",
+                      from: "",
+                      to: reqOwnerAddress,
+                    },
+                  }, */
+                }
               ).then((result) => {
                 // console.log(result._id);
                 User.findOneAndUpdate({ address: reqOwnerAddress }, { $addToSet: { ownedNFTs: result._id } }).then((result) => {});
               });
             });
           } else if (item.tokenUri.slice(0, 7) === "ipfs://") {
-            await axios.get(`https://ipfs.io/ipfs/${item.tokenUri.slice(7)}`).then((result) => {
-              KlayNFT.findOneAndUpdate(
+            await axios.get(`https://ipfs.io/ipfs/${item.tokenUri.slice(7)}`).then(async (result) => {
+              await KlayNFT.findOneAndUpdate(
+                { NFT_Token_id: item.tokenId, contract_address: contractAddress, history: null },
+                {
+                  $addToSet: {
+                    history: {
+                      event: "minted",
+                      date: mintedDate, //어떻게 해야할지 모르겠어서 일단 이렇게 해둠
+                      price: "",
+                      from: "",
+                      to: reqOwnerAddress,
+                    },
+                  },
+                }
+              );
+
+              await KlayNFT.findOneAndUpdate(
                 { NFT_Token_id: item.tokenId, contract_address: contractAddress },
                 {
                   name: result.data.name,
@@ -198,7 +227,7 @@ router.post("/sign", async (req, res) => {
         user.save();
         res.status(200).send("새로운 계정 DB 생성");
       } else {
-        res.status(208).send("기존 계정 DB 존재");
+        res.status(408).send("기존 계정 DB 존재");
       }
     })
     .catch((err) => {
