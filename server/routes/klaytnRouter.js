@@ -98,19 +98,6 @@ router.post("/fetchNFT", async (req, res) => {
 
           if (item.tokenUri.slice(0, 4) === "http") {
             await axios.get(item.tokenUri).then((result) => {
-              KlayNFT.findOneAndUpdate({ NFT_Token_id: item.tokenId, contract_address: contractAddress, history: null }),
-                {
-                  $addToSet: {
-                    history: {
-                      event: "minted",
-                      date: mintedDate, //어떻게 해야할지 모르겠어서 일단 이렇게 해둠
-                      price: "",
-                      from: "",
-                      to: reqOwnerAddress,
-                    },
-                  },
-                };
-
               KlayNFT.findOneAndUpdate(
                 { NFT_Token_id: item.tokenId, contract_address: contractAddress },
                 {
@@ -120,26 +107,22 @@ router.post("/fetchNFT", async (req, res) => {
                   image_url: result.data.image,
                   traits: result.data.attributes,
                   owner: owner._id,
+                  $addToSet: {
+                    history: {
+                      event: "minted",
+                      date: mintedDate, //어떻게 해야할지 모르겠어서 일단 이렇게 해둠
+                      price: "",
+                      from: "",
+                      to: reqOwnerAddress,
+                    },
+                  },
                 }
               ).then((result) => {
-                // console.log(result);
+                // console.log(result._id);
                 User.findOneAndUpdate({ address: reqOwnerAddress }, { $addToSet: { ownedNFTs: result._id } }).then((result) => {});
               });
             });
           } else if (item.tokenUri.slice(0, 7) === "ipfs://") {
-            KlayNFT.findOneAndUpdate({ NFT_Token_id: item.tokenId, contract_address: contractAddress, history: null }),
-              {
-                $addToSet: {
-                  history: {
-                    event: "minted",
-                    date: mintedDate, //어떻게 해야할지 모르겠어서 일단 이렇게 해둠
-                    price: "",
-                    from: "",
-                    to: reqOwnerAddress,
-                  },
-                },
-              };
-
             await axios.get(`https://ipfs.io/ipfs/${item.tokenUri.slice(7)}`).then((result) => {
               KlayNFT.findOneAndUpdate(
                 { NFT_Token_id: item.tokenId, contract_address: contractAddress },
@@ -150,6 +133,15 @@ router.post("/fetchNFT", async (req, res) => {
                   image_url: `https://ipfs.io/ipfs/${result.data.image.slice(7)}`, //
                   traits: result.data.attributes,
                   owner: owner._id,
+                  $addToSet: {
+                    history: {
+                      event: "minted",
+                      date: mintedDate, //어떻게 해야할지 모르겠어서 일단 이렇게 해둠
+                      price: "",
+                      from: "",
+                      to: reqOwnerAddress,
+                    },
+                  },
                 }
               ).then((result) => {
                 // console.log(result._id);
