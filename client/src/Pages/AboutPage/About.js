@@ -405,6 +405,7 @@ function About({ loginAccount /* 로그인된 계정 */ }) {
               const caver = new Caver(window.klaytn);
               caver.klay.getAccounts().then(async (account) => {
                 let contract = await new caver.klay.Contract(KiFTabi_Klaytn, Kift_Kip_Contract_Address);
+
                 await contract.methods
                   .isApprovedForAll(sellitem.contract_address, Kift_Kip_Contract_Address)
                   //서버에게 어프로브 되어있는지 검사합니다.
