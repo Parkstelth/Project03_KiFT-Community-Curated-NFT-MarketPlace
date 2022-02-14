@@ -71,6 +71,7 @@ router.post("/fetchNFT", async (req, res) => {
 
   result
     .then((result) => {
+      console.log("new@@@@@@@", result);
       result.items.map((item) => {
         let randomNum = Math.floor(Math.random() * 10000000);
         mintedDate = new Date(item.createdAt * 1000);
@@ -401,6 +402,41 @@ router.get("/fetchItemsOnSale", async (req, res) => {
     })
     .catch((err) => {
       res.status(401).send(err);
+    });
+});
+
+router.post("/listItemOntransfer", async (req, res) => {
+  let reqOpenseaId = req.body.openseaId;
+  let reqfrom = req.body.from;
+  let reqto = req.body.to;
+
+  KlayNFT.updateOne(
+    {
+      openseaId: reqOpenseaId,
+    },
+    {
+      price: 0,
+      isSale: false,
+      itemIdOnBlockChain: null,
+      $push: {
+        history: {
+          event: "Transfer",
+          date: new Date(),
+          price: " ",
+          from: reqfrom,
+          to: reqto,
+        },
+      },
+    }
+  )
+    .then(async (result) => {
+      res.status(200).send({
+        message: "This NFT Item transfer Success!",
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(400).send(err);
     });
 });
 

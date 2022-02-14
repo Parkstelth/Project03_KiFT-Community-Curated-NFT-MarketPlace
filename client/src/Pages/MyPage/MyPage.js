@@ -21,7 +21,6 @@ function MyPage({ setIsLogin, isKaikas, setIsKaikas }) {
   const [inputbox, setInputbox] = useState(false);
   const [transloading, setTransloading] = useState(false);
   // const [isKaikas, setIsKaikas] = useState(false);
-  console.log("iska", isKaikas);
 
   const ProfileCircle = styled.div`
     background-color: #${specialColor};
@@ -166,6 +165,7 @@ function MyPage({ setIsLogin, isKaikas, setIsKaikas }) {
           web.eth
             .getAccounts()
             .then(async (account) => {
+              console.log("test", item);
               let contract = await new web.eth.Contract(erc721abi, item.asset_contract.address);
               await contract.methods
                 .transferFrom(account[0], transTo, item.token_id)
@@ -208,9 +208,10 @@ function MyPage({ setIsLogin, isKaikas, setIsKaikas }) {
                 caver.klay
                   .getAccounts()
                   .then(async (account) => {
-                    let contract = await new caver.klay.Contract(kip17abi, item.asset_contract.address);
+                    let contract = await new caver.klay.Contract(kip17abi, item.contract_address);
+                    var hex = parseInt(item.NFT_Token_id.slice(2), 16);
                     await contract.methods
-                      .transferFrom(account[0], transTo, item.token_id)
+                      .transferFrom(account[0], transTo, hex)
                       .send({
                         from: account[0],
                         gas: 500000,
@@ -284,7 +285,7 @@ function MyPage({ setIsLogin, isKaikas, setIsKaikas }) {
         .post(
           "http://localhost:3001/klaytn/listItemOntransfer",
           {
-            openseaId: item.id,
+            openseaId: item.openseaId,
             to: to,
             from: from,
           },
@@ -337,7 +338,7 @@ function MyPage({ setIsLogin, isKaikas, setIsKaikas }) {
           "http://localhost:3001/klaytn/changeOwnerAndOwnedNFTs",
           {
             address: transTo.toLowerCase(),
-            openseaId: item.id,
+            openseaId: item.openseaId,
           },
           headers
         )
@@ -375,6 +376,7 @@ function MyPage({ setIsLogin, isKaikas, setIsKaikas }) {
                       await setData([]);
                     });
                   } else {
+                    console.log("test?", contracts);
                     contracts.map(async (contract) => {
                       const headers = {
                         "Content-Type": "application/json",

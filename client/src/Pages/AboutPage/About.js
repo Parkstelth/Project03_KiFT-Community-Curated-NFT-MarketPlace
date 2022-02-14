@@ -265,7 +265,7 @@ function About({ loginAccount /* 로그인된 계정 */ }) {
               .catch((err) => {
                 console.log(err);
               });
-            // document.location.href = `/mypage/${URLparam}`;
+            document.location.href = `/mypage/${URLparam}`;
           }
         })
         .catch((e) => {
@@ -306,7 +306,7 @@ function About({ loginAccount /* 로그인된 계정 */ }) {
               .catch((err) => {
                 console.log(err);
               });
-            // document.location.href = `/mypage/${URLparam}`;
+            document.location.href = `/mypage/${URLparam}`;
           }
         })
         .catch((e) => {

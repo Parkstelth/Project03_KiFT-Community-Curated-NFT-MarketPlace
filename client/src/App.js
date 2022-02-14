@@ -36,7 +36,7 @@ function App() {
   useEffect(() => {
     console.log(window.klaytn);
     window.klaytn.on("accountsChanged", () => {
-      window.location.href = "/";
+      // window.location.href = "/";
     });
     if (window.klaytn !== undefined && window.ethereum !== undefined) {
       window.klaytn._kaikas.isUnlocked().then(async (result) => {
