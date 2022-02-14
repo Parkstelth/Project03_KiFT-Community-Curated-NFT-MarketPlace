@@ -34,10 +34,10 @@ function App() {
   };
 
   useEffect(() => {
-    console.log(window.klaytn);
-    window.klaytn.on("accountsChanged", () => {
-      // window.location.href = "/";
-    });
+    // console.log(window.klaytn);
+    // window.klaytn.on("accountsChanged", () => {
+    //   // window.location.href = "/";
+    // });
     if (window.klaytn !== undefined && window.ethereum !== undefined) {
       window.klaytn._kaikas.isUnlocked().then(async (result) => {
         if (result === true) {

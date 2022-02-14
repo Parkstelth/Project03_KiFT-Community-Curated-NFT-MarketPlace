@@ -388,6 +388,13 @@ button.accordion-button {
   font-size: 1.4rem;
   font-family: Euclid, Roboto, Helvetica, Arial, sans-serif;
 }
+
+.price_set2 {
+  font-size: 1.4rem;
+  font-family: Euclid, Roboto, Helvetica, Arial, sans-serif;
+  padding-top: 2px;
+}
+
 .eth-logo {
   width: 13px;
   display: block;
