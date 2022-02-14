@@ -8,6 +8,7 @@ function Market({ setfooter }) {
   const [userMarketData, setUserMarketData] = useState([]);
   const [marketData, setMarketData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isKaikas, setisKaikas] = useState(false);
 
   useEffect(async () => {
     // if (window.klaytn !== undefined && window.ethereum !== undefined) {
@@ -24,6 +25,7 @@ function Market({ setfooter }) {
         if (result === true) {
           window.klaytn._kaikas.isApproved().then(async (result) => {
             if (result === true) {
+              setisKaikas(true);
               try {
                 const response = await axios.get("http://localhost:3001/klaytn/FetchItemsOnSale");
                 setUserMarketData(response.data.data);
@@ -88,7 +90,7 @@ function Market({ setfooter }) {
         <div className="row">
           <hr className="divider" />
         </div>
-        {loading ? <Loading className="loading" /> : <Item marketData={marketData} userMarketData={userMarketData}></Item>}
+        {loading ? <Loading className="loading" /> : <Item marketData={marketData} userMarketData={userMarketData} isKaikas={isKaikas}></Item>}
       </div>
     </div>
   );

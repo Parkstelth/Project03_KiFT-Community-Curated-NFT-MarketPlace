@@ -393,6 +393,12 @@ button.accordion-button {
   display: block;
   margin-right: 9px;
 }
+.klay-logo {
+  width: 20px;
+  display: block;
+  margin-right: 9px;
+  margin-top: 4px;
+}
 
 .accord.addoption.accordion {
   margin-top: 10px;

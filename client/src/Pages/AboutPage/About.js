@@ -1130,7 +1130,12 @@ function About({ loginAccount /* 로그인된 계정 */ }) {
                   loginAccount === ownerAddress ? (
                     <>
                       {" "}
-                      <input className="price" placeholder={`Current Price : ${sellitem.price} ETH`} value={priceSellerPut} onChange={onChange} />
+                      <input
+                        className="price"
+                        placeholder={`Current Price : ${sellitem.price} ${isKaikas ? "KLAY" : "ETH"}`}
+                        value={priceSellerPut}
+                        onChange={onChange}
+                      />
                       <button className="sell_button addoption" onClick={changePrice}>
                         Change Price
                       </button>
@@ -1141,7 +1146,32 @@ function About({ loginAccount /* 로그인된 계정 */ }) {
                   ) : (
                     <>
                       <div className="price_box">
-                        <img className="eth-logo" src="https://storage.opensea.io/files/6f8e2979d428180222796ff4a33ab929.svg" />
+                        {isKaikas ? (
+                          <div className="klay-logo">
+                            <svg
+                              className="kaikas-Logo"
+                              version="1.1"
+                              id="Layer_1"
+                              xmlns="http://www.w3.org/2000/svg"
+                              xmlns="http://www.w3.org/1999/xlink"
+                              x="0px"
+                              y="0px"
+                              viewBox="0 0 2000 1975.1"
+                              xml="preserve"
+                            >
+                              {/* <style type="text/css">.st0{`fill:#4F473B`}</style> */}
+                              <g>
+                                <path className="st0" d="M1047.4,982.5l683.3,678.3c359.1-380.9,359.1-975.7,0-1356.6" />
+                                <path className="st0" d="M997.5,1027.4l-673.3,668.3l673.3,279.3l673.3-279.3" />
+                                <path className="st0" d="M972.6,957.6l698.3-693.3L1027.4,0L389,1541.2L972.6,957.6z" />
+                                <path className="st0" d="M0,982.5c-0.5,252.3,95.9,495.1,269.3,678.3l668.3-1611" />
+                              </g>
+                            </svg>
+                          </div>
+                        ) : (
+                          <img className="eth-logo" src="https://storage.opensea.io/files/6f8e2979d428180222796ff4a33ab929.svg" />
+                        )}
+
                         <span className="price_set">{sellitem.price}</span>
                       </div>
                       <button className="sell_button" onClick={buyNFT}>
