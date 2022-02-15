@@ -28,7 +28,7 @@ function Nav({ isLogin, isKaikas }) {
               </Link>
             </Dropdown.Item>
             <Dropdown.Item>
-              <Link to="/" className="noneDeco">
+              <Link to="staking" className="noneDeco">
                 Staking
               </Link>
             </Dropdown.Item>

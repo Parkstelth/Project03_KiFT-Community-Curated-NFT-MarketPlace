@@ -11,6 +11,7 @@ import Search from "./Pages/SearchPage/Search";
 import CreateNft from "./Pages/CreateNftPage/CreateNft";
 import NotFound from "./Pages/NotFoundPage/notfound";
 import Nav from "./Pages/FrontPage/Nav";
+import Staking from "./Pages/StakingPage/Staking";
 import Footer from "./Pages/FrontPage/Footer";
 import { useState, useEffect } from "react";
 import Web3 from "web3";
@@ -33,16 +34,21 @@ function App() {
     provider.on("accountsChanged", (_) => (window.location.href = "/"));
   };
 
+  // useEffect(async () => {
+  //   if (window.klay !== undefined) {
+  //     await window.klaytn.on("accountsChanged", () => {
+  //       console.log("jax");
+  //     });
+  //   }
+  // }, []);
+
   useEffect(() => {
-    // console.log(window.klaytn);
-    // window.klaytn.on("accountsChanged", () => {
-    //   // window.location.href = "/";
-    // });
     if (window.klaytn !== undefined && window.ethereum !== undefined) {
       window.klaytn._kaikas.isUnlocked().then(async (result) => {
         if (result === true) {
           await window.klaytn._kaikas.isApproved().then((result) => {
             if (result === true) {
+              setAccountListner(window.klaytn);
               const caver = new Caver(window.klaytn);
               caver.klay.getAccounts().then(async (account) => {
                 const headers = {
@@ -258,6 +264,7 @@ function App() {
         <Route path="/mypage" element={<Mypage setIsLogin={setIsLogin} isKaikas={isKaikas} />} />
         <Route path="mypage/:id" element={<About loginAccount={loginAccount} isKaikas={isKaikas} />} />
         <Route path="/claim" element={<Claim />} />
+        <Route path="/staking" element={<Staking />} />
         <Route path="/create" element={<CreateNft setIsKaikas={setIsKaikas} isKaikas={isKaikas} />} />
         <Route path="/search" element={<Search />} />
         <Route path=":id" element={<NotFound />} />
