@@ -39,8 +39,9 @@ function Claim(isLogin) {
   }
 
   useEffect(async () => {
-    if (typeof window.ethereum === undefined) {
-      setStatus("Wallet not connected. Please connect your Metamask wallet to browser.");
+    console.log(window.ethereum);
+    if (window.ethereum === undefined) {
+      setStatus("Please download and Login Metamask!");
     } else {
       if (typeof window.ethereum.providers === "undefined") {
         var metamaskProvider = window.ethereum;
@@ -56,7 +57,7 @@ function Claim(isLogin) {
         setAccount(accounts[0].toLowerCase());
         web.eth.getAccounts().then(async (account) => {
           await axios
-            .post("https://thekift.shop/findUser", {
+            .post("http://localhost:3001/findUser", {
               address: account[0].toLowerCase(),
             })
             .then((result) => {
@@ -108,7 +109,7 @@ function Claim(isLogin) {
         web.eth.getAccounts().then(async (account) => {
           //계정 조회후 포인트 받아옴
           await axios
-            .post("https://thekift.shop/findUser", {
+            .post("http://localhost:3001/findUser", {
               address: account[0].toLowerCase(),
             })
             .then((result) => {
@@ -118,11 +119,10 @@ function Claim(isLogin) {
             .then(async (point) => {
               //포인트 있으면 민트 가능!!
               if (point > 0) {
-                let numbersUserCanClaim = point * 7 * 1000000000000000000;
-                console.log(numbersUserCanClaim.toString());
+                let numbersUserCanClaim = point * 7;
                 let contract = await new web.eth.Contract(KiFTTokenabi, process.env.REACT_APP_KIFT_TOKEN_CONTRACT_ADDRESS);
                 await contract.methods
-                  .mintToken(account[0], numbersUserCanClaim.toString())
+                  .mintToken(account[0], web.utils.toWei(String(numbersUserCanClaim), "ether"))
                   .send({
                     from: account[0],
                     gas: 100000,
@@ -133,7 +133,7 @@ function Claim(isLogin) {
                     if (receipt.blockHash) {
                       //민트 성공하면 디비 초기화 !!
                       await axios
-                        .post("https://thekift.shop/initializePoints", {
+                        .post("http://localhost:3001/initializePoints", {
                           address: account[0].toLowerCase(),
                         })
                         .then((result) => {

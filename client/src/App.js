@@ -7,10 +7,13 @@ import SignIn from "./Pages/SigninPage/SignIn";
 import Mypage from "./Pages/MyPage/MyPage";
 import About from "./Pages/AboutPage/About";
 import Claim from "./Pages/ClaimPage/Claim";
+import ClaimForKlaytn from "./Pages/ClaimPageForKlaytn/ClaimForKlaytn";
 import Search from "./Pages/SearchPage/Search";
 import CreateNft from "./Pages/CreateNftPage/CreateNft";
 import NotFound from "./Pages/NotFoundPage/notfound";
 import Nav from "./Pages/FrontPage/Nav";
+import Staking from "./Pages/StakingPage/Staking";
+import StakingForKlaytn from "./Pages/StakingForKlaytnPage/StakingForKlaytn";
 import Footer from "./Pages/FrontPage/Footer";
 import { useState, useEffect } from "react";
 import Web3 from "web3";
@@ -33,141 +36,219 @@ function App() {
     provider.on("accountsChanged", (_) => (window.location.href = "/"));
   };
 
+  // useEffect(async () => {
+  //   if (window.klay !== undefined) {
+  //     await window.klaytn.on("accountsChanged", () => {
+  //       console.log("jax");
+  //     });
+  //   }
+  // }, []);
+
   useEffect(() => {
-    window.klaytn._kaikas.isUnlocked().then(async (result) => {
-      if (result === true) {
-        await window.klaytn._kaikas.isApproved().then((result) => {
-          if (result === true) {
-            const caver = new Caver(window.klaytn);
-            window.klaytn.on("accountsChanged", (_) => (window.location.href = "/"));
-
-            caver.klay.getAccounts().then(async (account) => {
-              const headers = {
-                "Content-Type": "application/x-www-form-urlencoded",
-                Accept: "*/*",
-              };
-              const params = new URLSearchParams();
-              params.append("address", account[0].toLowerCase());
-
-              await axios
-                .post("https://thekift.shop/klaytn/sign", params, {
-                  headers,
-                })
-                .then((result) => {
-                  console.log(result);
-
-                  console.log("왜 안돼 ?");
-                })
-                .catch((err) => {
-                  console.log(err);
-                });
-
-              setLoginAccount(account[0].toLowerCase());
-              setIsLogin(true);
-              setIsKaikas(true);
-            });
-          } else {
-            if (typeof window.ethereum !== "undefined") {
-              //여러 wallet 플랫폼중 metaMask로 연결
-
-              if (typeof window.ethereum.providers === "undefined") {
-                var metamaskProvider = window.ethereum;
-                console.log("메타마스크만 다운되어있는 것 처리===>", metamaskProvider);
-              } else {
-                var metamaskProvider = window.ethereum.providers.find((provider) => provider.isMetaMask);
-                console.log("여러개 지갑 처리 ==>", metamaskProvider);
-              }
-              console.log("ethereum provider=====>>>>", metamaskProvider);
-              // window.ethereum이 있다면 여기서 window.ethereum이란 메타마스크 설치여부
-              setAccountListner(metamaskProvider); //  지갑 감지 변화
-              try {
-                //메타마스크 지갑 처리
-                const web = new Web3(metamaskProvider);
-                web.eth.getAccounts().then(async (account) => {
-                  if (account.length === 0) {
-                    setLoginAccount("");
-                    setIsLogin(false);
-                  } else {
-                    setLoginAccount(account[0].toLowerCase());
-                    setIsLogin(true);
-
-                    const headers = {
-                      "Content-Type": "application/x-www-form-urlencoded",
-                      Accept: "*/*",
-                    };
-                    const params = new URLSearchParams();
-                    params.append("loginAddress", account[0].toLowerCase());
-
-                    await axios
-                      .post("https://thekift.shop/sign", params, {
-                        headers,
-                      })
-                      .then((res) => {
-                        console.log(res);
-                      });
-                  }
-                });
-              } catch (err) {
-                console.log(err);
-              }
-            } else {
-              var win = window.open("https://metamask.io/download.html", "_blank");
-              win.focus();
-
-              setLoginAccount("");
-              setIsLogin(false);
-            }
-          }
-        });
-      } else {
-        if (typeof window.ethereum !== "undefined") {
-          //여러 wallet 플랫폼중 metaMask로 연결
-
-          if (typeof window.ethereum.providers === "undefined") {
-            var metamaskProvider = window.ethereum;
-            console.log("메타마스크만 다운되어있는 것 처리===>", metamaskProvider);
-          } else {
-            var metamaskProvider = window.ethereum.providers.find((provider) => provider.isMetaMask);
-            console.log("여러개 지갑 처리 ==>", metamaskProvider);
-          }
-          console.log("ethereum provider=====>>>>", metamaskProvider);
-          // window.ethereum이 있다면 여기서 window.ethereum이란 메타마스크 설치여부
-          setAccountListner(metamaskProvider); //  지갑 감지 변화
-          try {
-            //메타마스크 지갑 처리
-            const web = new Web3(metamaskProvider);
-            web.eth.getAccounts().then(async (account) => {
-              if (account.length === 0) {
-                setLoginAccount("");
-                setIsLogin(false);
-              } else {
-                setLoginAccount(account[0].toLowerCase());
-                setIsLogin(true);
-
+    if (window.klaytn !== undefined && window.ethereum !== undefined) {
+      window.klaytn._kaikas.isUnlocked().then(async (result) => {
+        if (result === true) {
+          await window.klaytn._kaikas.isApproved().then((result) => {
+            if (result === true) {
+              setAccountListner(window.klaytn);
+              const caver = new Caver(window.klaytn);
+              caver.klay.getAccounts().then(async (account) => {
                 const headers = {
                   "Content-Type": "application/x-www-form-urlencoded",
                   Accept: "*/*",
                 };
                 const params = new URLSearchParams();
-                params.append("loginAddress", account[0].toLowerCase());
-
-                await axios.post("https://thekift.shop/sign", params, { headers }).then((res) => {
-                  console.log(res);
-                });
+                params.append("address", account[0].toLowerCase());
+                await axios
+                  .post("http://localhost:3001/klaytn/sign", params, {
+                    headers,
+                  })
+                  .then((result) => {
+                    console.log(result);
+                  })
+                  .catch((err) => {
+                    console.log(err, "is this what you want?");
+                  });
+                setLoginAccount(account[0].toLowerCase());
+                setIsLogin(true);
+                setIsKaikas(true);
+              });
+            } else {
+              if (typeof window.ethereum !== "undefined") {
+                //여러 wallet 플랫폼중 metaMask로 연결
+                if (typeof window.ethereum.providers === "undefined") {
+                  var metamaskProvider = window.ethereum;
+                  console.log("메타마스크만 다운되어있는 것 처리===>", metamaskProvider);
+                } else {
+                  var metamaskProvider = window.ethereum.providers.find((provider) => provider.isMetaMask);
+                  console.log("여러개 지갑 처리 ==>", metamaskProvider);
+                }
+                console.log("ethereum provider=====>>>>", metamaskProvider);
+                // window.ethereum이 있다면 여기서 window.ethereum이란 메타마스크 설치여부
+                setAccountListner(metamaskProvider); //  지갑 감지 변화
+                try {
+                  //메타마스크 지갑 처리
+                  const web = new Web3(metamaskProvider);
+                  web.eth.getAccounts().then(async (account) => {
+                    if (account.length === 0) {
+                      setLoginAccount("");
+                      setIsLogin(false);
+                    } else {
+                      setLoginAccount(account[0].toLowerCase());
+                      setIsLogin(true);
+                      const headers = {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                        Accept: "*/*",
+                      };
+                      const params = new URLSearchParams();
+                      params.append("loginAddress", account[0].toLowerCase());
+                      await axios
+                        .post("http://localhost:3001/sign", params, {
+                          headers,
+                        })
+                        .then((res) => {
+                          console.log(res);
+                        });
+                    }
+                  });
+                } catch (err) {
+                  console.log(err);
+                }
+              } else {
+                var win = window.open("https://metamask.io/download.html", "_blank");
+                // win.focus();
+                setLoginAccount("");
+                setIsLogin(false);
               }
-            });
-          } catch (err) {
-            console.log(err);
-          }
+            }
+          });
         } else {
-          var win = window.open("https://metamask.io/download.html", "_blank");
-          win.focus();
-
-          setLoginAccount("");
-          setIsLogin(false);
+          if (typeof window.ethereum !== "undefined") {
+            //여러 wallet 플랫폼중 metaMask로 연결
+            if (typeof window.ethereum.providers === "undefined") {
+              var metamaskProvider = window.ethereum;
+              console.log("메타마스크만 다운되어있는 것 처리===>", metamaskProvider);
+            } else {
+              var metamaskProvider = window.ethereum.providers.find((provider) => provider.isMetaMask);
+              console.log("여러개 지갑 처리 ==>", metamaskProvider);
+            }
+            console.log("ethereum provider=====>>>>", metamaskProvider);
+            // window.ethereum이 있다면 여기서 window.ethereum이란 메타마스크 설치여부
+            setAccountListner(metamaskProvider); //  지갑 감지 변화
+            try {
+              //메타마스크 지갑 처리
+              const web = new Web3(metamaskProvider);
+              web.eth.getAccounts().then(async (account) => {
+                if (account.length === 0) {
+                  setLoginAccount("");
+                  setIsLogin(false);
+                } else {
+                  setLoginAccount(account[0].toLowerCase());
+                  setIsLogin(true);
+                  const headers = {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    Accept: "*/*",
+                  };
+                  const params = new URLSearchParams();
+                  params.append("loginAddress", account[0].toLowerCase());
+                  await axios.post("http://localhost:3001/sign", params, { headers }).then((res) => {
+                    console.log(res);
+                  });
+                }
+              });
+            } catch (err) {
+              console.log(err);
+            }
+          } else {
+            var win = window.open("https://metamask.io/download.html", "_blank");
+            // win.focus();
+            setLoginAccount("");
+            setIsLogin(false);
+          }
         }
+      });
+    } else if (window.klaytn !== undefined && window.ethereum === undefined) {
+      window.klaytn._kaikas.isUnlocked().then(async (result) => {
+        if (result === true) {
+          await window.klaytn._kaikas.isApproved().then((result) => {
+            if (result === true) {
+              window.klaytn.on("accountsChanged", () => {
+                window.location.href = "/";
+              });
+              const caver = new Caver(window.klaytn);
+              caver.klay.getAccounts().then(async (account) => {
+                const headers = {
+                  "Content-Type": "application/x-www-form-urlencoded",
+                  Accept: "*/*",
+                };
+                const params = new URLSearchParams();
+                params.append("address", account[0].toLowerCase());
+                await axios
+                  .post("http://localhost:3001/klaytn/sign", params, {
+                    headers,
+                  })
+                  .then((result) => {
+                    console.log(result);
+                  })
+                  .catch((err) => {
+                    console.log(err);
+                  });
+                setLoginAccount(account[0].toLowerCase());
+                setIsLogin(true);
+                setIsKaikas(true);
+              });
+            } else {
+              alert(`Please log in from our "Sign-in"`);
+              window.location.href = "/signin";
+            }
+          });
+        }
+      });
+    } else if (window.klaytn === undefined && window.ethereum !== undefined) {
+      if (typeof window.ethereum.providers === "undefined") {
+        var metamaskProvider = window.ethereum;
+        console.log("메타마스크만 다운되어있는 것 처리===>", metamaskProvider);
+      } else {
+        var metamaskProvider = window.ethereum.providers.find((provider) => provider.isMetaMask);
+        console.log("여러개 지갑 처리 ==>", metamaskProvider);
       }
-    });
+      console.log("ethereum provider=====>>>>", metamaskProvider);
+      // window.ethereum이 있다면 여기서 window.ethereum이란 메타마스크 설치여부
+      setAccountListner(metamaskProvider); //  지갑 감지 변화
+      try {
+        //메타마스크 지갑 처리
+        const web = new Web3(metamaskProvider);
+        web.eth.getAccounts().then(async (account) => {
+          if (account.length === 0) {
+            setLoginAccount("");
+            setIsLogin(false);
+          } else {
+            setLoginAccount(account[0].toLowerCase());
+            setIsLogin(true);
+            const headers = {
+              "Content-Type": "application/x-www-form-urlencoded",
+              Accept: "*/*",
+            };
+            const params = new URLSearchParams();
+            params.append("loginAddress", account[0].toLowerCase());
+            await axios
+              .post("http://localhost:3001/sign", params, {
+                headers,
+              })
+              .then((res) => {
+                console.log(res);
+              });
+          }
+        });
+      } catch (err) {
+        console.log(err);
+      }
+    } else {
+      alert("Please download Metamask or Kaikas Wallet");
+      var win = window.open("https://metamask.io/download.html", "_blank");
+      var win = window.open("https://chrome.google.com/webstore/detail/kaikas/jblndlipeogpafnldhgmapagcccfchpi?hl=ko", "_blank");
+      // win.focus();
+    }
   }, []);
 
   return (
@@ -188,6 +269,9 @@ function App() {
         <Route path="/mypage" element={<Mypage setIsLogin={setIsLogin} isKaikas={isKaikas} />} />
         <Route path="mypage/:id" element={<About loginAccount={loginAccount} isKaikas={isKaikas} />} />
         <Route path="/claim" element={<Claim />} />
+        <Route path="/claimforklaytn" element={<ClaimForKlaytn />} />
+        <Route path="/staking" element={<Staking />} />
+        <Route path="/StakingForKlaytn" element={<StakingForKlaytn />} />
         <Route path="/create" element={<CreateNft setIsKaikas={setIsKaikas} isKaikas={isKaikas} />} />
         <Route path="/search" element={<Search />} />
         <Route path=":id" element={<NotFound />} />

@@ -46,8 +46,7 @@
   border: 0;
   border-radius: 0;
   overflow-anchor: none;
-  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
-    border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out,
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out,
     border-radius 0.15s ease;
 }
 @media (prefers-reduced-motion: reduce) {
@@ -389,10 +388,23 @@ button.accordion-button {
   font-size: 1.4rem;
   font-family: Euclid, Roboto, Helvetica, Arial, sans-serif;
 }
+
+.price_set2 {
+  font-size: 1.4rem;
+  font-family: Euclid, Roboto, Helvetica, Arial, sans-serif;
+  padding-top: 2px;
+}
+
 .eth-logo {
   width: 13px;
   display: block;
   margin-right: 9px;
+}
+.klay-logo {
+  width: 20px;
+  display: block;
+  margin-right: 9px;
+  margin-top: 4px;
 }
 
 .accord.addoption.accordion {
@@ -462,6 +474,12 @@ button.accordion-button {
 .history_to2.addoption {
   color: black;
   cursor: default;
+}
+
+.history_to2.url {
+  width: 209px;
+  cursor: pointer;
+  color: rgb(32, 129, 226);
 }
 
 .loading {

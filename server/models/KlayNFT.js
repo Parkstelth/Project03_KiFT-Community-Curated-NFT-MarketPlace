@@ -8,7 +8,7 @@ const KlayNFTSchema = new mongoose.Schema(
     isSale: { type: Boolean, default: false }, //
     collectionName: { type: String },
     price: { type: Number, default: 0 },
-    openseaId: { type: Number, default: Math.floor(Math.random() * 10000000) },
+    openseaId: { type: Number },
     name: { type: String },
     contract_address: { type: String, required: true },
     asset_contract_type: { type: String, default: "non-fungible" },

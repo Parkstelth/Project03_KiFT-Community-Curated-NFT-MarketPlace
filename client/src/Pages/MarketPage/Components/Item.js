@@ -1,7 +1,7 @@
 import "./Item.css";
 import { Link } from "react-router-dom";
 
-function Item({ marketData, userMarketData }) {
+function Item({ marketData, userMarketData, isKaikas }) {
   return (
     /* 페이지 넘길 수 있게하거나 혹은 스크롤 밑으로 내리면서 아이템 볼 수 있게 만들어주기! */
     <div className="marketItemContainer">
@@ -21,7 +21,9 @@ function Item({ marketData, userMarketData }) {
             <div className="marketItem_price-item-container">
               <div className="marketItem_price-item">
                 <span>Price</span>
-                <p className="marketItem_price-text">{item.price} ETH</p>
+                <p className="marketItem_price-text">
+                  {item.price} {isKaikas === true ? "KLAY" : "ETH"}
+                </p>
               </div>
             </div>
 

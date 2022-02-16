@@ -5,14 +5,18 @@ import axios from "axios";
 import Loading from "../../component/assets/Loading";
 import NotifyModal from "./Components/NotifyModal.js";
 import Web3 from "web3";
+import Caver from "caver-js";
 import dotenv from "dotenv";
 dotenv.config();
 const Kift_Contract_Address = process.env.REACT_APP_KIFT_CONTRACT_ADDRESS;
+const Kift_Kip_Contract_Address = process.env.REACT_APP_KIFT_KIP_CONTRACT_ADDRESS;
 
 var KiFTabi = require("./KiFTabi");
 var erc721abi = require("./erc721abi");
+var KiFTabi_Klaytn = require("./KiFTabi_Klaytn");
+var kip17abi = require("./kip17abi");
 
-function About({ loginAccount, isKaikas /* 로그인된 계정 */ }) {
+function About({ loginAccount /* 로그인된 계정 */ }) {
   const [sellitem, setSellitem] = useState([]);
   const [priceSellerPut, setPrice] = useState("");
   const [showModal, setShowModal] = useState(false);
@@ -22,6 +26,8 @@ function About({ loginAccount, isKaikas /* 로그인된 계정 */ }) {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(true);
   const [closebox, setClosebox] = useState(false);
+  const [isKaikas, setIsKaikas] = useState(false);
+
   const URLparam = document.location.href.split("mypage/")[1]; //about으로 변경준비
 
   const closeModal = () => {
@@ -34,28 +40,56 @@ function About({ loginAccount, isKaikas /* 로그인된 계정 */ }) {
   };
 
   async function ListItem() {
-    //아이템 마켓에 올리기
+    //Sell 버튼을 통하여 아이템 판매 등록 시작
     setMessage("");
     setShowModal(true);
 
     if (isNaN(priceSellerPut) === false && priceSellerPut !== null && priceSellerPut !== "") {
-      if (typeof window.ethereum.providers === "undefined") {
-        var metamaskProvider = window.ethereum;
-        console.log("메타마스크만 다운되어있는 것 처리===>", metamaskProvider);
-      } else {
-        var metamaskProvider = window.ethereum.providers.find((provider) => provider.isMetaMask);
-        console.log("여러개 지갑 처리 ==>", metamaskProvider);
-      }
-
-      const web = new Web3(metamaskProvider);
-      await web.eth.getAccounts().then(async (account) => {
-        if (ownerAddress === account[0].toLowerCase()) {
-          setApprovalAll();
+      if (isKaikas === false) {
+        if (typeof window.ethereum.providers === "undefined") {
+          var metamaskProvider = window.ethereum;
+          console.log("메타마스크만 다운되어있는 것 처리===>", metamaskProvider);
         } else {
-          setMessage("You aren't NFT Owner!");
-          setClosebox(true);
+          var metamaskProvider = window.ethereum.providers.find((provider) => provider.isMetaMask);
+          console.log("여러개 지갑 처리 ==>", metamaskProvider);
         }
-      });
+        const web = new Web3(metamaskProvider);
+        await web.eth.getAccounts().then(async (account) => {
+          if (ownerAddress === account[0].toLowerCase()) {
+            setApprovalAll(); //서버에게 NFT 권한을 위임하고 블록체인에 NFT등록 및 DB등록 시작
+          } else {
+            setMessage("You aren't NFT Owner!");
+            setClosebox(true);
+          }
+        });
+      } else if (isKaikas === true) {
+        window.klaytn._kaikas.isUnlocked().then(async (result) => {
+          if (result === true) {
+            await window.klaytn._kaikas.isApproved().then(async (result) => {
+              if (result === true) {
+                const caver = new Caver(window.klaytn);
+                caver.klay.getAccounts().then(async (account) => {
+                  if (ownerAddress === account[0].toLowerCase()) {
+                    setApprovalAllKlaytn(); //서버에게 NFT 권한을 위임하고 블록체인에 NFT등록 및 DB등록 시작
+                  } else {
+                    setMessage("You aren't NFT Owner!");
+                    setClosebox(true);
+                  }
+                });
+              } else {
+                setMessage("Please re-Log in Kaikas!");
+                setClosebox(true);
+              }
+            });
+          } else {
+            setMessage("Please Log in Kaikas!");
+            setClosebox(true);
+          }
+        });
+      } else {
+        alert("Kaikas or MetaMask Connect error");
+        document.location.href = `/`;
+      }
     } else {
       setClosebox(true);
       setMessage("Please Submit Price!");
@@ -90,12 +124,14 @@ function About({ loginAccount, isKaikas /* 로그인된 계정 */ }) {
       if (result === true) {
         await window.klaytn._kaikas.isApproved().then(async (result) => {
           if (result === true) {
+            await setIsKaikas(true);
             await loadSellItemOnKlay();
           } else {
             await loadSellItem();
           }
         });
       } else {
+        await setIsKaikas(false);
         await loadSellItem();
       }
     });
@@ -150,7 +186,7 @@ function About({ loginAccount, isKaikas /* 로그인된 계정 */ }) {
     //데이터베이스에서 NFT 조회 후 받아온 정보로 페이지 구성
     await axios
       .post(
-        "https://thekift.shop/searchNFT",
+        "http://localhost:3001/searchNFT",
         {
           openseaId: URLparam,
         },
@@ -175,7 +211,7 @@ function About({ loginAccount, isKaikas /* 로그인된 계정 */ }) {
     //데이터베이스에서 NFT 조회 후 받아온 정보로 페이지 구성
     await axios
       .post(
-        "https://thekift.shop/klaytn/searchNFT",
+        "http://localhost:3001/klaytn/searchNFT",
         {
           openseaId: URLparam,
         },
@@ -196,115 +232,89 @@ function About({ loginAccount, isKaikas /* 로그인된 계정 */ }) {
 
   async function listNFTOnTheMarket(result) {
     //아이템 리스팅 후 기여도 1포인트 지급
-    const headers = {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-    };
+    if (isKaikas === false) {
+      const headers = {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      };
 
-    await axios
-      .post(
-        "https://thekift.shop/listItemOnlist",
-        {
-          openseaId: URLparam,
-          price: priceSellerPut,
-          isSale: true,
-          itemIdOnBlockChain: result.events.MarketItemCreated.returnValues.itemId,
-          from: result.from,
-        },
-        headers
-      )
-      .then(async (result) => {
-        if (result.status === 200) {
-          setMessage("Upload your NFT Success!");
+      await axios
+        .post(
+          "http://localhost:3001/listItemOnlist",
+          {
+            openseaId: URLparam,
+            price: priceSellerPut,
+            isSale: true,
+            itemIdOnBlockChain: result.events.MarketItemCreated.returnValues.itemId,
+            from: result.from,
+          },
+          headers
+        )
+        .then(async (result) => {
+          if (result.status === 200) {
+            setMessage("Upload your NFT Success!");
 
-          await axios
-            .post("https://thekift.shop/toGiveContributePoint", {
-              address: loginAccount,
-              point: 1,
-            })
-            .then((result) => {
-              console.log("this is result", result);
-            })
-            .catch((err) => {
-              console.log(err);
-            });
+            await axios
+              .post("http://localhost:3001/toGiveContributePoint", {
+                address: loginAccount,
+                point: 1,
+              })
+              .then((result) => {
+                console.log("this is result", result);
+              })
+              .catch((err) => {
+                console.log(err);
+              });
+            document.location.href = `/mypage/${URLparam}`;
+          }
+        })
+        .catch((e) => {
+          //에러를 프론트로 띄워주세요
+          setClosebox(true);
+          setMessage("listItem request failed! You can check error below");
+        });
+    } else {
+      const headers = {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      };
 
-          document.location.href = `/mypage/${URLparam}`;
-        }
-      })
-      .catch((e) => {
-        //에러를 프론트로 띄워주세요
-        setClosebox(true);
-        setMessage("listItem request failed! You can check error below");
-      });
-  }
+      await axios
+        .post(
+          "http://localhost:3001/klaytn/listItemOnlist",
+          {
+            openseaId: URLparam,
+            price: priceSellerPut,
+            isSale: true,
+            itemIdOnBlockChain: result.events.MarketItemCreated.returnValues.itemId,
+            from: result.from,
+          },
+          headers
+        )
+        .then(async (result) => {
+          if (result.status === 200) {
+            setMessage("Upload your NFT Success!");
 
-  async function ChangePriceNFTOnTheMarket(priceSellerPut, result) {
-    const headers = {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-    };
-    await axios
-      .post(
-        "https://thekift.shop/listItemOnchange",
-        {
-          openseaId: URLparam,
-          price: priceSellerPut,
-          from: result.from,
-        },
-        headers
-      )
-      .then((result) => {
-        if (result.status === 200) {
-          setMessage("Change your NFT Item Price Success!");
-          document.location.href = `/mypage/${URLparam}`;
-        }
-      })
-      .catch((e) => {
-        setClosebox(true);
-        setMessage("listItemPrice Change request failed! you can check error below");
-      });
-  }
-
-  async function CancleNFTOnTheMarket(result) {
-    //리스팅 된 아이템 취소 후 기여도 1포인트 지급 (가스비 때문)
-    const headers = {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-    };
-    await axios
-      .post(
-        "https://thekift.shop/listItemOncancel",
-        {
-          openseaId: URLparam,
-          isSale: false,
-          price: 0,
-          from: result.from,
-        },
-        headers
-      )
-      .then(async (result) => {
-        if (result.status === 200) {
-          setMessage("Cancle your NFT Item Success!");
-          await axios
-            .post("https://thekift.shop/toGiveContributePoint", {
-              address: loginAccount,
-              point: 1,
-            })
-            .then((result) => {
-              console.log("this is result", result);
-            })
-            .catch((err) => {
-              console.log(err);
-            });
-          document.location.href = `/mypage/${URLparam}`;
-        }
-      })
-      .catch((e) => {
-        //에러를 프론트로 띄워주세요
-        setClosebox(true);
-        setMessage("Cancle your NFT Item request failed! you can check error below");
-      });
+            await axios
+              .post("http://localhost:3001/toGiveContributePoint", {
+                address: loginAccount,
+                point: 1,
+              })
+              .then((result) => {
+                console.log("this is result", result);
+              })
+              .catch((err) => {
+                console.log(err);
+              });
+            document.location.href = `/mypage/${URLparam}`;
+          }
+        })
+        .catch((e) => {
+          //에러를 프론트로 띄워주세요
+          setClosebox(true);
+          setMessage("listItem request failed! You can check error below");
+        });
+    }
   }
 
   async function setApprovalAll() {
@@ -325,16 +335,17 @@ function About({ loginAccount, isKaikas /* 로그인된 계정 */ }) {
           let contract = await new web.eth.Contract(KiFTabi, Kift_Contract_Address);
           await contract.methods
             .isApprovedForAll(sellitem.contract_address, Kift_Contract_Address)
+            //서버에게 어프로브 되어있는지 검사합니다.
             .call({
               from: account[0],
             })
             .then(async (result) => {
               console.log("now approve ===> ", result);
               if (result) {
-                //어프로브 금지 후 아이템 리스팅
-                await createItem();
+                //결과로 true일시 어프로브를 하지않고 블록체인에 올리는 과정 진행
+                await createItem(); // 블록체인에 아이템 등록
               } else {
-                //어프로브 시작
+                //결과로 false일시 어프로브 진행
                 let contract = await new web.eth.Contract(erc721abi, sellitem.contract_address);
                 await contract.methods
                   .setApprovalForAll(
@@ -360,7 +371,7 @@ function About({ loginAccount, isKaikas /* 로그인된 계정 */ }) {
                   })
                   .then(async (result) => {
                     if (result) {
-                      await createItem();
+                      await createItem(); //블록체인에 아이템 등록
                     }
                   })
                   .catch((err) => {
@@ -384,85 +395,86 @@ function About({ loginAccount, isKaikas /* 로그인된 계정 */ }) {
     }
   }
 
-  async function changeItemPrice() {
-    setMessage(`Please wait until "Success!" to change the price`);
-    if (typeof window.ethereum !== "undefined") {
-      //여러 wallet 플랫폼중 metaMask로 연결
-      if (typeof window.ethereum.providers === "undefined") {
-        var metamaskProvider = window.ethereum;
-        console.log("메타마스크만 다운되어있는 것 처리===>", metamaskProvider);
-      } else {
-        var metamaskProvider = window.ethereum.providers.find((provider) => provider.isMetaMask);
-        console.log("여러개 지갑 처리 ==>", metamaskProvider);
-      }
-      try {
-        const web = new Web3(metamaskProvider);
-        web.eth.getAccounts().then(async (account) => {
-          let contract = await new web.eth.Contract(KiFTabi, Kift_Contract_Address);
+  async function setApprovalAllKlaytn() {
+    setMessage(`Please wait until "Success!"`);
+    window.klaytn._kaikas.isUnlocked().then(async (result) => {
+      if (result === true) {
+        await window.klaytn._kaikas.isApproved().then(async (result) => {
+          if (result === true) {
+            try {
+              const caver = new Caver(window.klaytn);
+              caver.klay.getAccounts().then(async (account) => {
+                let contract = await new caver.klay.Contract(KiFTabi_Klaytn, Kift_Kip_Contract_Address);
 
-          await contract.methods
-            .changeMarketItemPrice(sellitem.itemIdOnBlockChain, web.utils.toWei(String(priceSellerPut), "ether"))
-            .send({
-              from: account[0],
-              gas: 500000,
-              gasPrice: "2450000000",
-            })
-            .then(async (result) => {
-              await setMessage("Change your NFT Item Price Success!");
-              await ChangePriceNFTOnTheMarket(priceSellerPut, result);
-            })
-            .catch((err) => {
-              console.log("this is whole error message", err);
-              console.log("this is error message----->>>>", err.message);
-              setClosebox(true);
-              setMessage(err.message);
-            });
+                await contract.methods
+                  .isApprovedForAll(sellitem.contract_address, Kift_Kip_Contract_Address)
+                  //서버에게 어프로브 되어있는지 검사합니다.
+                  .call({
+                    from: account[0],
+                  })
+                  .then(async (result) => {
+                    console.log("now approve ===> ", result);
+                    if (result) {
+                      //결과로 true일시 어프로브를 하지않고 블록체인에 올리는 과정 진행
+                      await createItemKlaytn(); // 블록체인에 아이템 등록
+                    } else {
+                      //결과로 false일시 어프로브 진행
+                      let contract = await new caver.klay.Contract(kip17abi, sellitem.contract_address);
+                      await contract.methods
+                        .setApprovalForAll(
+                          Kift_Kip_Contract_Address, //setapproval 받을 kift.sol 배포 주소
+                          true
+                        )
+                        .send({
+                          from: account[0],
+                          gas: 5000000,
+                          gasPrice: "25000000000",
+                        })
+                        .then((result) => {
+                          setMessage("Approve to KiFT! Please sign the next one", result.blockHash);
+                          console.log("This is success result--->>>", result);
+                          console.log("This is Hash ", result.blockHash);
+                          return result;
+                        })
+                        .catch((err) => {
+                          console.log("this is whole error message", err);
+                          console.log("this is error message----->>>>", err.message);
+                          setClosebox(true);
+                          setMessage(err.message);
+                        })
+                        .then(async (result) => {
+                          if (result) {
+                            await createItemKlaytn(); //블록체인에 아이템 등록
+                          }
+                        })
+                        .catch((err) => {
+                          console.log("this is whole error message", err);
+                          console.log("this is error message----->>>>", err.message);
+                          setClosebox(true);
+                          setMessage(err.message);
+                        });
+                    }
+                  })
+                  .catch((err) => {
+                    console.log("this is whole error message", err);
+                    console.log("this is error message----->>>>", err.message);
+                    setClosebox(true);
+                    setMessage(err.message);
+                  });
+              });
+            } catch (err) {
+              console.log(err);
+            }
+          } else {
+            setMessage("Please re-Log in Kaikas!");
+            setClosebox(true);
+          }
         });
-      } catch (err) {
-        console.log(err);
-      }
-    }
-  }
-
-  async function cancleMarketItem() {
-    setMessage(`Please wait until "Success!" to cancle your Item`);
-    if (typeof window.ethereum !== "undefined") {
-      //여러 wallet 플랫폼중 metaMask로 연결
-
-      if (typeof window.ethereum.providers === "undefined") {
-        var metamaskProvider = window.ethereum;
-        console.log("메타마스크만 다운되어있는 것 처리===>", metamaskProvider);
       } else {
-        var metamaskProvider = window.ethereum.providers.find((provider) => provider.isMetaMask);
-        console.log("여러개 지갑 처리 ==>", metamaskProvider);
+        setMessage("Please Log in Kaikas!");
+        setClosebox(true);
       }
-      try {
-        const web = new Web3(metamaskProvider);
-        web.eth.getAccounts().then(async (account) => {
-          let contract = await new web.eth.Contract(KiFTabi, Kift_Contract_Address);
-
-          await contract.methods
-            .soldOutMarketItem(sellitem.itemIdOnBlockChain)
-            .send({
-              from: account[0],
-              gas: 1500000,
-              gasPrice: "2450000000",
-            })
-            .then(async (result) => {
-              await setMessage("Cancle your NFT Item Success!");
-              await CancleNFTOnTheMarket(result);
-            })
-            .catch((err) => {
-              console.log("this is whole error message", err);
-              console.log("this is error message----->>>>", err.message);
-              setClosebox(true);
-              setMessage(err.message);
-            });
-        });
-      } catch (err) {
-        console.log(err);
-      }
-    }
+    });
   }
 
   async function createItem() {
@@ -476,14 +488,13 @@ function About({ loginAccount, isKaikas /* 로그인된 계정 */ }) {
         var metamaskProvider = window.ethereum.providers.find((provider) => provider.isMetaMask);
         console.log("여러개 지갑 처리 ==>", metamaskProvider);
       }
-      // window.ethereum이 있다면 여기서 window.ethereum이란 메타마스크 설치여부
       try {
         const web = new Web3(metamaskProvider);
-
         web.eth.getAccounts().then(async (account) => {
           let contract = await new web.eth.Contract(KiFTabi, Kift_Contract_Address);
           await contract.methods
             .createMarketItem(sellitem.contract_address, sellitem.NFT_Token_id, web.utils.toWei(String(priceSellerPut), "ether"))
+            //마켓 블록체인에 아이템 등록
             .send({
               from: account[0],
               gas: 500000,
@@ -492,7 +503,7 @@ function About({ loginAccount, isKaikas /* 로그인된 계정 */ }) {
             .then(async (result) => {
               console.log("itemId", result.events.MarketItemCreated.returnValues.itemId);
               await setMessage("upload blockChain to KiFT Success!");
-              await listNFTOnTheMarket(result);
+              await listNFTOnTheMarket(result); //기여도를 지급하는 함수
             })
             .catch((err) => {
               console.log("this is whole error message", err);
@@ -507,121 +518,585 @@ function About({ loginAccount, isKaikas /* 로그인된 계정 */ }) {
     }
   }
 
-  async function buyNFT() {
-    //여러 wallet 플랫폼중 metaMask로 연결
-    setShowModal(true);
-    setMessage(`Please sign the MetaMask! and wait until "Success!"`);
-    if (typeof window.ethereum.providers === "undefined") {
-      var metamaskProvider = window.ethereum;
-      console.log("메타마스크만 다운되어있는 것 처리===>", metamaskProvider);
-    } else {
-      var metamaskProvider = window.ethereum.providers.find((provider) => provider.isMetaMask);
-      console.log("여러개 지갑 처리 ==>", metamaskProvider);
-    }
-    // window.ethereum이 있다면 여기서 window.ethereum이란 메타마스크 설치여부
-    try {
-      const web = new Web3(metamaskProvider);
+  async function createItemKlaytn() {
+    window.klaytn._kaikas.isUnlocked().then(async (result) => {
+      if (result === true) {
+        await window.klaytn._kaikas.isApproved().then(async (result) => {
+          if (result === true) {
+            try {
+              const caver = new Caver(window.klaytn);
+              caver.klay.getAccounts().then(async (account) => {
+                let contract = await new caver.klay.Contract(KiFTabi_Klaytn, Kift_Kip_Contract_Address);
+                await contract.methods
+                  .createMarketItem(sellitem.contract_address, sellitem.NFT_Token_id, caver.utils.convertToPeb(String(priceSellerPut), "KLAY"))
+                  //마켓 블록체인에 아이템 등록
+                  .send({
+                    from: account[0],
+                    gas: 500000,
+                    gasPrice: "25000000000",
+                  })
+                  .then(async (result) => {
+                    console.log("test?", result);
+                    // console.log("itemId", result.events.MarketItemCreated.returnValues.itemId);
+                    await setMessage("upload blockChain to KiFT Success!");
+                    await listNFTOnTheMarket(result); //기여도를 지급하는 함수
+                  })
+                  .catch((err) => {
+                    console.log("this is whole error message", err);
+                    console.log("this is error message----->>>>", err.message);
+                    setClosebox(true);
+                    setMessage(err.message);
+                  });
+              });
+            } catch (err) {
+              setMessage("upload blockChain to KiFT Fail!");
+            }
+          } else {
+            setMessage("Please re-Log in Kaikas!");
+            setClosebox(true);
+          }
+        });
+      } else {
+        setMessage("Please Log in Kaikas!");
+        setClosebox(true);
+      }
+    });
+  }
 
-      web.eth.getAccounts().then(async (account) => {
-        let contract = await new web.eth.Contract(KiFTabi, Kift_Contract_Address);
-        await contract.methods
-          .createMarketSale(sellitem.contract_address, sellitem.itemIdOnBlockChain)
-
-          .send({
-            from: account[0],
-            gas: 500000,
-            gasPrice: "2450000000",
-            value: web.utils.toWei(String(sellitem.price), "ether"),
-          })
-          .then(async (result) => {
-            await setMessage("Your purchase request Success!");
-            await soldoutNFTOnTheMarket(result.from, ownerAddress, sellitem.price);
-            console.log("is there ownerAddress found???? =====>>>>>>", ownerAddress);
-
-            console.log("Before changeownerandownedNFTS ==========================");
-
-            await axios
-              .post("https://thekift.shop/toGiveContributePoint", {
-                address: loginAccount,
-                secondAddress: ownerAddress,
-                point: 10,
+  async function changeItemPrice() {
+    //블록체인에 등록된 NFT 가격 변경 함수
+    setMessage(`Please wait until "Success!" to change the price`);
+    if (isKaikas === false) {
+      if (typeof window.ethereum !== "undefined") {
+        //여러 wallet 플랫폼중 metaMask로 연결
+        if (typeof window.ethereum.providers === "undefined") {
+          var metamaskProvider = window.ethereum;
+          console.log("메타마스크만 다운되어있는 것 처리===>", metamaskProvider);
+        } else {
+          var metamaskProvider = window.ethereum.providers.find((provider) => provider.isMetaMask);
+          console.log("여러개 지갑 처리 ==>", metamaskProvider);
+        }
+        try {
+          const web = new Web3(metamaskProvider);
+          web.eth.getAccounts().then(async (account) => {
+            let contract = await new web.eth.Contract(KiFTabi, Kift_Contract_Address);
+            await contract.methods
+              .changeMarketItemPrice(sellitem.itemIdOnBlockChain, web.utils.toWei(String(priceSellerPut), "ether"))
+              .send({
+                from: account[0],
+                gas: 500000,
+                gasPrice: "2450000000",
               })
               .then(async (result) => {
-                await changeOwner();
-                document.location.href = `/mypage/${URLparam}`;
-                console.log("contribute points done!", result);
+                await setMessage("Change your NFT Item Price Success!");
+                await ChangePriceNFTOnTheMarket(priceSellerPut, result);
+              })
+              .catch((err) => {
+                console.log("this is whole error message", err);
+                console.log("this is error message----->>>>", err.message);
+                setClosebox(true);
+                setMessage(err.message);
+              });
+          });
+        } catch (err) {
+          console.log(err);
+        }
+      }
+    } else {
+      window.klaytn._kaikas.isUnlocked().then(async (result) => {
+        if (result === true) {
+          await window.klaytn._kaikas.isApproved().then(async (result) => {
+            if (result === true) {
+              try {
+                const caver = new Caver(window.klaytn);
+                caver.klay.getAccounts().then(async (account) => {
+                  let contract = await new caver.klay.Contract(KiFTabi_Klaytn, Kift_Kip_Contract_Address);
+                  await contract.methods
+                    .changeMarketItemPrice(sellitem.itemIdOnBlockChain, caver.utils.convertToPeb(String(priceSellerPut), "KLAY"))
+                    //마켓 블록체인에 아이템 등록
+                    .send({
+                      from: account[0],
+                      gas: 500000,
+                      gasPrice: "25000000000",
+                    })
+                    .then(async (result) => {
+                      await setMessage("Change your NFT Item Price Success!");
+                      await ChangePriceNFTOnTheMarket(priceSellerPut, result);
+                    })
+                    .catch((err) => {
+                      console.log("this is whole error message", err);
+                      console.log("this is error message----->>>>", err.message);
+                      setClosebox(true);
+                      setMessage(err.message);
+                    });
+                });
+              } catch (err) {
+                setMessage("Change your NFT Item Price Fail!");
+              }
+            } else {
+              setMessage("Please re-Log in Kaikas!");
+              setClosebox(true);
+            }
+          });
+        } else {
+          setMessage("Please Log in Kaikas!");
+          setClosebox(true);
+        }
+      });
+    }
+  }
+
+  async function ChangePriceNFTOnTheMarket(priceSellerPut, result) {
+    //블록체인에서 해당 NFT 가격 수정 후 DB에 저장된 가격도 수정 시작
+    if (isKaikas === false) {
+      const headers = {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      };
+      await axios
+        .post(
+          "http://localhost:3001/listItemOnchange",
+          {
+            openseaId: URLparam,
+            price: priceSellerPut,
+            from: result.from,
+          },
+          headers
+        )
+        .then((result) => {
+          if (result.status === 200) {
+            setMessage("Change your NFT Item Price Success!");
+            document.location.href = `/mypage/${URLparam}`;
+          }
+        })
+        .catch((e) => {
+          setClosebox(true);
+          setMessage("listItemPrice Change request failed! you can check error below");
+        });
+    } else {
+      const headers = {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      };
+      await axios
+        .post(
+          "http://localhost:3001/klaytn/listItemOnchange",
+          {
+            openseaId: URLparam,
+            price: priceSellerPut,
+            from: result.from,
+          },
+          headers
+        )
+        .then((result) => {
+          if (result.status === 200) {
+            setMessage("Change your NFT Item Price Success!");
+            document.location.href = `/mypage/${URLparam}`;
+          }
+        })
+        .catch((e) => {
+          setClosebox(true);
+          setMessage("listItemPrice Change request failed! you can check error below");
+        });
+    }
+  }
+
+  async function cancleMarketItem() {
+    //블록체인에 등록된 NFT 판매 중지 함수
+    setMessage(`Please wait until "Success!" to cancle your Item`);
+    if (isKaikas === false) {
+      if (typeof window.ethereum !== "undefined") {
+        //여러 wallet 플랫폼중 metaMask로 연결
+        if (typeof window.ethereum.providers === "undefined") {
+          var metamaskProvider = window.ethereum;
+          console.log("메타마스크만 다운되어있는 것 처리===>", metamaskProvider);
+        } else {
+          var metamaskProvider = window.ethereum.providers.find((provider) => provider.isMetaMask);
+          console.log("여러개 지갑 처리 ==>", metamaskProvider);
+        }
+        try {
+          const web = new Web3(metamaskProvider);
+          web.eth.getAccounts().then(async (account) => {
+            let contract = await new web.eth.Contract(KiFTabi, Kift_Contract_Address);
+            await contract.methods
+              .soldOutMarketItem(sellitem.itemIdOnBlockChain)
+              .send({
+                from: account[0],
+                gas: 1500000,
+                gasPrice: "2450000000",
+              })
+              .then(async (result) => {
+                await setMessage("Cancle your NFT Item Success!");
+                await CancleNFTOnTheMarket(result);
+                // 블록체인에서 취소후 DB에도 취소 시작
+              })
+              .catch((err) => {
+                console.log("this is whole error message", err);
+                console.log("this is error message----->>>>", err.message);
+                setClosebox(true);
+                setMessage(err.message);
+              });
+          });
+        } catch (err) {
+          console.log(err);
+        }
+      }
+    } else {
+      window.klaytn._kaikas.isUnlocked().then(async (result) => {
+        if (result === true) {
+          await window.klaytn._kaikas.isApproved().then(async (result) => {
+            if (result === true) {
+              try {
+                const caver = new Caver(window.klaytn);
+                caver.klay.getAccounts().then(async (account) => {
+                  let contract = await new caver.klay.Contract(KiFTabi_Klaytn, Kift_Kip_Contract_Address);
+                  await contract.methods
+                    .soldOutMarketItem(sellitem.itemIdOnBlockChain)
+                    //마켓 블록체인에 아이템 등록
+                    .send({
+                      from: account[0],
+                      gas: 500000,
+                      gasPrice: "25000000000",
+                    })
+                    .then(async (result) => {
+                      await setMessage("Cancle your NFT Item Success!");
+                      await CancleNFTOnTheMarket(result);
+                      // 블록체인에서 취소후 DB에도 취소 시작
+                    })
+                    .catch((err) => {
+                      console.log("this is whole error message", err);
+                      console.log("this is error message----->>>>", err.message);
+                      setClosebox(true);
+                      setMessage(err.message);
+                    });
+                });
+              } catch (err) {
+                setMessage("Cancle your NFT Item Fail!");
+              }
+            } else {
+              setMessage("Please re-Log in Kaikas!");
+              setClosebox(true);
+            }
+          });
+        } else {
+          setMessage("Please Log in Kaikas!");
+          setClosebox(true);
+        }
+      });
+    }
+  }
+
+  async function CancleNFTOnTheMarket(result) {
+    //DB에서 해당하는 NFT아이템 취소 등록
+    //리스팅 된 아이템 취소 후 기여도 1포인트 지급 (가스비 때문)
+    if (isKaikas === false) {
+      const headers = {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      };
+      await axios
+        .post(
+          "http://localhost:3001/listItemOncancel",
+          {
+            openseaId: URLparam,
+            isSale: false,
+            price: 0,
+            from: result.from,
+          },
+          headers
+        )
+        .then(async (result) => {
+          if (result.status === 200) {
+            setMessage("Cancle your NFT Item Success!");
+            await axios
+              .post("http://localhost:3001/toGiveContributePoint", {
+                address: loginAccount,
+                point: 1,
+              })
+              .then((result) => {
+                console.log("this is result", result);
               })
               .catch((err) => {
                 console.log(err);
               });
-          })
-          .catch((err) => {
-            console.log("this is whole error message", err);
-            console.log("this is error message----->>>>", err.message);
-            setClosebox(true);
-            setMessage(err.message);
+            document.location.href = `/mypage/${URLparam}`;
+          }
+        })
+        .catch((e) => {
+          //에러를 프론트로 띄워주세요
+          setClosebox(true);
+          setMessage("Cancle your NFT Item request failed! you can check error below");
+        });
+    } else {
+      const headers = {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      };
+      await axios
+        .post(
+          "http://localhost:3001/klaytn/listItemOncancel",
+          {
+            openseaId: URLparam,
+            isSale: false,
+            price: 0,
+            from: result.from,
+          },
+          headers
+        )
+        .then(async (result) => {
+          if (result.status === 200) {
+            setMessage("Cancle your NFT Item Success!");
+            await axios
+              .post("http://localhost:3001/toGiveContributePoint", {
+                address: loginAccount,
+                point: 1,
+              })
+              .then((result) => {
+                console.log("this is result", result);
+              })
+              .catch((err) => {
+                console.log(err);
+              });
+            document.location.href = `/mypage/${URLparam}`;
+          }
+        })
+        .catch((e) => {
+          //에러를 프론트로 띄워주세요
+          setClosebox(true);
+          setMessage("Cancle your NFT Item request failed! you can check error below");
+        });
+    }
+  }
+
+  async function buyNFT() {
+    //여러 wallet 플랫폼중 metaMask로 연결
+    setShowModal(true);
+    setMessage(`Please sign the Wallet and wait until "Success!"`);
+    if (isKaikas === false) {
+      if (typeof window.ethereum.providers === "undefined") {
+        var metamaskProvider = window.ethereum;
+        console.log("메타마스크만 다운되어있는 것 처리===>", metamaskProvider);
+      } else {
+        var metamaskProvider = window.ethereum.providers.find((provider) => provider.isMetaMask);
+        console.log("여러개 지갑 처리 ==>", metamaskProvider);
+      }
+      // window.ethereum이 있다면 여기서 window.ethereum이란 메타마스크 설치여부
+      try {
+        const web = new Web3(metamaskProvider);
+        web.eth.getAccounts().then(async (account) => {
+          let contract = await new web.eth.Contract(KiFTabi, Kift_Contract_Address);
+          await contract.methods
+            .createMarketSale(sellitem.contract_address, sellitem.itemIdOnBlockChain)
+            //블록체인에 등록된 NFT아이템 구매 시작
+            .send({
+              from: account[0],
+              gas: 500000,
+              gasPrice: "2450000000",
+              value: web.utils.toWei(String(sellitem.price), "ether"),
+            })
+            .then(async (result) => {
+              await setMessage("Your purchase request Success!");
+              await soldoutNFTOnTheMarket(result.from, ownerAddress, sellitem.price);
+              // NFT구매후 DB정보 수정 시작
+              console.log("is there ownerAddress found???? =====>>>>>>", ownerAddress);
+              console.log("Before changeownerandownedNFTS ==========================");
+              await axios
+                .post("http://localhost:3001/toGiveContributePoint", {
+                  address: loginAccount,
+                  secondAddress: ownerAddress,
+                  point: 10,
+                })
+                .then(async (result) => {
+                  await changeOwner(); //DB에 저장된 NFT소유 오너 변경
+                  document.location.href = `/mypage/${URLparam}`;
+                  console.log("contribute points done!", result);
+                })
+                .catch((err) => {
+                  console.log(err);
+                });
+            })
+            .catch((err) => {
+              console.log("this is whole error message", err);
+              console.log("this is error message----->>>>", err.message);
+              setClosebox(true);
+              setMessage(err.message);
+            });
+        });
+      } catch (err) {
+        setMessage("Your purchase request Fail!");
+      }
+    } else {
+      window.klaytn._kaikas.isUnlocked().then(async (result) => {
+        if (result === true) {
+          await window.klaytn._kaikas.isApproved().then(async (result) => {
+            if (result === true) {
+              try {
+                const caver = new Caver(window.klaytn);
+                caver.klay.getAccounts().then(async (account) => {
+                  let contract = await new caver.klay.Contract(KiFTabi_Klaytn, Kift_Kip_Contract_Address);
+                  await contract.methods
+                    .createMarketSale(sellitem.contract_address, sellitem.itemIdOnBlockChain)
+                    //블록체인에 등록된 NFT아이템 구매 시작
+                    .send({
+                      from: account[0],
+                      gas: 500000,
+                      gasPrice: "25000000000",
+                      value: caver.utils.convertToPeb(String(sellitem.price), "KLAY"),
+                    })
+                    .then(async (result) => {
+                      await setMessage("Your purchase request Success!");
+                      await soldoutNFTOnTheMarket(result.from, ownerAddress, sellitem.price);
+                      // NFT구매후 DB정보 수정 시작
+                      console.log("is there ownerAddress found???? =====>>>>>>", ownerAddress);
+                      console.log("Before changeownerandownedNFTS ==========================");
+                      await axios
+                        .post("http://localhost:3001/toGiveContributePoint", {
+                          address: loginAccount,
+                          secondAddress: ownerAddress,
+                          point: 10,
+                        })
+                        .then(async (result) => {
+                          await changeOwner(); //DB에 저장된 NFT소유 오너 변경
+                          document.location.href = `/mypage/${URLparam}`;
+                          console.log("contribute points done!", result);
+                        })
+                        .catch((err) => {
+                          console.log(err);
+                        });
+                    })
+                    .catch((err) => {
+                      console.log("this is whole error message", err);
+                      console.log("this is error message----->>>>", err.message);
+                      setClosebox(true);
+                      setMessage(err.message);
+                    });
+                });
+              } catch (err) {
+                setMessage("Your purchase request Fail!");
+              }
+            } else {
+              setMessage("Please re-Log in Kaikas!");
+              setClosebox(true);
+            }
           });
+        } else {
+          setMessage("Please Log in Kaikas!");
+          setClosebox(true);
+        }
       });
-    } catch (err) {
-      setMessage("Your purchase request Fail!");
     }
   }
 
   async function soldoutNFTOnTheMarket(to, from, itemprice) {
-    //위에 buyNFT 후 디비 정보 변경
-
-    const headers = {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-    };
-    await axios
-      .post(
-        "https://thekift.shop/listItemOnbuy",
-        {
-          openseaId: URLparam,
-          price: 0,
-          isSale: false,
-          itemIdOnBlockChain: null,
-          to: to,
-          from: from,
-          itemprice: itemprice,
-        },
-        headers
-      )
-      .then((result) => {
-        if (result.status === 200) {
-          setMessage("Your NFT purchase Success!");
-        }
-      })
-      .catch((e) => {
-        //에러를 프론트로 띄워주세요
-        setClosebox(true);
-        setMessage("Your purchase request failed! You can check error below");
-      });
+    //위에 buyNFT 후 DB 정보 변경
+    if (isKaikas === false) {
+      const headers = {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      };
+      await axios
+        .post(
+          "http://localhost:3001/listItemOnbuy",
+          {
+            openseaId: URLparam,
+            price: 0,
+            isSale: false,
+            itemIdOnBlockChain: null,
+            to: to,
+            from: from,
+            itemprice: itemprice,
+          },
+          headers
+        )
+        .then((result) => {
+          if (result.status === 200) {
+            setMessage("Your NFT purchase Success!");
+          }
+        })
+        .catch((e) => {
+          //에러를 프론트로 띄워주세요
+          setClosebox(true);
+          setMessage("Your purchase request failed! You can check error below");
+        });
+    } else {
+      const headers = {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      };
+      await axios
+        .post(
+          "http://localhost:3001/klaytn/listItemOnbuy",
+          {
+            openseaId: URLparam,
+            price: 0,
+            isSale: false,
+            itemIdOnBlockChain: null,
+            to: to,
+            from: from,
+            itemprice: itemprice,
+          },
+          headers
+        )
+        .then((result) => {
+          if (result.status === 200) {
+            setMessage("Your NFT purchase Success!");
+          }
+        })
+        .catch((e) => {
+          //에러를 프론트로 띄워주세요
+          setClosebox(true);
+          setMessage("Your purchase request failed! You can check error below");
+        });
+    }
   }
 
   async function changeOwner() {
-    const headers = {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-    };
-    await axios
-      .post(
-        "https://thekift.shop/changeOwnerAndOwnedNFTs",
-        {
-          address: loginAccount,
-          openseaId: sellitem.openseaId,
-        },
-        headers
-      )
-      .then((result) => {
-        console.log("After changeownerandownedNFTS ==========================");
-        console.log("fetching changeOwnerAndOwnedNFTs API!===>>", result);
-      })
-      .catch((err) => {
-        console.log("fetching changeOwnerAndOwnedNFTs API FAILED!!!! ===>", err);
-      });
+    //구매가 완료되면 DB에서 해당 NFT의 오너 수정
+    if (isKaikas === false) {
+      const headers = {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      };
+      await axios
+        .post(
+          "http://localhost:3001/changeOwnerAndOwnedNFTs",
+          {
+            address: loginAccount,
+            openseaId: sellitem.openseaId,
+          },
+          headers
+        )
+        .then((result) => {
+          console.log("After changeownerandownedNFTS ==========================");
+          console.log("fetching changeOwnerAndOwnedNFTs API!===>>", result);
+        })
+        .catch((err) => {
+          console.log("fetching changeOwnerAndOwnedNFTs API FAILED!!!! ===>", err);
+        });
+    } else {
+      const headers = {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      };
+      await axios
+        .post(
+          "http://localhost:3001/klaytn/changeOwnerAndOwnedNFTs",
+          {
+            address: loginAccount,
+            openseaId: sellitem.openseaId,
+          },
+          headers
+        )
+        .then((result) => {
+          console.log("After changeownerandownedNFTS ==========================");
+          console.log("fetching changeOwnerAndOwnedNFTs API!===>>", result);
+        })
+        .catch((err) => {
+          console.log("fetching changeOwnerAndOwnedNFTs API FAILED!!!! ===>", err);
+        });
+    }
   }
+
   return (
     <>
       {loading ? (
@@ -632,7 +1107,6 @@ function About({ loginAccount, isKaikas /* 로그인된 계정 */ }) {
       ) : (
         <div className="about_main">
           {showModal && <NotifyModal showModal={showModal} closeModal={closeModal} message={message} closebox={closebox}></NotifyModal>}
-
           <div className="sell_bar"></div>
           <div className="middle2">
             <div className="main_left">
@@ -656,7 +1130,12 @@ function About({ loginAccount, isKaikas /* 로그인된 계정 */ }) {
                   loginAccount === ownerAddress ? (
                     <>
                       {" "}
-                      <input className="price" placeholder={`Current Price : ${sellitem.price} ETH`} value={priceSellerPut} onChange={onChange} />
+                      <input
+                        className="price"
+                        placeholder={`Current Price : ${sellitem.price} ${isKaikas ? "KLAY" : "ETH"}`}
+                        value={priceSellerPut}
+                        onChange={onChange}
+                      />
                       <button className="sell_button addoption" onClick={changePrice}>
                         Change Price
                       </button>
@@ -667,8 +1146,32 @@ function About({ loginAccount, isKaikas /* 로그인된 계정 */ }) {
                   ) : (
                     <>
                       <div className="price_box">
-                        <img className="eth-logo" src="https://storage.opensea.io/files/6f8e2979d428180222796ff4a33ab929.svg" />
-                        <span className="price_set">{sellitem.price}</span>
+                        {isKaikas ? (
+                          <div className="klay-logo">
+                            <svg
+                              className="kaikas-Logo"
+                              version="1.1"
+                              id="Layer_1"
+                              xmlns="http://www.w3.org/2000/svg"
+                              xmlns="http://www.w3.org/1999/xlink"
+                              x="0px"
+                              y="0px"
+                              viewBox="0 0 2000 1975.1"
+                              xml="preserve"
+                            >
+                              {/* <style type="text/css">.st0{`fill:#4F473B`}</style> */}
+                              <g>
+                                <path className="st0" d="M1047.4,982.5l683.3,678.3c359.1-380.9,359.1-975.7,0-1356.6" />
+                                <path className="st0" d="M997.5,1027.4l-673.3,668.3l673.3,279.3l673.3-279.3" />
+                                <path className="st0" d="M972.6,957.6l698.3-693.3L1027.4,0L389,1541.2L972.6,957.6z" />
+                                <path className="st0" d="M0,982.5c-0.5,252.3,95.9,495.1,269.3,678.3l668.3-1611" />
+                              </g>
+                            </svg>
+                          </div>
+                        ) : (
+                          <img className="eth-logo" src="https://storage.opensea.io/files/6f8e2979d428180222796ff4a33ab929.svg" />
+                        )}
+                        {isKaikas ? <span className="price_set2">{sellitem.price}</span> : <span className="price_set">{sellitem.price}</span>}
                       </div>
                       <button className="sell_button" onClick={buyNFT}>
                         BUY
@@ -729,7 +1232,7 @@ function About({ loginAccount, isKaikas /* 로그인된 계정 */ }) {
                   </div>
                   <div className="detail_menu">
                     <span>blockchain</span>
-                    <span className="right_end">Rinkeby</span>
+                    <span className="right_end">{isKaikas ? "Baobab" : "Rinkeby"}</span>
                   </div>
                 </div>
               </div>
@@ -761,16 +1264,32 @@ function About({ loginAccount, isKaikas /* 로그인된 계정 */ }) {
                             Minted
                           </div>
                           <div className="history_price2">...</div>
-                          <div className="history_from2" onClick={() => runEtherscan2(his.from)}>
-                            {String(his.from).slice(0, 6)}
-                            {"..."}
-                            {String(his.from).slice(-6)}
-                          </div>
-                          <div className="history_to2 addoption">
-                            {String(his.to).slice(0, 6)}
-                            {"..."}
-                            {String(his.to).slice(-6)}
-                          </div>
+                          {isKaikas ? (
+                            <div className="history_from">
+                              {String(his.from).slice(0, 6)}
+                              {"..."}
+                              {String(his.from).slice(-6)}
+                            </div>
+                          ) : (
+                            <div className="history_from2" onClick={() => runEtherscan2(his.from)}>
+                              {String(his.from).slice(0, 6)}
+                              {"..."}
+                              {String(his.from).slice(-6)}
+                            </div>
+                          )}
+                          {isKaikas ? (
+                            <div className="history_to2 url" onClick={() => runEtherscan2(his.to)}>
+                              {String(his.to).slice(0, 6)}
+                              {"..."}
+                              {String(his.to).slice(-6)}
+                            </div>
+                          ) : (
+                            <div className="history_to2 addoption">
+                              {String(his.to).slice(0, 6)}
+                              {"..."}
+                              {String(his.to).slice(-6)}
+                            </div>
+                          )}
                           <div className="history_date2">
                             {" "}
                             {String(his.date).slice(0, 10)} {String(his.date).slice(11, 19)}
@@ -785,7 +1304,30 @@ function About({ loginAccount, isKaikas /* 로그인된 계정 */ }) {
                             List
                           </div>
                           <div className="history_price2">
-                            <img className="history_logo" src="https://storage.opensea.io/files/6f8e2979d428180222796ff4a33ab929.svg" />
+                            {isKaikas ? (
+                              <svg
+                                className="history_logo"
+                                version="1.1"
+                                id="Layer_1"
+                                xmlns="http://www.w3.org/2000/svg"
+                                xmlns="http://www.w3.org/1999/xlink"
+                                x="0px"
+                                y="0px"
+                                viewBox="0 0 2000 1975.1"
+                                xml="preserve"
+                              >
+                                {/* <style type="text/css">.st0{`fill:#4F473B`}</style> */}
+                                <g>
+                                  <path className="st0" d="M1047.4,982.5l683.3,678.3c359.1-380.9,359.1-975.7,0-1356.6" />
+                                  <path className="st0" d="M997.5,1027.4l-673.3,668.3l673.3,279.3l673.3-279.3" />
+                                  <path className="st0" d="M972.6,957.6l698.3-693.3L1027.4,0L389,1541.2L972.6,957.6z" />
+                                  <path className="st0" d="M0,982.5c-0.5,252.3,95.9,495.1,269.3,678.3l668.3-1611" />
+                                </g>
+                              </svg>
+                            ) : (
+                              <img className="history_logo" src="https://storage.opensea.io/files/6f8e2979d428180222796ff4a33ab929.svg" />
+                            )}
+
                             {his.price}
                           </div>
                           <div className="history_from2" onClick={() => runEtherscan2(his.from)}>
@@ -812,7 +1354,29 @@ function About({ loginAccount, isKaikas /* 로그인된 계정 */ }) {
                             Buy
                           </div>
                           <div className="history_price2">
-                            <img className="history_logo" src="https://storage.opensea.io/files/6f8e2979d428180222796ff4a33ab929.svg" />
+                            {isKaikas ? (
+                              <svg
+                                className="history_logo"
+                                version="1.1"
+                                id="Layer_1"
+                                xmlns="http://www.w3.org/2000/svg"
+                                xmlns="http://www.w3.org/1999/xlink"
+                                x="0px"
+                                y="0px"
+                                viewBox="0 0 2000 1975.1"
+                                xml="preserve"
+                              >
+                                {/* <style type="text/css">.st0{`fill:#4F473B`}</style> */}
+                                <g>
+                                  <path className="st0" d="M1047.4,982.5l683.3,678.3c359.1-380.9,359.1-975.7,0-1356.6" />
+                                  <path className="st0" d="M997.5,1027.4l-673.3,668.3l673.3,279.3l673.3-279.3" />
+                                  <path className="st0" d="M972.6,957.6l698.3-693.3L1027.4,0L389,1541.2L972.6,957.6z" />
+                                  <path className="st0" d="M0,982.5c-0.5,252.3,95.9,495.1,269.3,678.3l668.3-1611" />
+                                </g>
+                              </svg>
+                            ) : (
+                              <img className="history_logo" src="https://storage.opensea.io/files/6f8e2979d428180222796ff4a33ab929.svg" />
+                            )}
                             {his.price}
                           </div>
                           <div className="history_from2" onClick={() => runEtherscan2(his.from)}>
@@ -863,7 +1427,29 @@ function About({ loginAccount, isKaikas /* 로그인된 계정 */ }) {
                             Price
                           </div>
                           <div className="history_price2">
-                            <img className="history_logo" src="https://storage.opensea.io/files/6f8e2979d428180222796ff4a33ab929.svg" />
+                            {isKaikas ? (
+                              <svg
+                                className="history_logo"
+                                version="1.1"
+                                id="Layer_1"
+                                xmlns="http://www.w3.org/2000/svg"
+                                xmlns="http://www.w3.org/1999/xlink"
+                                x="0px"
+                                y="0px"
+                                viewBox="0 0 2000 1975.1"
+                                xml="preserve"
+                              >
+                                {/* <style type="text/css">.st0{`fill:#4F473B`}</style> */}
+                                <g>
+                                  <path className="st0" d="M1047.4,982.5l683.3,678.3c359.1-380.9,359.1-975.7,0-1356.6" />
+                                  <path className="st0" d="M997.5,1027.4l-673.3,668.3l673.3,279.3l673.3-279.3" />
+                                  <path className="st0" d="M972.6,957.6l698.3-693.3L1027.4,0L389,1541.2L972.6,957.6z" />
+                                  <path className="st0" d="M0,982.5c-0.5,252.3,95.9,495.1,269.3,678.3l668.3-1611" />
+                                </g>
+                              </svg>
+                            ) : (
+                              <img className="history_logo" src="https://storage.opensea.io/files/6f8e2979d428180222796ff4a33ab929.svg" />
+                            )}
                             {his.price}
                           </div>
                           <div className="history_from2" onClick={() => runEtherscan2(his.from)}>
@@ -871,7 +1457,7 @@ function About({ loginAccount, isKaikas /* 로그인된 계정 */ }) {
                             {"..."}
                             {String(his.from).slice(-6)}
                           </div>
-                          <div className="history_to2" onClick={() => runEtherscan2(his.to)}>
+                          <div className="history_to">
                             {String(his.to).slice(0, 6)}
                             {"..."}
                             {String(his.to).slice(-6)}
@@ -914,7 +1500,29 @@ function About({ loginAccount, isKaikas /* 로그인된 계정 */ }) {
                             {his.event}
                           </div>
                           <div className="history_price2">
-                            <img className="history_logo" src="https://storage.opensea.io/files/6f8e2979d428180222796ff4a33ab929.svg" />
+                            {isKaikas ? (
+                              <svg
+                                className="history_logo"
+                                version="1.1"
+                                id="Layer_1"
+                                xmlns="http://www.w3.org/2000/svg"
+                                xmlns="http://www.w3.org/1999/xlink"
+                                x="0px"
+                                y="0px"
+                                viewBox="0 0 2000 1975.1"
+                                xml="preserve"
+                              >
+                                {/* <style type="text/css">.st0{`fill:#4F473B`}</style> */}
+                                <g>
+                                  <path className="st0" d="M1047.4,982.5l683.3,678.3c359.1-380.9,359.1-975.7,0-1356.6" />
+                                  <path className="st0" d="M997.5,1027.4l-673.3,668.3l673.3,279.3l673.3-279.3" />
+                                  <path className="st0" d="M972.6,957.6l698.3-693.3L1027.4,0L389,1541.2L972.6,957.6z" />
+                                  <path className="st0" d="M0,982.5c-0.5,252.3,95.9,495.1,269.3,678.3l668.3-1611" />
+                                </g>
+                              </svg>
+                            ) : (
+                              <img className="history_logo" src="https://storage.opensea.io/files/6f8e2979d428180222796ff4a33ab929.svg" />
+                            )}
                             {his.price}
                           </div>
                           <div className="history_from2" onClick={() => runEtherscan2(his.from)}>
@@ -941,9 +1549,31 @@ function About({ loginAccount, isKaikas /* 로그인된 계정 */ }) {
                           <span className="material-icons addoption">store</span>
                           NoData
                         </div>
-
                         <div className="history_price2">
-                          <img className="history_logo" src="https://storage.opensea.io/files/6f8e2979d428180222796ff4a33ab929.svg" />0
+                          {isKaikas ? (
+                            <svg
+                              className="history_logo"
+                              version="1.1"
+                              id="Layer_1"
+                              xmlns="http://www.w3.org/2000/svg"
+                              xmlns="http://www.w3.org/1999/xlink"
+                              x="0px"
+                              y="0px"
+                              viewBox="0 0 2000 1975.1"
+                              xml="preserve"
+                            >
+                              {/* <style type="text/css">.st0{`fill:#4F473B`}</style> */}
+                              <g>
+                                <path className="st0" d="M1047.4,982.5l683.3,678.3c359.1-380.9,359.1-975.7,0-1356.6" />
+                                <path className="st0" d="M997.5,1027.4l-673.3,668.3l673.3,279.3l673.3-279.3" />
+                                <path className="st0" d="M972.6,957.6l698.3-693.3L1027.4,0L389,1541.2L972.6,957.6z" />
+                                <path className="st0" d="M0,982.5c-0.5,252.3,95.9,495.1,269.3,678.3l668.3-1611" />
+                              </g>
+                            </svg>
+                          ) : (
+                            <img className="history_logo" src="https://storage.opensea.io/files/6f8e2979d428180222796ff4a33ab929.svg" />
+                          )}
+                          0
                         </div>
                         <div className="history_from2">0x0</div>
                         <div className="history_to2">0x0</div>
