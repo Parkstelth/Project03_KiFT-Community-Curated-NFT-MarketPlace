@@ -28,6 +28,7 @@ function Market({ setfooter }) {
               setisKaikas(true);
               try {
                 const response = await axios.get("http://localhost:3001/klaytn/FetchItemsOnSale");
+                console.log("???", response.data.data);
                 setUserMarketData(response.data.data);
                 console.log(userMarketData, "this is what i want");
               } catch (err) {

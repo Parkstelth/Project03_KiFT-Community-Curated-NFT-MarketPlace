@@ -415,7 +415,7 @@ router.post("/changeOwnerAndOwnedNFTs", async (req, res) => {
 
 router.get("/fetchItemsOnSale", async (req, res) => {
   KlayNFT.find({ isSale: true })
-    .sort({ _id: -1 })
+    .sort({ _id: 1 })
     .then(async (result) => {
       res.status(200).send({ message: "fetch listed Items Successed!", data: result });
       console.log(result, "succeeded!");

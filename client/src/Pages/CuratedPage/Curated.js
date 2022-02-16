@@ -5,7 +5,7 @@ import merge from "./merge.svg";
 
 function Curated() {
   return (
-    <div>
+    <div className="topup">
       <div className="issue">Issue No. 1</div>
       <div className="article">
         <div className="Title">This is Pak.</div>
