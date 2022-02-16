@@ -117,25 +117,71 @@ function Staking() {
   };
 
   const getReward = async () => {
-    setShowModal(true);
-    setMessage(`Please sign the Wallet and wait until "Success!"`);
-    if (typeof window.ethereum.providers === "undefined") {
-      var metamaskProvider = window.ethereum;
-    } else {
-      var metamaskProvider = window.ethereum.providers.find((provider) => provider.isMetaMask);
-    }
-    const web = new Web3(metamaskProvider);
+    if (window.ethereum !== undefined) {
+      setShowModal(true);
+      setMessage(`Please sign the Wallet and wait until "Success!"`);
+      if (typeof window.ethereum.providers === "undefined") {
+        var metamaskProvider = window.ethereum;
+      } else {
+        var metamaskProvider = window.ethereum.providers.find((provider) => provider.isMetaMask);
+      }
+      const web = new Web3(metamaskProvider);
 
-    if (Number(earnedAmounts) > 0) {
+      if (Number(earnedAmounts) > 0) {
+        await web.eth
+          .getAccounts()
+          .then(async (account) => {
+            let stakeContract = new web.eth.Contract(stakingAbi, stakingContract.toLowerCase());
+            stakeContract.methods
+              .getReward()
+              .send({ from: account[0] })
+              .then(() => {
+                setMessage("Compensate on KFT Success!");
+                document.location.href = `/staking`;
+              })
+              .catch((err) => {
+                setClosebox(true);
+                setMessage(err.message);
+              });
+          })
+          .catch((err) => {
+            setClosebox(true);
+            setMessage(err.message);
+          });
+      } else {
+        setClosebox(true);
+        setMessage("There is no KFT to be compensated!");
+      }
+    } else {
+      setShowModal(true);
+      setMessage("Please download Metamask!");
+      setClosebox(true);
+    }
+  };
+
+  //출금!!!
+  const withdrawl = async () => {
+    if (window.ethereum !== undefined) {
+      setShowModal(true);
+      setMessage(`Please sign the Wallet and wait until "Success!"`);
+      if (typeof window.ethereum.providers === "undefined") {
+        var metamaskProvider = window.ethereum;
+      } else {
+        var metamaskProvider = window.ethereum.providers.find((provider) => provider.isMetaMask);
+      }
+      const web = new Web3(metamaskProvider);
+
       await web.eth
         .getAccounts()
         .then(async (account) => {
+          console.log(web.utils.toWei(String(inputData), "ether"));
+
           let stakeContract = new web.eth.Contract(stakingAbi, stakingContract.toLowerCase());
           stakeContract.methods
-            .getReward()
+            .withdraw(web.utils.toWei(String(inputData), "ether"))
             .send({ from: account[0] })
             .then(() => {
-              setMessage("Compensate on KFT Success!");
+              setMessage("Withdraw on KFT Success!");
               document.location.href = `/staking`;
             })
             .catch((err) => {
@@ -148,119 +194,91 @@ function Staking() {
           setMessage(err.message);
         });
     } else {
+      setShowModal(true);
+      setMessage("Please download Metamask!");
       setClosebox(true);
-      setMessage("There is no KFT to be compensated!");
     }
-  };
-
-  //출금!!!
-  const withdrawl = async () => {
-    setShowModal(true);
-    setMessage(`Please sign the Wallet and wait until "Success!"`);
-    if (typeof window.ethereum.providers === "undefined") {
-      var metamaskProvider = window.ethereum;
-    } else {
-      var metamaskProvider = window.ethereum.providers.find((provider) => provider.isMetaMask);
-    }
-    const web = new Web3(metamaskProvider);
-
-    await web.eth
-      .getAccounts()
-      .then(async (account) => {
-        console.log(web.utils.toWei(String(inputData), "ether"));
-
-        let stakeContract = new web.eth.Contract(stakingAbi, stakingContract.toLowerCase());
-        stakeContract.methods
-          .withdraw(web.utils.toWei(String(inputData), "ether"))
-          .send({ from: account[0] })
-          .then(() => {
-            setMessage("Withdraw on KFT Success!");
-            document.location.href = `/staking`;
-          })
-          .catch((err) => {
-            setClosebox(true);
-            setMessage(err.message);
-          });
-      })
-      .catch((err) => {
-        setClosebox(true);
-        setMessage(err.message);
-      });
   };
 
   //스테이킹 출발!!
   const startStaking = async () => {
-    setShowModal(true);
-    setMessage(`Please sign the Wallet and wait until "Next Sign"`);
-    if (typeof window.ethereum.providers === "undefined") {
-      var metamaskProvider = window.ethereum;
+    if (window.ethereum !== undefined) {
+      setShowModal(true);
+      setMessage(`Please sign the Wallet and wait until "Next Sign"`);
+      if (typeof window.ethereum.providers === "undefined") {
+        var metamaskProvider = window.ethereum;
+      } else {
+        var metamaskProvider = window.ethereum.providers.find((provider) => provider.isMetaMask);
+      }
+      const web = new Web3(metamaskProvider);
+
+      //수량 체크
+      await web.eth
+        .getAccounts()
+        .then(async (account) => {
+          let kiftContract = new web.eth.Contract(KiFTTokenabi, KiFTContract);
+          console.log(kiftContract.methods);
+
+          await kiftContract.methods
+            .allowance(account[0], stakingContract)
+            .call({ from: account[0] })
+            .then(async (result) => {
+              if (result >= web.utils.toWei(String(stakingInputData), "ether")) {
+                //어프루브된 수량과 똑같으면 바로 start Stake **
+                // console.log("it's same");
+                // console.log(result);
+                // console.log(inputData + "000000000000000000");
+
+                let stakeContract = new web.eth.Contract(stakingAbi, stakingContract.toLowerCase());
+                stakeContract.methods
+                  .stake(web.utils.toWei(String(stakingInputData), "ether"))
+                  .send({ from: account[0] })
+                  .then(() => {
+                    setMessage("Stake on KiFT Success!");
+                    document.location.href = `/staking`;
+                  })
+                  .catch((err) => {
+                    setClosebox(true);
+                    setMessage(err.message);
+                  });
+              } else {
+                //어프루브된 수량과 똑같지 않으면 approve again **
+                // console.log(result);
+                // console.log(inputData + "000000000000000000");
+                await kiftContract.methods
+                  .approve(stakingContract, web.utils.toWei(String(stakingInputData), "ether"))
+                  .send({ from: account[0] })
+                  .then(() => {
+                    setMessage(`Please Next sign the Wallet and wait until "Success!"`);
+                    let stakeContract = new web.eth.Contract(stakingAbi, stakingContract.toLowerCase());
+                    stakeContract.methods
+                      .stake(web.utils.toWei(String(stakingInputData), "ether"))
+                      .send({ from: account[0] })
+                      .then(() => {
+                        setMessage("Stake on KFT Success!");
+                        document.location.href = `/staking`;
+                      })
+                      .catch((err) => {
+                        setClosebox(true);
+                        setMessage(err.message);
+                      });
+                  })
+                  .catch((err) => {
+                    setClosebox(true);
+                    setMessage(err.message);
+                  });
+              }
+            });
+        })
+        .catch((err) => {
+          setClosebox(true);
+          setMessage(err.message);
+        });
     } else {
-      var metamaskProvider = window.ethereum.providers.find((provider) => provider.isMetaMask);
+      setShowModal(true);
+      setMessage("Please download Metamask!");
+      setClosebox(true);
     }
-    const web = new Web3(metamaskProvider);
-
-    //수량 체크
-    await web.eth
-      .getAccounts()
-      .then(async (account) => {
-        let kiftContract = new web.eth.Contract(KiFTTokenabi, KiFTContract);
-        console.log(kiftContract.methods);
-
-        await kiftContract.methods
-          .allowance(account[0], stakingContract)
-          .call({ from: account[0] })
-          .then(async (result) => {
-            if (result >= web.utils.toWei(String(stakingInputData), "ether")) {
-              //어프루브된 수량과 똑같으면 바로 start Stake **
-              // console.log("it's same");
-              // console.log(result);
-              // console.log(inputData + "000000000000000000");
-
-              let stakeContract = new web.eth.Contract(stakingAbi, stakingContract.toLowerCase());
-              stakeContract.methods
-                .stake(web.utils.toWei(String(stakingInputData), "ether"))
-                .send({ from: account[0] })
-                .then(() => {
-                  setMessage("Stake on KiFT Success!");
-                  document.location.href = `/staking`;
-                })
-                .catch((err) => {
-                  setClosebox(true);
-                  setMessage(err.message);
-                });
-            } else {
-              //어프루브된 수량과 똑같지 않으면 approve again **
-              // console.log(result);
-              // console.log(inputData + "000000000000000000");
-              await kiftContract.methods
-                .approve(stakingContract, web.utils.toWei(String(stakingInputData), "ether"))
-                .send({ from: account[0] })
-                .then(() => {
-                  setMessage(`Please Next sign the Wallet and wait until "Success!"`);
-                  let stakeContract = new web.eth.Contract(stakingAbi, stakingContract.toLowerCase());
-                  stakeContract.methods
-                    .stake(web.utils.toWei(String(stakingInputData), "ether"))
-                    .send({ from: account[0] })
-                    .then(() => {
-                      setMessage("Stake on KFT Success!");
-                      document.location.href = `/staking`;
-                    })
-                    .catch((err) => {
-                      setClosebox(true);
-                      setMessage(err.message);
-                    });
-                })
-                .catch((err) => {
-                  setClosebox(true);
-                  setMessage(err.message);
-                });
-            }
-          });
-      })
-      .catch((err) => {
-        setClosebox(true);
-        setMessage(err.message);
-      });
 
     /* //스테이킹 전 어프루브 날리기
     await web.eth.getAccounts().then((account) => {
