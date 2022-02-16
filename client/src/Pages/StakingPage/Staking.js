@@ -85,7 +85,7 @@ function Staking() {
           let stakeContract = new web.eth.Contract(stakingAbi, stakingContract.toLowerCase());
           //본인이 스테이킹 한 양을 체크
           stakeContract.methods
-            .stakingValue(account[0].toLowerCase())
+            .stakingValue(account[0])
             .call()
             .then((result) => {
               console.log(result, "this is waht i wnat /1!!!!!");
@@ -207,7 +207,7 @@ function Staking() {
         console.log(kiftContract.methods);
 
         await kiftContract.methods
-          .allowance(account[0], stakingContract.toLowerCase())
+          .allowance(account[0], stakingContract)
           .call({ from: account[0] })
           .then(async (result) => {
             if (result >= web.utils.toWei(String(stakingInputData), "ether")) {
@@ -307,7 +307,7 @@ function Staking() {
           let stakeContract = new web.eth.Contract(stakingAbi, stakingContract.toLowerCase());
           //본인이 스테이킹 한 양을 체크
           stakeContract.methods
-            .stakingValue(account[0].toLowerCase())
+            .stakingValue(account[0])
             .call()
             .then((result) => {
               console.log(result, "this is waht i wnat /1!!!!!");

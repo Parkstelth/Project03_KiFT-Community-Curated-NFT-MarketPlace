@@ -50,13 +50,6 @@ function StakingForKlaytn() {
   };
 
   const reLoadEarned = async () => {
-    /* if (typeof window.ethereum !== "undefined") {
-      if (typeof window.ethereum.providers === "undefined") {
-        var metamaskProvider = window.ethereum;
-      } else {
-        var metamaskProvider = window.ethereum.providers.find((provider) => provider.isMetaMask);
-      } */
-    // const web = new Web3(metamaskProvider);
     if (window.klaytn) {
       window.klaytn._kaikas.isUnlocked().then(async (result) => {
         if (result === true) {
