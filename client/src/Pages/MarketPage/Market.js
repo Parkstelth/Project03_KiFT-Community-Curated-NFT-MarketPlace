@@ -11,15 +11,6 @@ function Market({ setfooter }) {
   const [isKaikas, setisKaikas] = useState(false);
 
   useEffect(async () => {
-    // if (window.klaytn !== undefined && window.ethereum !== undefined) {
-    //   window.klaytn._kaikas.isUnlocked().then(async (result) => {
-    //     if (result === true) {
-    //       await window.klaytn._kaikas.isApproved().then((result) => {
-    //         if (result === true) {
-    //         }
-    //       }
-    //   }
-    //   }
     if (window.klaytn !== undefined) {
       window.klaytn._kaikas.isUnlocked().then(async (result) => {
         if (result === true) {
