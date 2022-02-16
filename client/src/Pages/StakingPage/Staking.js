@@ -304,10 +304,10 @@ function Staking() {
 
       try {
         web.eth.getAccounts().then((account) => {
-          let stakeContract = new web.eth.Contract(stakingAbi, stakingContract);
+          let stakeContract = new web.eth.Contract(stakingAbi, stakingContract.toLowerCase());
           //본인이 스테이킹 한 양을 체크
           stakeContract.methods
-            .stakingValue(account[0])
+            .stakingValue(account[0].toLowerCase())
             .call()
             .then((result) => {
               console.log(result, "this is waht i wnat /1!!!!!");

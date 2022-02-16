@@ -32,15 +32,14 @@ router.post("/crolling", async function (req, res) {
   const page = await browser.newPage();
   // 페이지의 크기를 설정한다.
 
-  await page.goto(`https://baobab.scope.klaytn.com/account/${account}`);
+  await page.goto(`https://baobab.scope.klaytn.com/account/${account}?tabId=kip17Balance`);
+  //
 
   try {
-    await page.click(
-      "#root > div > div.SidebarTemplate > div.SidebarTemplate__main > div > div > div.DetailPageTableTemplate > div > div.Tab__tabItemList > div:nth-child(4)"
-    );
     await page.waitForSelector(
       "#root > div > div.SidebarTemplate > div.SidebarTemplate__main > div > div > div.DetailPageTableTemplate > div > div.Tab__content > section > article.TokenBalancesList__body > div > div.Table__tbody"
     );
+
     const content = await page.content();
     let list = [];
     const $ = cheerio.load(content);
