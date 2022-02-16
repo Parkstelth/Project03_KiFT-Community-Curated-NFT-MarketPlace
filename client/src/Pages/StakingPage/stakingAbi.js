@@ -12,10 +12,12 @@ const stakingAbi = [
         type: "address",
       },
     ],
-    stateMutability: "payable",
+    payable: false,
+    stateMutability: "nonpayable",
     type: "constructor",
   },
   {
+    constant: true,
     inputs: [
       {
         internalType: "address",
@@ -31,17 +33,21 @@ const stakingAbi = [
         type: "uint256",
       },
     ],
+    payable: false,
     stateMutability: "view",
     type: "function",
   },
   {
+    constant: false,
     inputs: [],
     name: "getReward",
     outputs: [],
+    payable: false,
     stateMutability: "nonpayable",
     type: "function",
   },
   {
+    constant: true,
     inputs: [],
     name: "lastUpdateTime",
     outputs: [
@@ -51,10 +57,12 @@ const stakingAbi = [
         type: "uint256",
       },
     ],
+    payable: false,
     stateMutability: "view",
     type: "function",
   },
   {
+    constant: true,
     inputs: [],
     name: "rewardPerToken",
     outputs: [
@@ -64,10 +72,12 @@ const stakingAbi = [
         type: "uint256",
       },
     ],
+    payable: false,
     stateMutability: "view",
     type: "function",
   },
   {
+    constant: true,
     inputs: [],
     name: "rewardPerTokenStored",
     outputs: [
@@ -77,10 +87,12 @@ const stakingAbi = [
         type: "uint256",
       },
     ],
+    payable: false,
     stateMutability: "view",
     type: "function",
   },
   {
+    constant: true,
     inputs: [],
     name: "rewardRate",
     outputs: [
@@ -90,10 +102,12 @@ const stakingAbi = [
         type: "uint256",
       },
     ],
+    payable: false,
     stateMutability: "view",
     type: "function",
   },
   {
+    constant: true,
     inputs: [
       {
         internalType: "address",
@@ -109,10 +123,12 @@ const stakingAbi = [
         type: "uint256",
       },
     ],
+    payable: false,
     stateMutability: "view",
     type: "function",
   },
   {
+    constant: true,
     inputs: [],
     name: "rewardsToken",
     outputs: [
@@ -122,10 +138,12 @@ const stakingAbi = [
         type: "address",
       },
     ],
+    payable: false,
     stateMutability: "view",
     type: "function",
   },
   {
+    constant: false,
     inputs: [
       {
         internalType: "uint256",
@@ -135,10 +153,12 @@ const stakingAbi = [
     ],
     name: "stake",
     outputs: [],
+    payable: false,
     stateMutability: "nonpayable",
     type: "function",
   },
   {
+    constant: true,
     inputs: [],
     name: "stakingToken",
     outputs: [
@@ -148,10 +168,12 @@ const stakingAbi = [
         type: "address",
       },
     ],
+    payable: false,
     stateMutability: "view",
     type: "function",
   },
   {
+    constant: true,
     inputs: [
       {
         internalType: "address",
@@ -167,10 +189,12 @@ const stakingAbi = [
         type: "uint256",
       },
     ],
+    payable: false,
     stateMutability: "view",
     type: "function",
   },
   {
+    constant: true,
     inputs: [],
     name: "totalSupply",
     outputs: [
@@ -180,10 +204,12 @@ const stakingAbi = [
         type: "uint256",
       },
     ],
+    payable: false,
     stateMutability: "view",
     type: "function",
   },
   {
+    constant: true,
     inputs: [
       {
         internalType: "address",
@@ -199,10 +225,12 @@ const stakingAbi = [
         type: "uint256",
       },
     ],
+    payable: false,
     stateMutability: "view",
     type: "function",
   },
   {
+    constant: false,
     inputs: [
       {
         internalType: "uint256",
@@ -212,6 +240,7 @@ const stakingAbi = [
     ],
     name: "withdraw",
     outputs: [],
+    payable: false,
     stateMutability: "nonpayable",
     type: "function",
   },
