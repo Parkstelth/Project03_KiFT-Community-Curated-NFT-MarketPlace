@@ -11,15 +11,6 @@ function Market({ setfooter }) {
   const [isKaikas, setisKaikas] = useState(false);
 
   useEffect(async () => {
-    // if (window.klaytn !== undefined && window.ethereum !== undefined) {
-    //   window.klaytn._kaikas.isUnlocked().then(async (result) => {
-    //     if (result === true) {
-    //       await window.klaytn._kaikas.isApproved().then((result) => {
-    //         if (result === true) {
-    //         }
-    //       }
-    //   }
-    //   }
     if (window.klaytn !== undefined) {
       window.klaytn._kaikas.isUnlocked().then(async (result) => {
         if (result === true) {
@@ -28,6 +19,7 @@ function Market({ setfooter }) {
               setisKaikas(true);
               try {
                 const response = await axios.get("http://localhost:3001/klaytn/FetchItemsOnSale");
+                console.log("???", response.data.data);
                 setUserMarketData(response.data.data);
                 console.log(userMarketData, "this is what i want");
               } catch (err) {

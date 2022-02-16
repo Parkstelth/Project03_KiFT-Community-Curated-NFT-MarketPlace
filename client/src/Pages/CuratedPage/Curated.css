@@ -1,16 +1,18 @@
 .article {
   text-align: center;
-  margin: 1rem;
+  margin: 5.3rem 1rem 1rem 1rem;
 }
-
-.issue {
+.topup {
   position: relative;
-  left: 19%;
+}
+.issue {
+  position: absolute;
+  left: 32.5rem;
+  top: -1rem;
   margin: 0 auto;
   font-size: 1.5rem;
   color: gray;
   line-height: 0;
-  margin-top: 3rem;
 }
 
 .Title {
