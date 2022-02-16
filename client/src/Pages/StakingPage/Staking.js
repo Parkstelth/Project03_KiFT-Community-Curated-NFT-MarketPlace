@@ -225,10 +225,6 @@ function Staking() {
             .then(async (result) => {
               if (result >= web.utils.toWei(String(stakingInputData), "ether")) {
                 //어프루브된 수량과 똑같으면 바로 start Stake **
-                // console.log("it's same");
-                // console.log(result);
-                // console.log(inputData + "000000000000000000");
-
                 let stakeContract = new web.eth.Contract(stakingAbi, stakingContract.toLowerCase());
                 stakeContract.methods
                   .stake(web.utils.toWei(String(stakingInputData), "ether"))
@@ -243,8 +239,6 @@ function Staking() {
                   });
               } else {
                 //어프루브된 수량과 똑같지 않으면 approve again **
-                // console.log(result);
-                // console.log(inputData + "000000000000000000");
                 await kiftContract.methods
                   .approve(stakingContract, web.utils.toWei(String(stakingInputData), "ether"))
                   .send({ from: account[0] })
@@ -279,16 +273,6 @@ function Staking() {
       setMessage("Please download Metamask!");
       setClosebox(true);
     }
-
-    /* //스테이킹 전 어프루브 날리기
-    await web.eth.getAccounts().then((account) => {
-      let kiftContract = new web.eth.Contract(KiFTTokenabi, KiFTContract);
-      console.log(kiftContract);
-      kiftContract.methods
-        .approve(stakingContract, web.utils.toWei(String(inputData), "ether"))
-        .send({ from: account[0] })
-        .then(console.log);
-    }); */
   };
 
   useEffect(async () => {
@@ -322,33 +306,34 @@ function Staking() {
 
       try {
         web.eth.getAccounts().then((account) => {
-          let stakeContract = new web.eth.Contract(stakingAbi, stakingContract.toLowerCase());
-          //본인이 스테이킹 한 양을 체크
-          stakeContract.methods
-            .stakingValue(account[0])
-            .call()
-            .then((result) => {
-              console.log(result, "this is waht i wnat /1!!!!!");
-              setStakingAmounts(web.utils.fromWei(String(result), "ether"));
-            });
+          if (account.length > 0) {
+            let stakeContract = new web.eth.Contract(stakingAbi, stakingContract.toLowerCase());
+            //본인이 스테이킹 한 양을 체크
+            stakeContract.methods
+              .stakingValue(account[0])
+              .call()
+              .then((result) => {
+                console.log(result, "this is waht i wnat /1!!!!!");
+                setStakingAmounts(web.utils.fromWei(String(result), "ether"));
+              });
 
-          //전체 스테이킹 양 체크!!!!
-          stakeContract.methods
-            .totalSupply()
-            .call()
-            .then((result) => {
-              console.log(result, "this is waht i wnat /1!!!!!asdfkj;asilfjsd;ifja;df");
-              setTotalSupply(web.utils.fromWei(String(result), "ether"));
-            });
+            //전체 스테이킹 양 체크!!!!
+            stakeContract.methods
+              .totalSupply()
+              .call()
+              .then((result) => {
+                setTotalSupply(web.utils.fromWei(String(result), "ether"));
+              });
 
-          //본인의 수익 체크 !!!!
-          stakeContract.methods
-            .earned(account[0])
-            .call()
-            .then((result) => {
-              console.log(result, "Earned!!!!!!");
-              setEarnedAmounts(web.utils.fromWei(String(result), "ether"));
-            });
+            //본인의 수익 체크 !!!!
+            stakeContract.methods
+              .earned(account[0])
+              .call()
+              .then((result) => {
+                console.log(result, "Earned!!!!!!");
+                setEarnedAmounts(web.utils.fromWei(String(result), "ether"));
+              });
+          }
         });
       } catch (err) {
         console.log(err);

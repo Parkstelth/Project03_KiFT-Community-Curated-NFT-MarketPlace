@@ -313,7 +313,6 @@ function StakingForKlaytn() {
                     .totalSupply()
                     .call()
                     .then((result) => {
-                      console.log(result, " thisi sawfjiowhit hiasdf!!!");
                       setTotalSupply(caver.utils.fromWei(String(result), "ether"));
                     });
 
@@ -321,7 +320,6 @@ function StakingForKlaytn() {
                     .earned(account[0])
                     .call()
                     .then((result) => {
-                      console.log(result, "Earend!@#@!@#!@#");
                       setEarnedAmounts(caver.utils.fromWei(String(result), "ether"));
                     });
                 });
