@@ -18,23 +18,28 @@ function Nav({ isLogin, isKaikas }) {
 
           <DropdownButton className="nav" id="dropdown-basic-button" title="Community">
             <Dropdown.Item>
-              <Link to="/claim" className="noneDeco">
-                Claim KiFToken
-              </Link>
-            </Dropdown.Item>
-            <Dropdown.Item>
-              <Link to="/claimforklaytn" className="noneDeco">
-                Claim KiFToken (Klay)
-              </Link>
-            </Dropdown.Item>
-            <Dropdown.Item>
               <Link to="create" className="noneDeco">
                 Create NFT
               </Link>
             </Dropdown.Item>
             <Dropdown.Item>
-              <Link to="staking" className="noneDeco">
+              <Link to="/claimforklaytn" className="noneDeco">
+                Claim KiFToken
+              </Link>
+            </Dropdown.Item>
+            <Dropdown.Item>
+              <Link to="/claim" className="noneDeco">
+                Claim KiFToken (Eth)
+              </Link>
+            </Dropdown.Item>
+            <Dropdown.Item>
+              <Link to="stakingForKlaytn" className="noneDeco">
                 Staking
+              </Link>
+            </Dropdown.Item>
+            <Dropdown.Item>
+              <Link to="staking" className="noneDeco">
+                Staking (Eth)
               </Link>
             </Dropdown.Item>
             <Dropdown.Item>

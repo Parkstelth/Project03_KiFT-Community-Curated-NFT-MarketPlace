@@ -1,0 +1,206 @@
+/* * {
+  font-family: Kanit, sans-serif;
+} */
+
+.headup {
+  margin-top: 40px;
+  width: 100%;
+  background: linear-gradient(139.73deg, rgb(229, 253, 255) 0%, rgb(243, 239, 255) 100%);
+  height: 200px;
+}
+
+.headup_name {
+  font-size: 3.4rem;
+  margin: auto;
+  width: 406px;
+  padding-top: 57px;
+  color: rgb(32, 129, 226);
+  font-weight: bold;
+  text-align: center;
+}
+.mainPool {
+  max-width: 1200px;
+  margin: 50px auto;
+  border: 2px solid rgb(231, 227, 235);
+  border-radius: 15px;
+  box-shadow: rgb(238 234 244) 0px 0px 5px inset;
+}
+.first_menu {
+  display: flex;
+  padding: 20px 40px;
+  height: 100px;
+  align-items: center;
+}
+
+.st_logo {
+  margin-right: 13px;
+  position: relative;
+}
+
+.st_logoSet {
+  width: 40px;
+  height: 40px;
+}
+
+.st_logoSet2 {
+  border: 3px solid rgb(32, 129, 226);
+  width: 27px;
+  height: 27px;
+  border-radius: 50px;
+  display: flex;
+  font-size: 0.8rem;
+  color: white;
+  background-color: rgb(32, 129, 226);
+  font-weight: bold;
+  text-align: center;
+  justify-content: center;
+  position: absolute;
+  top: -10px;
+  left: -10px;
+}
+
+.info {
+  width: 200px;
+}
+
+.info_name {
+  font-size: 1.2rem;
+  font-weight: 600;
+  line-height: 0.8;
+}
+
+.info_desc {
+  font-weight: 500;
+  font-size: 0.9rem;
+  font-family: Kanit, sans-serif;
+}
+
+.earned {
+  width: 200px;
+  margin-bottom: 7px;
+}
+
+.earned_name {
+  font-weight: bold;
+  border-bottom: 1px solid rgb(231, 227, 235);
+}
+
+.staked {
+  width: 200px;
+  margin-bottom: 7px;
+}
+
+.staked_name {
+  font-weight: bold;
+  border-bottom: 1px solid rgb(231, 227, 235);
+}
+
+.totalStaked {
+  width: 200px;
+  margin-bottom: 7px;
+}
+
+.totalStaked_name {
+  font-weight: bold;
+  border-bottom: 1px solid rgb(231, 227, 235);
+}
+
+.mytoken {
+  width: 200px;
+  margin-bottom: 7px;
+}
+
+.mytoken_name {
+  font-weight: bold;
+  border-bottom: 1px solid rgb(231, 227, 235);
+}
+
+.second_menu {
+  display: flex;
+  padding: 20px 40px;
+  align-items: center;
+  border-top: 2px solid rgb(231, 227, 235);
+  height: 180px;
+  background-color: rgb(250, 249, 250);
+  box-sizing: content-box;
+  border-bottom-left-radius: 15px;
+  border-bottom-right-radius: 15px;
+  box-shadow: rgb(238 234 244) 0px 0px 5px inset;
+}
+
+.link_tap {
+  width: 220px;
+}
+.tap_name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-right: 4px;
+}
+
+.tap1 {
+  display: flex;
+  margin-bottom: 24px;
+  width: 155px;
+  cursor: pointer;
+  color: rgb(32, 129, 226);
+}
+
+.reward {
+  border: 2px solid #adb5bd8c;
+  border-radius: 15px;
+  width: 280px;
+  height: 145px;
+  padding: 15px 20px;
+  position: relative;
+  margin-right: 18px;
+}
+
+.reward_name {
+  color: black;
+  font-size: 1rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.reward_value {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.reward_button {
+  position: absolute;
+  right: 16px;
+  bottom: 8px;
+  font-size: 1.2rem;
+  border-radius: 18px;
+  width: 110px;
+  height: 40px;
+  cursor: pointer;
+}
+
+.withdraw_value {
+  width: 240px;
+  border-radius: 7px;
+}
+
+.howto {
+  display: flex;
+  border: 3px solid rgb(32, 129, 226);
+  width: 156px;
+  height: 46px;
+  border-radius: 25px;
+  padding: 10px 10px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.material-icons.setcolor {
+  color: rgb(32, 129, 226);
+  margin-right: 10px;
+}
+
+.howto_name {
+  font-size: 1rem;
+  font-weight: bold;
+  color: rgb(32, 129, 226);
+}
