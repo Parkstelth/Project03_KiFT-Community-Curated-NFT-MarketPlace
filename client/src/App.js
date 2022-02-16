@@ -13,6 +13,7 @@ import CreateNft from "./Pages/CreateNftPage/CreateNft";
 import NotFound from "./Pages/NotFoundPage/notfound";
 import Nav from "./Pages/FrontPage/Nav";
 import Staking from "./Pages/StakingPage/Staking";
+import StakingForKlaytn from "./Pages/StakingForKlaytnPage/StakingForKlaytn";
 import Footer from "./Pages/FrontPage/Footer";
 import { useState, useEffect } from "react";
 import Web3 from "web3";
@@ -270,6 +271,7 @@ function App() {
         <Route path="/claim" element={<Claim />} />
         <Route path="/claimforklaytn" element={<ClaimForKlaytn />} />
         <Route path="/staking" element={<Staking />} />
+        <Route path="/StakingForKlaytn" element={<StakingForKlaytn />} />
         <Route path="/create" element={<CreateNft setIsKaikas={setIsKaikas} isKaikas={isKaikas} />} />
         <Route path="/search" element={<Search />} />
         <Route path=":id" element={<NotFound />} />
