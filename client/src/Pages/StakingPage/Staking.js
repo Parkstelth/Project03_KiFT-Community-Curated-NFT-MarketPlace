@@ -346,7 +346,7 @@ function Staking() {
   return (
     <div>
       <div className="headup">
-        <div className="headup_name">S T A K I N G</div>
+        <div className="headup_name">S T A K I N G (ETH)</div>
       </div>
       <div className="mainPool">
         {showModal && <NotifyModal showModal={showModal} closeModal={closeModal} message={message} closebox={closebox}></NotifyModal>}
