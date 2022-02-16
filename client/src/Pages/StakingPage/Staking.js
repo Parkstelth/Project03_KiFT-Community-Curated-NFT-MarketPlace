@@ -92,12 +92,12 @@ function Staking() {
           </div>
           <div className="reward">
             <div className="reward_name">WITHDRAW</div>
-            <input className="withdraw_value" />
+            <input className="withdraw_value" placeholder="Amount" />
             <button className="reward_button">Withdraw</button>
           </div>
           <div className="reward">
             <div className="reward_name">START STAKING</div>
-            <input className="withdraw_value" />
+            <input className="withdraw_value" placeholder="Amount" />
             <button className="reward_button">Launch</button>
           </div>
         </div>

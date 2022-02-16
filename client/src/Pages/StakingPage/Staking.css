@@ -1,6 +1,6 @@
-* {
+/* * {
   font-family: Kanit, sans-serif;
-}
+} */
 
 .headup {
   margin-top: 40px;
@@ -44,7 +44,7 @@
 .st_logoSet2 {
   border: 3px solid rgb(32, 129, 226);
   width: 27px;
-  height: 26px;
+  height: 27px;
   border-radius: 50px;
   display: flex;
   font-size: 0.8rem;
@@ -54,7 +54,7 @@
   text-align: center;
   justify-content: center;
   position: absolute;
-  top: -8px;
+  top: -10px;
   left: -10px;
 }
 
@@ -71,6 +71,7 @@
 .info_desc {
   font-weight: 500;
   font-size: 0.9rem;
+  font-family: Kanit, sans-serif;
 }
 
 .earned {
@@ -80,6 +81,7 @@
 
 .earned_name {
   font-weight: bold;
+  border-bottom: 1px solid rgb(231, 227, 235);
 }
 
 .staked {
@@ -89,6 +91,7 @@
 
 .staked_name {
   font-weight: bold;
+  border-bottom: 1px solid rgb(231, 227, 235);
 }
 
 .totalStaked {
@@ -98,6 +101,7 @@
 
 .totalStaked_name {
   font-weight: bold;
+  border-bottom: 1px solid rgb(231, 227, 235);
 }
 
 .mytoken {
@@ -107,17 +111,20 @@
 
 .mytoken_name {
   font-weight: bold;
+  border-bottom: 1px solid rgb(231, 227, 235);
 }
 
 .second_menu {
   display: flex;
   padding: 20px 40px;
-  height: 100px;
   align-items: center;
   border-top: 2px solid rgb(231, 227, 235);
   height: 180px;
   background-color: rgb(250, 249, 250);
   box-sizing: content-box;
+  border-bottom-left-radius: 15px;
+  border-bottom-right-radius: 15px;
+  box-shadow: rgb(238 234 244) 0px 0px 5px inset;
 }
 
 .link_tap {
