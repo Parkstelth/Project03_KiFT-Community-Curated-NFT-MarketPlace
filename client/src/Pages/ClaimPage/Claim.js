@@ -118,11 +118,10 @@ function Claim(isLogin) {
             .then(async (point) => {
               //포인트 있으면 민트 가능!!
               if (point > 0) {
-                let numbersUserCanClaim = point * 7 * 1000000000000000000;
-                console.log(numbersUserCanClaim.toString());
+                let numbersUserCanClaim = point * 7;
                 let contract = await new web.eth.Contract(KiFTTokenabi, process.env.REACT_APP_KIFT_TOKEN_CONTRACT_ADDRESS);
                 await contract.methods
-                  .mintToken(account[0], numbersUserCanClaim.toString())
+                  .mintToken(account[0], web.utils.toWei(String(numbersUserCanClaim), "ether"))
                   .send({
                     from: account[0],
                     gas: 100000,
