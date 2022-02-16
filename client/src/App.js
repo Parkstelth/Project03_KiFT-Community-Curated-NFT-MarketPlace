@@ -242,7 +242,10 @@ function App() {
         console.log(err);
       }
     } else {
-      alert("Please download both Metamask and Kaikas Wallet");
+      alert("Please download Metamask or Kaikas Wallet");
+      var win = window.open("https://metamask.io/download.html", "_blank");
+      var win = window.open("https://chrome.google.com/webstore/detail/kaikas/jblndlipeogpafnldhgmapagcccfchpi?hl=ko", "_blank");
+      win.focus();
     }
   }, []);
 

@@ -16,6 +16,7 @@
   padding-top: 57px;
   color: rgb(32, 129, 226);
   font-weight: bold;
+  text-align: center;
 }
 .mainPool {
   max-width: 1200px;
@@ -162,7 +163,7 @@
 }
 
 .reward_value {
-  font-size: 1.3rem;
+  font-size: 1.2rem;
   font-weight: bold;
 }
 

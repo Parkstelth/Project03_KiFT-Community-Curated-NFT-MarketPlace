@@ -39,8 +39,9 @@ function Claim(isLogin) {
   }
 
   useEffect(async () => {
-    if (typeof window.ethereum === undefined) {
-      setStatus("Wallet not connected. Please connect your Metamask wallet to browser.");
+    console.log(window.ethereum);
+    if (window.ethereum === undefined) {
+      setStatus("Please download and Login Metamask!");
     } else {
       if (typeof window.ethereum.providers === "undefined") {
         var metamaskProvider = window.ethereum;

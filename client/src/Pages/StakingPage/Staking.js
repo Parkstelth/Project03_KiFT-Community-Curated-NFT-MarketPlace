@@ -51,7 +51,74 @@ function Staking() {
     console.log("result of Input==========>>>>>", e.target.value);
   };
 
+  const reLoadEarned = async () => {
+    if (typeof window.ethereum !== "undefined") {
+      if (typeof window.ethereum.providers === "undefined") {
+        var metamaskProvider = window.ethereum;
+      } else {
+        var metamaskProvider = window.ethereum.providers.find((provider) => provider.isMetaMask);
+      }
+      const web = new Web3(metamaskProvider);
+
+      //키프트 토큰의 발란스 체크
+      try {
+        const accounts = await metamaskProvider.request({
+          method: "eth_requestAccounts",
+        });
+        setAccount(accounts[0].toLowerCase());
+
+        web.eth.getAccounts().then((account) => {
+          let kiftContract = new web.eth.Contract(KiFTTokenabi, KiFTContract);
+          kiftContract.methods
+            .balanceOf(account[0].toLocaleLowerCase())
+            .call()
+            .then((amount) => {
+              setBalance(web.utils.fromWei(String(amount), "ether"));
+            });
+        });
+      } catch (err) {
+        console.log(err);
+      }
+
+      try {
+        web.eth.getAccounts().then((account) => {
+          let stakeContract = new web.eth.Contract(stakingAbi, stakingContract.toLowerCase());
+          //본인이 스테이킹 한 양을 체크
+          stakeContract.methods
+            .stakingValue(account[0].toLowerCase())
+            .call()
+            .then((result) => {
+              console.log(result, "this is waht i wnat /1!!!!!");
+              setStakingAmounts(web.utils.fromWei(String(result), "ether"));
+            });
+
+          //전체 스테이킹 양 체크!!!!
+          stakeContract.methods
+            .totalSupply()
+            .call()
+            .then((result) => {
+              console.log(result, "this is waht i wnat /1!!!!!asdfkj;asilfjsd;ifja;df");
+              setTotalSupply(web.utils.fromWei(String(result), "ether"));
+            });
+
+          //본인의 수익 체크 !!!!
+          stakeContract.methods
+            .earned(account[0])
+            .call()
+            .then((result) => {
+              console.log(result, "Earned!!!!!!");
+              setEarnedAmounts(web.utils.fromWei(String(result), "ether"));
+            });
+        });
+      } catch (err) {
+        console.log(err);
+      }
+    }
+  };
+
   const getReward = async () => {
+    setShowModal(true);
+    setMessage(`Please sign the Wallet and wait until "Success!"`);
     if (typeof window.ethereum.providers === "undefined") {
       var metamaskProvider = window.ethereum;
     } else {
@@ -59,20 +126,37 @@ function Staking() {
     }
     const web = new Web3(metamaskProvider);
 
-    //본인이 스테이킹 한 양을 체크
-    await web.eth.getAccounts().then(async (account) => {
-      let stakeContract = new web.eth.Contract(stakingAbi, stakingContract.toLowerCase());
-      stakeContract.methods
-        .getReward()
-        .send({ from: account[0] })
-        .then((result) => {
-          console.log(result);
+    if (Number(earnedAmounts) > 0) {
+      await web.eth
+        .getAccounts()
+        .then(async (account) => {
+          let stakeContract = new web.eth.Contract(stakingAbi, stakingContract.toLowerCase());
+          stakeContract.methods
+            .getReward()
+            .send({ from: account[0] })
+            .then(() => {
+              setMessage("Compensate on KFT Success!");
+              document.location.href = `/staking`;
+            })
+            .catch((err) => {
+              setClosebox(true);
+              setMessage(err.message);
+            });
+        })
+        .catch((err) => {
+          setClosebox(true);
+          setMessage(err.message);
         });
-    });
+    } else {
+      setClosebox(true);
+      setMessage("There is no KFT to be compensated!");
+    }
   };
 
   //출금!!!
   const withdrawl = async () => {
+    setShowModal(true);
+    setMessage(`Please sign the Wallet and wait until "Success!"`);
     if (typeof window.ethereum.providers === "undefined") {
       var metamaskProvider = window.ethereum;
     } else {
@@ -80,21 +164,34 @@ function Staking() {
     }
     const web = new Web3(metamaskProvider);
 
-    await web.eth.getAccounts().then(async (account) => {
-      console.log(web.utils.toWei(String(inputData), "ether"));
+    await web.eth
+      .getAccounts()
+      .then(async (account) => {
+        console.log(web.utils.toWei(String(inputData), "ether"));
 
-      let stakeContract = new web.eth.Contract(stakingAbi, stakingContract.toLowerCase());
-      stakeContract.methods
-        .withdraw(web.utils.toWei(String(inputData), "ether"))
-        .send({ from: account[0] })
-        .then((result) => {
-          console.log(result);
-        });
-    });
+        let stakeContract = new web.eth.Contract(stakingAbi, stakingContract.toLowerCase());
+        stakeContract.methods
+          .withdraw(web.utils.toWei(String(inputData), "ether"))
+          .send({ from: account[0] })
+          .then(() => {
+            setMessage("Withdraw on KFT Success!");
+            document.location.href = `/staking`;
+          })
+          .catch((err) => {
+            setClosebox(true);
+            setMessage(err.message);
+          });
+      })
+      .catch((err) => {
+        setClosebox(true);
+        setMessage(err.message);
+      });
   };
 
   //스테이킹 출발!!
   const startStaking = async () => {
+    setShowModal(true);
+    setMessage(`Please sign the Wallet and wait until "Next Sign"`);
     if (typeof window.ethereum.providers === "undefined") {
       var metamaskProvider = window.ethereum;
     } else {
@@ -103,41 +200,67 @@ function Staking() {
     const web = new Web3(metamaskProvider);
 
     //수량 체크
-    await web.eth.getAccounts().then(async (account) => {
-      let kiftContract = new web.eth.Contract(KiFTTokenabi, KiFTContract);
-      console.log(kiftContract.methods);
+    await web.eth
+      .getAccounts()
+      .then(async (account) => {
+        let kiftContract = new web.eth.Contract(KiFTTokenabi, KiFTContract);
+        console.log(kiftContract.methods);
 
-      await kiftContract.methods
-        .allowance(account[0], stakingContract.toLowerCase())
-        .call({ from: account[0] })
-        .then(async (result) => {
-          if (result >= stakingInputData + "000000000000000000") {
-            //어프루브된 수량과 똑같으면 바로 start Stake **
-            // console.log("it's same");
-            // console.log(result);
-            // console.log(inputData + "000000000000000000");
-          } else {
-            //어프루브된 수량과 똑같지 않으면 approve again **
-            // console.log(result);
-            // console.log(inputData + "000000000000000000");
-            await kiftContract.methods
-              .approve(stakingContract, web.utils.toWei(String(stakingInputData), "ether"))
-              .send({ from: account[0] })
-              .then(console.log);
-          }
-          await web.eth.getAccounts().then((account) => {
-            let stakeContract = new web.eth.Contract(stakingAbi, stakingContract.toLowerCase());
-            console.log(stakingAbi);
+        await kiftContract.methods
+          .allowance(account[0], stakingContract.toLowerCase())
+          .call({ from: account[0] })
+          .then(async (result) => {
+            if (result >= web.utils.toWei(String(stakingInputData), "ether")) {
+              //어프루브된 수량과 똑같으면 바로 start Stake **
+              // console.log("it's same");
+              // console.log(result);
+              // console.log(inputData + "000000000000000000");
 
-            console.log(stakingContract, "this is it");
-            console.log(stakeContract, "this is that");
-            stakeContract.methods
-              .stake(web.utils.toWei(String(stakingInputData), "ether"))
-              .send({ from: account[0] })
-              .then(console.log);
+              let stakeContract = new web.eth.Contract(stakingAbi, stakingContract.toLowerCase());
+              stakeContract.methods
+                .stake(web.utils.toWei(String(stakingInputData), "ether"))
+                .send({ from: account[0] })
+                .then(() => {
+                  setMessage("Stake on KiFT Success!");
+                  document.location.href = `/staking`;
+                })
+                .catch((err) => {
+                  setClosebox(true);
+                  setMessage(err.message);
+                });
+            } else {
+              //어프루브된 수량과 똑같지 않으면 approve again **
+              // console.log(result);
+              // console.log(inputData + "000000000000000000");
+              await kiftContract.methods
+                .approve(stakingContract, web.utils.toWei(String(stakingInputData), "ether"))
+                .send({ from: account[0] })
+                .then(() => {
+                  setMessage(`Please Next sign the Wallet and wait until "Success!"`);
+                  let stakeContract = new web.eth.Contract(stakingAbi, stakingContract.toLowerCase());
+                  stakeContract.methods
+                    .stake(web.utils.toWei(String(stakingInputData), "ether"))
+                    .send({ from: account[0] })
+                    .then(() => {
+                      setMessage("Stake on KFT Success!");
+                      document.location.href = `/staking`;
+                    })
+                    .catch((err) => {
+                      setClosebox(true);
+                      setMessage(err.message);
+                    });
+                })
+                .catch((err) => {
+                  setClosebox(true);
+                  setMessage(err.message);
+                });
+            }
           });
-        });
-    });
+      })
+      .catch((err) => {
+        setClosebox(true);
+        setMessage(err.message);
+      });
 
     /* //스테이킹 전 어프루브 날리기
     await web.eth.getAccounts().then((account) => {
@@ -151,65 +274,69 @@ function Staking() {
   };
 
   useEffect(async () => {
-    if (typeof window.ethereum.providers === "undefined") {
-      var metamaskProvider = window.ethereum;
+    if (typeof window.ethereum !== "undefined") {
+      if (typeof window.ethereum.providers === "undefined") {
+        var metamaskProvider = window.ethereum;
+      } else {
+        var metamaskProvider = window.ethereum.providers.find((provider) => provider.isMetaMask);
+      }
+      const web = new Web3(metamaskProvider);
+
+      //키프트 토큰의 발란스 체크
+      try {
+        const accounts = await metamaskProvider.request({
+          method: "eth_requestAccounts",
+        });
+        setAccount(accounts[0].toLowerCase());
+
+        web.eth.getAccounts().then((account) => {
+          let kiftContract = new web.eth.Contract(KiFTTokenabi, KiFTContract);
+          kiftContract.methods
+            .balanceOf(account[0].toLocaleLowerCase())
+            .call()
+            .then((amount) => {
+              setBalance(web.utils.fromWei(String(amount), "ether"));
+            });
+        });
+      } catch (err) {
+        console.log(err);
+      }
+
+      try {
+        web.eth.getAccounts().then((account) => {
+          let stakeContract = new web.eth.Contract(stakingAbi, stakingContract.toLowerCase());
+          //본인이 스테이킹 한 양을 체크
+          stakeContract.methods
+            .stakingValue(account[0].toLowerCase())
+            .call()
+            .then((result) => {
+              console.log(result, "this is waht i wnat /1!!!!!");
+              setStakingAmounts(web.utils.fromWei(String(result), "ether"));
+            });
+
+          //전체 스테이킹 양 체크!!!!
+          stakeContract.methods
+            .totalSupply()
+            .call()
+            .then((result) => {
+              console.log(result, "this is waht i wnat /1!!!!!asdfkj;asilfjsd;ifja;df");
+              setTotalSupply(web.utils.fromWei(String(result), "ether"));
+            });
+
+          //본인의 수익 체크 !!!!
+          stakeContract.methods
+            .earned(account[0])
+            .call()
+            .then((result) => {
+              console.log(result, "Earned!!!!!!");
+              setEarnedAmounts(web.utils.fromWei(String(result), "ether"));
+            });
+        });
+      } catch (err) {
+        console.log(err);
+      }
     } else {
-      var metamaskProvider = window.ethereum.providers.find((provider) => provider.isMetaMask);
-    }
-    const web = new Web3(metamaskProvider);
-
-    //키프트 토큰의 발란스 체크
-    try {
-      const accounts = await metamaskProvider.request({
-        method: "eth_requestAccounts",
-      });
-      setAccount(accounts[0].toLowerCase());
-
-      web.eth.getAccounts().then((account) => {
-        let kiftContract = new web.eth.Contract(KiFTTokenabi, KiFTContract);
-        kiftContract.methods
-          .balanceOf(account[0].toLocaleLowerCase())
-          .call()
-          .then((amount) => {
-            setBalance(web.utils.fromWei(String(amount), "ether"));
-          });
-      });
-    } catch (err) {
-      console.log(err);
-    }
-
-    try {
-      web.eth.getAccounts().then((account) => {
-        let stakeContract = new web.eth.Contract(stakingAbi, stakingContract.toLowerCase());
-        //본인이 스테이킹 한 양을 체크
-        stakeContract.methods
-          .stakingValue(account[0].toLowerCase())
-          .call()
-          .then((result) => {
-            console.log(result, "this is waht i wnat /1!!!!!");
-            setStakingAmounts(web.utils.fromWei(String(result), "ether"));
-          });
-
-        //전체 스테이킹 양 체크!!!!
-        stakeContract.methods
-          .totalSupply()
-          .call()
-          .then((result) => {
-            console.log(result, "this is waht i wnat /1!!!!!asdfkj;asilfjsd;ifja;df");
-            setTotalSupply(web.utils.fromWei(String(result), "ether"));
-          });
-
-        //본인의 수익 체크 !!!!
-        stakeContract.methods
-          .earned(account[0])
-          .call()
-          .then((result) => {
-            console.log(result, "Earned!!!!!!");
-            setEarnedAmounts(web.utils.fromWei(String(result), "ether"));
-          });
-      });
-    } catch (err) {
-      console.log(err);
+      alert("Please download Metamask!");
     }
   }, []);
 
@@ -250,15 +377,17 @@ function Staking() {
           <div className="link_tap">
             <div className="tap1" onClick={() => openlink1()}>
               <div className="tap_name">See Token Info</div>
-              <span class="material-icons">open_in_new</span>
+              <span className="material-icons">open_in_new</span>
             </div>
             <div className="tap1" onClick={() => openlink2()}>
               <div className="tap_name">View Contract</div>
-              <span class="material-icons">open_in_new</span>
+              <span className="material-icons">open_in_new</span>
             </div>
             <div className="howto">
-              <span class="material-icons setcolor">help_outline</span>
-              <div className="howto_name">How to use</div>
+              <span className="material-icons setcolor">refresh</span>
+              <div className="howto_name" onClick={reLoadEarned}>
+                Refresh All
+              </div>
             </div>
           </div>
           <div className="reward">

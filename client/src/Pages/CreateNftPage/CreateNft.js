@@ -84,15 +84,19 @@ function CreateNft({ isKaikas, setIsKaikas }) {
   });
 
   useEffect(async () => {
-    window.klaytn._kaikas.isUnlocked().then(async (result) => {
-      if (result === true) {
-        await window.klaytn._kaikas.isApproved().then(async (result) => {
-          if (result === true) {
-            setIsKaikas(true);
-          }
-        });
-      }
-    });
+    if (window.klay !== undefined || window.ethereum !== undefined) {
+      window.klaytn._kaikas.isUnlocked().then(async (result) => {
+        if (result === true) {
+          await window.klaytn._kaikas.isApproved().then(async (result) => {
+            if (result === true) {
+              setIsKaikas(true);
+            }
+          });
+        }
+      });
+    } else {
+      alert("Please download Metamask or Kaikas Wallet");
+    }
   }, []);
 
   const [countList, setCountList] = useState([0]);
