@@ -12,6 +12,16 @@
 .headup_name {
   font-size: 3.4rem;
   margin: auto;
+  width: 406px;
+  padding-top: 57px;
+  color: rgb(32, 129, 226);
+  font-weight: bold;
+  text-align: center;
+}
+
+.headup_name2 {
+  font-size: 3.4rem;
+  margin: auto;
   width: 475px;
   padding-top: 57px;
   color: rgb(32, 129, 226);

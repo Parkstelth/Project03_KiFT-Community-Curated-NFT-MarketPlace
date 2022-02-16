@@ -27,21 +27,21 @@ function Nav({ isLogin, isKaikas }) {
                 Claim KiFToken
               </Link>
             </Dropdown.Item>
-            <Dropdown.Item>
+            {/* <Dropdown.Item>
               <Link to="/claim" className="noneDeco">
                 Claim KiFToken (Eth)
               </Link>
-            </Dropdown.Item>
+            </Dropdown.Item> */}
             <Dropdown.Item>
               <Link to="stakingForKlaytn" className="noneDeco">
                 Staking
               </Link>
             </Dropdown.Item>
-            <Dropdown.Item>
+            {/* <Dropdown.Item>
               <Link to="staking" className="noneDeco">
                 Staking (Eth)
               </Link>
-            </Dropdown.Item>
+            </Dropdown.Item> */}
             <Dropdown.Item>
               <Link to="/" className="noneDeco">
                 DAO
