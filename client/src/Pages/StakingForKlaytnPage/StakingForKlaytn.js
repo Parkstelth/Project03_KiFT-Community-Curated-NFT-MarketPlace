@@ -110,6 +110,7 @@ function StakingForKlaytn() {
       });
     } else {
       alert("there's no Kaikas");
+      setShowModal(false);
     }
   };
 
@@ -155,6 +156,7 @@ function StakingForKlaytn() {
       });
     } else {
       alert("there's no Kaikas");
+      setShowModal(false);
     }
   };
 
@@ -195,6 +197,7 @@ function StakingForKlaytn() {
       });
     } else {
       alert("there's no kaikas");
+      setShowModal(false);
     }
   };
 
@@ -266,6 +269,7 @@ function StakingForKlaytn() {
       });
     } else {
       alert("there's no Kaikas!!!!");
+      setShowModal(false);
     }
   };
 
@@ -330,6 +334,7 @@ function StakingForKlaytn() {
       });
     } else {
       alert("there's no Kaikas");
+      setShowModal(false);
     }
   }, []);
 
