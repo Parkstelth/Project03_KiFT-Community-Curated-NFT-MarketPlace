@@ -7,6 +7,7 @@ import SignIn from "./Pages/SigninPage/SignIn";
 import Mypage from "./Pages/MyPage/MyPage";
 import About from "./Pages/AboutPage/About";
 import Claim from "./Pages/ClaimPage/Claim";
+import ClaimForKlaytn from "./Pages/ClaimPageForKlaytn/ClaimForKlaytn";
 import Search from "./Pages/SearchPage/Search";
 import CreateNft from "./Pages/CreateNftPage/CreateNft";
 import NotFound from "./Pages/NotFoundPage/notfound";
@@ -114,7 +115,7 @@ function App() {
                 }
               } else {
                 var win = window.open("https://metamask.io/download.html", "_blank");
-                win.focus();
+                // win.focus();
                 setLoginAccount("");
                 setIsLogin(false);
               }
@@ -159,7 +160,7 @@ function App() {
             }
           } else {
             var win = window.open("https://metamask.io/download.html", "_blank");
-            win.focus();
+            // win.focus();
             setLoginAccount("");
             setIsLogin(false);
           }
@@ -245,7 +246,7 @@ function App() {
       alert("Please download Metamask or Kaikas Wallet");
       var win = window.open("https://metamask.io/download.html", "_blank");
       var win = window.open("https://chrome.google.com/webstore/detail/kaikas/jblndlipeogpafnldhgmapagcccfchpi?hl=ko", "_blank");
-      win.focus();
+      // win.focus();
     }
   }, []);
 
@@ -267,6 +268,7 @@ function App() {
         <Route path="/mypage" element={<Mypage setIsLogin={setIsLogin} isKaikas={isKaikas} />} />
         <Route path="mypage/:id" element={<About loginAccount={loginAccount} isKaikas={isKaikas} />} />
         <Route path="/claim" element={<Claim />} />
+        <Route path="/claimforklaytn" element={<ClaimForKlaytn />} />
         <Route path="/staking" element={<Staking />} />
         <Route path="/create" element={<CreateNft setIsKaikas={setIsKaikas} isKaikas={isKaikas} />} />
         <Route path="/search" element={<Search />} />
