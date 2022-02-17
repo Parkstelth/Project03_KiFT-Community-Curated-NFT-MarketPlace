@@ -7,6 +7,7 @@ const CaverExtKAS = require("caver-js-ext-kas");
 const puppeteer = require("puppeteer");
 const cheerio = require("cheerio");
 const axios = require("axios");
+const chromium = require("chrome-aws-lambda");
 
 //카스 테스트
 const accessKeyId = "KASKGXY61FBDCS5DG3H4X9QF";
@@ -24,8 +25,8 @@ router.post("/crolling", async function (req, res) {
   // 브라우저를 실행한다.
   // 옵션으로 headless모드를 끌 수 있다.
   let account = req.body.account;
-  const browser = await puppeteer.launch({
-    headless: true,
+  const browser = await chromium.puppeteer.launch({
+    executablePath: await chromium.executablePath,
   });
 
   // 새로운 페이지를 연다.
