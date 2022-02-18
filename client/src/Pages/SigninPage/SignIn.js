@@ -9,6 +9,7 @@ function SignIn({ setfooter, setLoginAccount, setIsLogin, setIsKaikas, isKaikas 
   }, []);
 
   const connectWallet = async () => {
+    //메타마스크 로그인 함수
     if (window.ethereum !== undefined) {
       if (typeof window.ethereum.providers === "undefined") {
         var metamaskProvider = window.ethereum;
@@ -37,6 +38,7 @@ function SignIn({ setfooter, setLoginAccount, setIsLogin, setIsKaikas, isKaikas 
         params.append("loginAddress", accounts[0].toLowerCase());
 
         await axios.post("http://localhost:3001/sign", params, { headers }).then((res) => {
+          //서버로 로그인한 지갑의 주소와 로그인시간등 기록을 저장시키도록 요청
           console.log(res);
         });
 
@@ -44,6 +46,7 @@ function SignIn({ setfooter, setLoginAccount, setIsLogin, setIsKaikas, isKaikas 
         document.location.href = "/market";
       } catch (e) {
         if (typeof window.ethereum === "undefined") {
+          //메타마스크가 없을시 다운로드창을 띄운다.
           var win = window.open("https://metamask.io/download.html", "_blank");
           win.focus();
         } else {
@@ -56,6 +59,7 @@ function SignIn({ setfooter, setLoginAccount, setIsLogin, setIsKaikas, isKaikas 
   };
 
   const connectKaikas = async () => {
+    //카이카스 로그인 함수
     if (window.klaytn !== undefined) {
       await window.klaytn.enable();
       console.log(window.klaytn.selectedAddress);
@@ -76,6 +80,7 @@ function SignIn({ setfooter, setLoginAccount, setIsLogin, setIsKaikas, isKaikas 
         params.append("Chain", "baobab");
 
         await axios.post("http://localhost:3001/sign", params, { headers }).then((res) => {
+          //서버로 로그인한 지갑의 주소와 로그인시간등 기록을 저장시키도록 요청
           document.location.href = "/";
         });
       });

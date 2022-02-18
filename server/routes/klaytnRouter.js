@@ -15,37 +15,39 @@ const chainId = 1001;
 
 const caver = new CaverExtKAS();
 caver.initKASAPI(chainId, accessKeyId, secretAccessKey);
+//
 
 router.get("/", function (req, res) {
   res.status(200).send("welcome");
 });
 
 router.post("/crolling", async function (req, res) {
+  //KIP-17의 보유 nft를 컨트랙트 주소를 모두 가져오기 위해 크롤링을 한다.
   // 브라우저를 실행한다.
   // 옵션으로 headless모드를 끌 수 있다.
   let account = req.body.account;
   const browser = await puppeteer.launch({
-    headless: true,
+    headless: true, //가상웹을 띄우지 않고 back에서 처리
   });
 
   // 새로운 페이지를 연다.
   const page = await browser.newPage();
   // 페이지의 크기를 설정한다.
 
-  await page.goto(`https://baobab.scope.klaytn.com/account/${account}?tabId=kip17Balance`);
+  await page.goto(`https://baobab.scope.klaytn.com/account/${account}?tabId=kip17Balance`); //해당 웹으로 이동
   //
 
   try {
     await page.waitForSelector(
       "#root > div > div.SidebarTemplate > div.SidebarTemplate__main > div > div > div.DetailPageTableTemplate > div > div.Tab__content > section > article.TokenBalancesList__body > div > div.Table__tbody"
-    );
+    ); //해당하는 셀럭터가 다만들어질때 까지 대기
 
-    const content = await page.content();
+    const content = await page.content(); //html 소스 추출
     let list = [];
-    const $ = cheerio.load(content);
+    const $ = cheerio.load(content); //추출된 소스를 다시 html형식으로
     const $bodyList = $(
       "div.Table__td.TokenBalancesListDesktop.TokenBalancesListDesktop__kip17-balance__name.TokenBalancesListDesktop.TokenBalancesListDesktop__kip17-balance__nameTd > a"
-    );
+    ); //셀럭터 검색으로 queryselectorAll과 같은기능
     for (let i = 0; i < $bodyList.length; i++) {
       list.push($bodyList[i].attribs.href.slice(5));
     }
@@ -58,6 +60,7 @@ router.post("/crolling", async function (req, res) {
 });
 
 router.post("/fetchNFT", async (req, res) => {
+  // KIP-17 소유 NFT를 DB에 모두 저장시킨다.
   //결과로 유저의 정보 빼와줌
   let reqOwnerAddress = req.body.ownerAddress;
   let mintedDate;
@@ -74,6 +77,7 @@ router.post("/fetchNFT", async (req, res) => {
         let randomNum = Math.floor(Math.random() * 10000000);
         mintedDate = new Date(item.createdAt * 1000);
         KlayNFT.findOneAndUpdate(
+          //있으면 무시 없으면 새로 생성
           {
             NFT_Token_id: item.tokenId,
             contract_address: contractAddress,
@@ -92,17 +96,16 @@ router.post("/fetchNFT", async (req, res) => {
         ).then((result) => {});
         //URI들어가서 정보빼오기
         User.findOne({ address: reqOwnerAddress }).then(async (owner) => {
-          console.log("??@@@?@??", item.tokenUri.slice(0, 4));
-
           if (item.tokenUri.slice(0, 4) === "http") {
             await axios.get(item.tokenUri).then(async (result) => {
               await KlayNFT.findOneAndUpdate(
+                //히스토리에 minted로 기록
                 { NFT_Token_id: item.tokenId, contract_address: contractAddress, history: null },
                 {
                   $addToSet: {
                     history: {
                       event: "minted",
-                      date: mintedDate, //어떻게 해야할지 모르겠어서 일단 이렇게 해둠
+                      date: mintedDate,
                       price: "",
                       from: "",
                       to: reqOwnerAddress,
@@ -131,11 +134,11 @@ router.post("/fetchNFT", async (req, res) => {
                   }, */
                 }
               ).then((result) => {
-                // console.log(result._id);
                 User.findOneAndUpdate({ address: reqOwnerAddress }, { $addToSet: { ownedNFTs: result._id } }).then((result) => {});
               });
             });
           } else if (item.tokenUri.slice(0, 7) === "ipfs://") {
+            //불러온 nft의 tokenURI에 따라 제어한다.
             await axios.get(`https://ipfs.io/ipfs/${item.tokenUri.slice(7)}`).then(async (result) => {
               await KlayNFT.findOneAndUpdate(
                 { NFT_Token_id: item.tokenId, contract_address: contractAddress, history: null },
@@ -143,7 +146,7 @@ router.post("/fetchNFT", async (req, res) => {
                   $addToSet: {
                     history: {
                       event: "minted",
-                      date: mintedDate, //어떻게 해야할지 모르겠어서 일단 이렇게 해둠
+                      date: mintedDate,
                       price: "",
                       from: "",
                       to: reqOwnerAddress,
@@ -172,7 +175,6 @@ router.post("/fetchNFT", async (req, res) => {
                   },
                 }
               ).then((result) => {
-                // console.log(result._id);
                 User.findOneAndUpdate({ address: reqOwnerAddress }, { $addToSet: { ownedNFTs: result._id } }).then((result) => {});
               });
             });
@@ -198,6 +200,7 @@ router.post("/fetchNFT", async (req, res) => {
 });
 
 router.post("/searchNFT", async (req, res) => {
+  //KIP-17로 DB에 저장된 NFT를 검색하여 응답
   KlayNFT.findOne({ openseaId: req.body.openseaId })
     .populate("owner")
     .then((result) => {
@@ -210,6 +213,7 @@ router.post("/searchNFT", async (req, res) => {
 });
 
 router.post("/sign", async (req, res) => {
+  //카이카스로 SIGN 페이지에서 접속하거나 새롭게 DB에 유저계정 저장시 응답
   let reqAddress = req.body.address;
 
   User.findOne({
@@ -236,6 +240,7 @@ router.post("/sign", async (req, res) => {
 });
 
 router.post("/listItemOnlist", async (req, res) => {
+  //리스팅 기록을 히스토리에 저장
   let reqOpenseaId = req.body.openseaId;
   let reqPrice = req.body.price;
   let reqIsSale = req.body.isSale;
@@ -272,6 +277,7 @@ router.post("/listItemOnlist", async (req, res) => {
 });
 
 router.post("/listItemOnchange", async (req, res) => {
+  //가격변경기록을 히스토리에 저장
   let reqOpenseaId = req.body.openseaId;
   let reqPrice = req.body.price;
   let changefrom = req.body.from;
@@ -304,6 +310,7 @@ router.post("/listItemOnchange", async (req, res) => {
 });
 
 router.post("/listItemOncancel", async (req, res) => {
+  //언리스팅 기록을 히스토리에 저장
   let reqOpenseaId = req.body.openseaId;
   let reqPrice = req.body.price;
   let reqIsSale = req.body.isSale;
@@ -340,6 +347,7 @@ router.post("/listItemOncancel", async (req, res) => {
 });
 
 router.post("/listItemOnbuy", async (req, res) => {
+  //구매기록을 히스토리에 저장
   let reqOpenseaId = req.body.openseaId;
   let reqPrice = req.body.price;
   let reqIsSale = req.body.isSale;
@@ -377,7 +385,44 @@ router.post("/listItemOnbuy", async (req, res) => {
     });
 });
 
+router.post("/listItemOntransfer", async (req, res) => {
+  // 전송 기록을 히스토리에 저장
+  let reqOpenseaId = req.body.openseaId;
+  let reqfrom = req.body.from;
+  let reqto = req.body.to;
+
+  KlayNFT.updateOne(
+    {
+      openseaId: reqOpenseaId,
+    },
+    {
+      price: 0,
+      isSale: false,
+      itemIdOnBlockChain: null,
+      $push: {
+        history: {
+          event: "Transfer",
+          date: new Date(),
+          price: " ",
+          from: reqfrom,
+          to: reqto,
+        },
+      },
+    }
+  )
+    .then(async (result) => {
+      res.status(200).send({
+        message: "This NFT Item transfer Success!",
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(400).send(err);
+    });
+});
+
 router.post("/changeOwnerAndOwnedNFTs", async (req, res) => {
+  //NFT 소유 주인을 DB에서 변경
   let reqBuyerAccount = req.body.address;
   let reqOpenseaId = req.body.openseaId;
 
@@ -414,6 +459,7 @@ router.post("/changeOwnerAndOwnedNFTs", async (req, res) => {
 });
 
 router.get("/fetchItemsOnSale", async (req, res) => {
+  //DB에 저장된 KIP-17 NFT의 판매중으로 변경
   KlayNFT.find({ isSale: true })
     .sort({ _id: 1 })
     .then(async (result) => {
@@ -422,41 +468,6 @@ router.get("/fetchItemsOnSale", async (req, res) => {
     })
     .catch((err) => {
       res.status(401).send(err);
-    });
-});
-
-router.post("/listItemOntransfer", async (req, res) => {
-  let reqOpenseaId = req.body.openseaId;
-  let reqfrom = req.body.from;
-  let reqto = req.body.to;
-
-  KlayNFT.updateOne(
-    {
-      openseaId: reqOpenseaId,
-    },
-    {
-      price: 0,
-      isSale: false,
-      itemIdOnBlockChain: null,
-      $push: {
-        history: {
-          event: "Transfer",
-          date: new Date(),
-          price: " ",
-          from: reqfrom,
-          to: reqto,
-        },
-      },
-    }
-  )
-    .then(async (result) => {
-      res.status(200).send({
-        message: "This NFT Item transfer Success!",
-      });
-    })
-    .catch((err) => {
-      console.log(err);
-      res.status(400).send(err);
     });
 });
 

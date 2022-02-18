@@ -1,3 +1,4 @@
+//ERC-20 KFT 토큰 클레임
 import Web3 from "web3";
 import dotenv from "dotenv";
 import axios from "axios";
@@ -58,6 +59,7 @@ function Claim(isLogin) {
         web.eth.getAccounts().then(async (account) => {
           await axios
             .post("http://localhost:3001/findUser", {
+              //지갑의 Account와 동일한 DB속 유저의 기여포인트를 가져옵니다.
               address: account[0].toLowerCase(),
             })
             .then((result) => {
@@ -76,14 +78,12 @@ function Claim(isLogin) {
         });
         const acc = accounts[0].toLowerCase();
 
-        let contract = new web.eth.Contract(KiFTTokenabi, tokenAddress);
-        console.log(acc);
+        let contract = new web.eth.Contract(KiFTTokenabi, tokenAddress); //보유중인 KFT토큰 발란스를 가져옵니다.
         contract.methods
           .balanceOf(acc)
           .call()
           .then(function (bal) {
-            const final = bal / 1000000000000000000;
-            console.log(final);
+            const final = web.utils.toWei(String(bal), "ether");
             setCurrent(final);
           });
       } catch (err) {
@@ -110,6 +110,7 @@ function Claim(isLogin) {
           //계정 조회후 포인트 받아옴
           await axios
             .post("http://localhost:3001/findUser", {
+              //DB속 기여도를 가져와서 기여도만큼 아래 수치계산을 하여 mintToken으로 토큰을 민팅해줍니다.
               address: account[0].toLowerCase(),
             })
             .then((result) => {
@@ -119,10 +120,10 @@ function Claim(isLogin) {
             .then(async (point) => {
               //포인트 있으면 민트 가능!!
               if (point > 0) {
-                let numbersUserCanClaim = point * 7;
+                let numbersUserCanClaim = point * 7; // 기여도에 수치계산
                 let contract = await new web.eth.Contract(KiFTTokenabi, process.env.REACT_APP_KIFT_TOKEN_CONTRACT_ADDRESS);
                 await contract.methods
-                  .mintToken(account[0], web.utils.toWei(String(numbersUserCanClaim), "ether"))
+                  .mintToken(account[0], web.utils.toWei(String(numbersUserCanClaim), "ether")) //토큰 민팅
                   .send({
                     from: account[0],
                     gas: 100000,

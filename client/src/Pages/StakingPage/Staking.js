@@ -1,3 +1,4 @@
+//ERC-20 KFT 토큰 스테이킹
 import Web3 from "web3";
 import { useState, useEffect } from "react";
 import dotenv from "dotenv";
@@ -88,7 +89,6 @@ function Staking() {
             .stakingValue(account[0])
             .call()
             .then((result) => {
-              console.log(result, "this is waht i wnat /1!!!!!");
               setStakingAmounts(web.utils.fromWei(String(result), "ether"));
             });
 
@@ -97,7 +97,6 @@ function Staking() {
             .totalSupply()
             .call()
             .then((result) => {
-              console.log(result, "this is waht i wnat /1!!!!!asdfkj;asilfjsd;ifja;df");
               setTotalSupply(web.utils.fromWei(String(result), "ether"));
             });
 
@@ -106,7 +105,6 @@ function Staking() {
             .earned(account[0])
             .call()
             .then((result) => {
-              console.log(result, "Earned!!!!!!");
               setEarnedAmounts(web.utils.fromWei(String(result), "ether"));
             });
         });
@@ -174,8 +172,6 @@ function Staking() {
       await web.eth
         .getAccounts()
         .then(async (account) => {
-          console.log(web.utils.toWei(String(inputData), "ether"));
-
           let stakeContract = new web.eth.Contract(stakingAbi, stakingContract.toLowerCase());
           stakeContract.methods
             .withdraw(web.utils.toWei(String(inputData), "ether"))
@@ -313,7 +309,6 @@ function Staking() {
               .stakingValue(account[0])
               .call()
               .then((result) => {
-                console.log(result, "this is waht i wnat /1!!!!!");
                 setStakingAmounts(web.utils.fromWei(String(result), "ether"));
               });
 
@@ -330,7 +325,6 @@ function Staking() {
               .earned(account[0])
               .call()
               .then((result) => {
-                console.log(result, "Earned!!!!!!");
                 setEarnedAmounts(web.utils.fromWei(String(result), "ether"));
               });
           }

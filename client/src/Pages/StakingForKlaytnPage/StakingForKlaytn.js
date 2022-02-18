@@ -1,10 +1,10 @@
-import Web3 from "web3";
+//KIP-7 KFT 토큰 스테이킹
+
 import { useState, useEffect } from "react";
 import dotenv from "dotenv";
 import NotifyModal from "./Components/NotifyModal";
 import "./Staking.css";
 import Caver from "caver-js";
-import ClaimForKlaytn from "../ClaimPageForKlaytn/ClaimForKlaytn";
 dotenv.config();
 
 function StakingForKlaytn() {
@@ -50,6 +50,7 @@ function StakingForKlaytn() {
   };
 
   const reLoadEarned = async () => {
+    //현재 스테이킹 관련 정보를 새로고침하는 함수
     if (window.klaytn) {
       window.klaytn._kaikas.isUnlocked().then(async (result) => {
         if (result === true) {
@@ -63,7 +64,7 @@ function StakingForKlaytn() {
                   console.log(account);
                   let contract = new caver.klay.Contract(KiFTTokenabi, KiFTContract);
                   contract.methods
-                    .balanceOf(account[0])
+                    .balanceOf(account[0]) //현재KFT토큰의 보유량 새로고침
                     .call()
                     .then((amount) => {
                       setBalance(caver.utils.fromWei(String(amount), "ether"));
@@ -80,24 +81,22 @@ function StakingForKlaytn() {
                   let stakeContract = new caver.klay.Contract(stakingAbi, stakingContract);
                   console.log(stakingContract, "this is contract we want");
                   stakeContract.methods
-                    .stakingValue(account[0])
+                    .stakingValue(account[0]) //내 스테이킹중인 양 새로고침
                     .call()
                     .then((result) => {
                       setStakingAmounts(caver.utils.fromWei(String(result), "ether"));
                     });
                   stakeContract.methods
-                    .totalSupply()
+                    .totalSupply() //총 스테이킹 중인양 새로고침
                     .call()
                     .then((result) => {
-                      console.log(result, " thisi sawfjiowhit hiasdf!!!");
                       setTotalSupply(caver.utils.fromWei(String(result), "ether"));
                     });
 
                   stakeContract.methods
-                    .earned(account[0])
+                    .earned(account[0]) //현재 이자수익 새로고침
                     .call()
                     .then((result) => {
-                      console.log(result, "Earend!@#@!@#!@#");
                       setEarnedAmounts(caver.utils.fromWei(String(result), "ether"));
                     });
                 });
@@ -115,6 +114,7 @@ function StakingForKlaytn() {
   };
 
   const getReward = async () => {
+    //이자를 출금하는 함수
     setShowModal(true);
     setMessage(`Please sign the Wallet and wait until "Success!"`);
     if (window.klaytn) {
@@ -131,7 +131,7 @@ function StakingForKlaytn() {
                     let stakeContract = new caver.klay.Contract(stakingAbi, stakingContract);
 
                     stakeContract.methods
-                      .getReward()
+                      .getReward() //이자출금함수
                       .send({ from: account[0], gasPrice: 25000000000, gas: 210000 })
                       .then(() => {
                         setMessage("Compensate on KFT Success!");
@@ -176,7 +176,7 @@ function StakingForKlaytn() {
                 .then(async (account) => {
                   let stakeContract = new caver.klay.Contract(stakingAbi, stakingContract);
                   stakeContract.methods
-                    .withdraw(caver.utils.toWei(String(inputData), "ether"))
+                    .withdraw(caver.utils.toWei(String(inputData), "ether")) //출금함수
                     .send({ from: account[0], gasPrice: 25000000000, gas: 210000 })
                     .then(() => {
                       setMessage("Withdraw on KFT Success!");
@@ -217,13 +217,14 @@ function StakingForKlaytn() {
                 await caver.klay.getAccounts().then(async (account) => {
                   let kiftContract = new caver.klay.Contract(KiFTTokenabi, KiFTContract);
                   await kiftContract.methods
-                    .allowance(account[0], stakingContract)
+                    .allowance(account[0], stakingContract) //어프로브된 양 확인
                     .call({ from: account[0], gasPrice: 25000000000, gas: 210000 })
                     .then(async (result) => {
                       if (result >= caver.utils.toWei(String(stakingInputData), "ether")) {
+                        //어프로브된 양확인하여 보내려는양과 비교하여 다시어프로브하여 가스비낭비 방지
                         let stakeContract = new caver.klay.Contract(stakingAbi, stakingContract);
                         stakeContract.methods
-                          .stake(caver.utils.toWei(String(stakingInputData), "ether"))
+                          .stake(caver.utils.toWei(String(stakingInputData), "ether")) //스테이킹
                           .send({ from: account[0], gasPrice: 25000000000, gas: 210000 })
                           .then(() => {
                             setMessage("Stake on KiFT Success!");
@@ -235,13 +236,13 @@ function StakingForKlaytn() {
                           });
                       } else {
                         await kiftContract.methods
-                          .approve(stakingContract, caver.utils.toWei(String(stakingInputData), "ether"))
+                          .approve(stakingContract, caver.utils.toWei(String(stakingInputData), "ether")) //어프로브가 부족하여 어프로브작동
                           .send({ from: account[0], gasPrice: 25000000000, gas: 210000 })
                           .then(async () => {
                             setMessage(`Please Next sign the Wallet and wait until "Success!"`);
                             let stakeContract = new caver.klay.Contract(stakingAbi, stakingContract);
                             await stakeContract.methods
-                              .stake(caver.utils.toWei(String(stakingInputData), "ether"))
+                              .stake(caver.utils.toWei(String(stakingInputData), "ether")) //스테이킹
                               .send({ from: account[0], gasPrice: 25000000000, gas: 210000 })
                               .then(() => {
                                 setMessage("Stake on KFT Successed!");

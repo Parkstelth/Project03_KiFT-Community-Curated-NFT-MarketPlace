@@ -27,7 +27,7 @@ function Nav({ isLogin, isKaikas }) {
                 Claim KiFToken
               </Link>
             </Dropdown.Item>
-            {/* <Dropdown.Item>
+            {/* <Dropdown.Item> //ERC-20 클레임 페이지 작동
               <Link to="/claim" className="noneDeco">
                 Claim KiFToken (Eth)
               </Link>
@@ -37,7 +37,7 @@ function Nav({ isLogin, isKaikas }) {
                 Staking
               </Link>
             </Dropdown.Item>
-            {/* <Dropdown.Item>
+            {/* <Dropdown.Item> //ERC-20 스테이킹 페이지 작동
               <Link to="staking" className="noneDeco">
                 Staking (Eth)
               </Link>

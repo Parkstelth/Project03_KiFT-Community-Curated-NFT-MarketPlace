@@ -6,7 +6,7 @@ var logger = require("morgan");
 const cors = require("cors");
 
 const mongoose = require("mongoose");
-mongoose
+mongoose //테스트용 DB 계정 (환경변수 관리 X)
   .connect("mongodb+srv://kiftmaster:root1234@kift.q7pbt.mongodb.net/testDB?retryWrites=true&w=majority", {
     useNewUrlParser: true,
     useUnifiedTopology: true,

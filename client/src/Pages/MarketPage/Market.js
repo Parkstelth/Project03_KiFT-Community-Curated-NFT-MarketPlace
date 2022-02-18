@@ -18,8 +18,7 @@ function Market({ setfooter }) {
             if (result === true) {
               setisKaikas(true);
               try {
-                const response = await axios.get("http://localhost:3001/klaytn/FetchItemsOnSale");
-                console.log("???", response.data.data);
+                const response = await axios.get("http://localhost:3001/klaytn/FetchItemsOnSale"); //DB에 저장된 클레이튼NFT들중 판매중인(isSale : true) 인 것만 가져온다
                 setUserMarketData(response.data.data);
                 console.log(userMarketData, "this is what i want");
               } catch (err) {
@@ -43,7 +42,7 @@ function Market({ setfooter }) {
         } else {
           const dataLoad = async () => {
             await axios
-              .get("http://localhost:3001/fetchItemsonsale")
+              .get("http://localhost:3001/fetchItemsonsale") //DB에 저장된 링크비 NFT들중 판매중인(isSale : true) 인 것만 가져온다
               .then((result) => {
                 console.log("==유저들의 리스팅 토큰 갖고오기 완료 ==");
                 console.log(result.data.data);

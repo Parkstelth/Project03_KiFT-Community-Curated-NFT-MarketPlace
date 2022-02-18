@@ -537,7 +537,6 @@ function About({ loginAccount /* 로그인된 계정 */ }) {
                   })
                   .then(async (result) => {
                     console.log("test?", result);
-                    // console.log("itemId", result.events.MarketItemCreated.returnValues.itemId);
                     await setMessage("upload blockChain to KiFT Success!");
                     await listNFTOnTheMarket(result); //기여도를 지급하는 함수
                   })

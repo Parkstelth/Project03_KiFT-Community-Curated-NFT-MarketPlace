@@ -31,6 +31,7 @@ function MyPage({ setIsLogin, isKaikas, setIsKaikas }) {
   `;
 
   async function getKaikas_AllNft(account) {
+    //보유 클레이튼 NFT들의 컨트랙트 주소를 받아오기 위해 서버에 크롤링을 요청하는 함수
     let contracts = [];
     const headers = {
       "Content-Type": "application/json",
@@ -55,6 +56,7 @@ function MyPage({ setIsLogin, isKaikas, setIsKaikas }) {
   }
 
   async function transferStart(item) {
+    //NFT 전송 함수
     setInputbox(true);
 
     if (transTo !== "" && transTo.slice(0, 2) === "0x" && transTo.length === 42) {
@@ -67,6 +69,7 @@ function MyPage({ setIsLogin, isKaikas, setIsKaikas }) {
   }
 
   const fetchNFTs = async () => {
+    //보유중인 링크비 NFT들을 불러오는 함수
     const web = new Web3(window.ethereum);
     await web.eth
       .getAccounts()
@@ -77,8 +80,8 @@ function MyPage({ setIsLogin, isKaikas, setIsKaikas }) {
       })
       .then(async (account) => {
         await axios.get(`https://testnets-api.opensea.io/assets?owner=${account}`).then(async (result) => {
+          //오픈씨 API를 사용한 보유NFT 응답
           setData(result.data.assets);
-          console.log("account setting succssed!!!!!");
           setNowAccount(account);
           setLoading(false);
           console.log("opensea retrieve assets", result);
@@ -88,21 +91,21 @@ function MyPage({ setIsLogin, isKaikas, setIsKaikas }) {
           };
           await axios
             .post(
-              "http://localhost:3001/findUser",
+              "http://localhost:3001/findUser", //현재 링크비 Address의 DB를 확인하여 응답
               {
                 address: account[0].toLowerCase(),
               },
               headers
             )
             .then(async (user) => {
-              await console.log("this is your user's data ====>", user.data.data);
               const data = user.data.data;
               console.log("just data ---------> ", data);
-              setRegdate(data.createdAt.slice(0, 10));
-              return data;
+              setRegdate(data.createdAt.slice(0, 10)); //유저가 웹에서 최초로그인한(등록) 정보를 불러와 State로 저장
+              return data; //유저 데이터를 다시 리턴
             })
             .then((data) => {
               result.data.assets.map(async (item) => {
+                //오픈씨로 부터 받은 보유NFT들을 DB에 저장하도록 요청
                 const headers = {
                   "Content-Type": "application/json",
                   Accept: "application/json",
@@ -131,7 +134,6 @@ function MyPage({ setIsLogin, isKaikas, setIsKaikas }) {
                     return result;
                   })
                   .catch((err) => {
-                    console.log("errrrrrr ", err);
                     return err;
                   });
               });
@@ -168,7 +170,7 @@ function MyPage({ setIsLogin, isKaikas, setIsKaikas }) {
               console.log("test", item);
               let contract = await new web.eth.Contract(erc721abi, item.asset_contract.address);
               await contract.methods
-                .transferFrom(account[0], transTo, item.token_id)
+                .transferFrom(account[0], transTo, item.token_id) //전송 함수
                 .send({
                   from: account[0],
                   gas: 500000,
@@ -219,11 +221,11 @@ function MyPage({ setIsLogin, isKaikas, setIsKaikas }) {
                       })
                       .then(async (result) => {
                         await setMessage("Your NFT Item transfer Success!");
-                        await transferNFTOnTheMarket(result.from, transTo, item);
+                        await transferNFTOnTheMarket(result.from, transTo, item); //해당 아이템 히스토리에 전송기록을 저장시키는 함수 작동
                         return result;
                       })
                       .then(async (result) => {
-                        await changeOwner(item);
+                        await changeOwner(item); //DB에 저장되어있는 NFT오너주인도 변경
                       })
                       .catch((err) => {
                         setTransloading(false);
@@ -252,14 +254,16 @@ function MyPage({ setIsLogin, isKaikas, setIsKaikas }) {
   }
 
   async function transferNFTOnTheMarket(from, to, item) {
+    //해당하는 아이템의 히스토리에 전송기록을 남기기위해 서버에 요청을 보냄
     if (isKaikas === false) {
+      //카이카스 상태에 따라 아래에서 처리
       const headers = {
         "Content-Type": "application/json",
         Accept: "application/json",
       };
       await axios
         .post(
-          "http://localhost:3001/listItemOntransfer",
+          "http://localhost:3001/listItemOntransfer", //링크비 NFT에 히스토리 추가
           {
             openseaId: item.id,
             to: to,
@@ -283,7 +287,7 @@ function MyPage({ setIsLogin, isKaikas, setIsKaikas }) {
       };
       await axios
         .post(
-          "http://localhost:3001/klaytn/listItemOntransfer",
+          "http://localhost:3001/klaytn/listItemOntransfer", //클레이튼 NFT에 히스토리 추가
           {
             openseaId: item.openseaId,
             to: to,
@@ -304,6 +308,7 @@ function MyPage({ setIsLogin, isKaikas, setIsKaikas }) {
   }
 
   async function changeOwner(item) {
+    //DB에서 NFT주인을 변경한다.
     if (isKaikas === false) {
       const headers = {
         "Content-Type": "application/json",
@@ -365,6 +370,7 @@ function MyPage({ setIsLogin, isKaikas, setIsKaikas }) {
               const caver = new Caver(window.klaytn);
               caver.klay.getAccounts().then(async (account) => {
                 await getKaikas_AllNft(account[0].toLowerCase()).then(async (contracts) => {
+                  //카이카스가 로그인 되어 있다면 보유NFT의 컨트랙트주소를 모두 불러오기 위해 서버에 크롤링요청을 보낸다.
                   console.log("?", contracts);
                   if (contracts === false) {
                     const headers = {
@@ -372,18 +378,20 @@ function MyPage({ setIsLogin, isKaikas, setIsKaikas }) {
                       Accept: "application/json",
                     };
                     await axios.post("http://localhost:3001/regdate", { address: account[0].toLowerCase() }, headers).then(async (result) => {
+                      //최초 웹에 로그인한 지갑의 DATE를 불러와 state에 담는다.
                       await setRegdate(result.data.createdAt.slice(0, 10));
                       await setData([]);
                     });
                   } else {
                     console.log("test?", contracts);
                     contracts.map(async (contract) => {
+                      //받아온 모든 컨트랙트 주소로 아래에서 서버에 컨트랙트주소를 날리며 서버에서 NFT 정보를 하나씩 DB에 저장시키고 총 해당하는 NFT를 반환
                       const headers = {
                         "Content-Type": "application/json",
                         Accept: "application/json",
                       };
                       await axios
-                        .post("http://localhost:3001/klaytn/fetchNFT", { ownerAddress: account[0].toLowerCase(), thisContract: contract }, headers)
+                        .post("http://localhost:3001/klaytn/fetchNFT", { ownerAddress: account[0].toLowerCase(), thisContract: contract }, headers) //
                         .then(async (result) => {
                           console.log("result??", result);
                           await setRegdate(result.data.result.createdAt.slice(0, 10));
@@ -391,7 +399,7 @@ function MyPage({ setIsLogin, isKaikas, setIsKaikas }) {
                         });
                     });
                   }
-                }); //kip-17 소유 nft 컨트랙트 다받아오기
+                });
 
                 setNowAccount(account);
                 setLoading(false);
@@ -409,16 +417,6 @@ function MyPage({ setIsLogin, isKaikas, setIsKaikas }) {
   }, []);
 
   useEffect(() => {
-    // window.klaytn._kaikas.isUnlocked().then(async (result) => {
-    //   if (result === true) {
-    //     await window.klaytn._kaikas.isApproved().then(async (result) => {
-    //       if (result === true) {
-    //         await setIsKaikas(true);
-    //       }
-    //     });
-    //   }
-    // });
-
     if (nowAccount[0] !== undefined) {
       setColor(nowAccount[0].slice(-6));
     }

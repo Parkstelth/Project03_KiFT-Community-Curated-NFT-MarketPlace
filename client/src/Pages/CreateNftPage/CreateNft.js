@@ -11,12 +11,10 @@ import dotenv from "dotenv";
 import DetailList from "./DetailList";
 import { Button } from "antd";
 import Caver from "caver-js";
-
 dotenv.config();
+
 const Kift_721_Contract_Address = process.env.REACT_APP_KIFT_721_CONTRACT_ADDRESS;
 const Kift_721_Klaytn_Contract_Address = process.env.REACT_APP_KIFT_721_KLAYTN_CONTRACT_ADDRESS;
-console.log(Kift_721_Contract_Address, "this is first one");
-console.log(Kift_721_Klaytn_Contract_Address, "yo tes it !!!!@#!#!@");
 var KiFT721abi = require("./KiFT721abi");
 var KiFTNFT721Klaytnabi = require("./KiFTNFT721-Klaytn");
 
@@ -78,6 +76,7 @@ const CreateListDiv = styled.div`
 
 function CreateNft({ isKaikas, setIsKaikas }) {
   const ipfs = create({
+    //ipfs 사용을 위한 infura 연결
     host: "ipfs.infura.io",
     port: 5001,
     protocol: "https",
@@ -89,7 +88,7 @@ function CreateNft({ isKaikas, setIsKaikas }) {
         if (result === true) {
           await window.klaytn._kaikas.isApproved().then(async (result) => {
             if (result === true) {
-              setIsKaikas(true);
+              setIsKaikas(true); //카이카스 로그인상태에 따라 이후 로직에서 Kaikas로 작동시킬지 metamask로 작동시킬지 계산한다.
             }
           });
         }
@@ -135,6 +134,7 @@ function CreateNft({ isKaikas, setIsKaikas }) {
   };
 
   const onHandleChange = (event) => {
+    //NFT 이미지 파일을 업로드하면 ImgSrc에 관련 state를 저장시킨다.
     event.preventDefault();
     setFiles(event.target.files[0]);
     let fileReader = new FileReader();
@@ -150,6 +150,7 @@ function CreateNft({ isKaikas, setIsKaikas }) {
   };
 
   const onAddDetailDiv = () => {
+    //프로퍼티스를 테이블을 생성해주는 함수
     let totalTrait = {};
 
     let countArr = [...countList];
@@ -167,7 +168,6 @@ function CreateNft({ isKaikas, setIsKaikas }) {
       setTrait2("");
       setResultTraits(resultTraits);
     }
-    console.log("tt", resultTraits);
   };
 
   const createItem = async () => {
@@ -186,25 +186,25 @@ function CreateNft({ isKaikas, setIsKaikas }) {
         const web = new Web3(metamaskProvider);
         web.eth.getAccounts().then(async (account) => {
           if (account.length === 0) {
+            // 메타마스크 로그인이 안되어있을시
             setClosebox(true);
             setMessage("Please log in to MetaMask");
           } else {
-            const imgURI = await ipfs.add(files);
-            console.log("test1", imgURI);
+            const imgURI = await ipfs.add(files); //ipfs에 파일을 담아 URI로 만든다.
             const metadata = {
+              //메타데이터 생성
               name: name,
               collection: collection,
               description: description,
-              image: `https://ipfs.io/ipfs/${imgURI.path}`,
+              image: `https://ipfs.io/ipfs/${imgURI.path}`, //위에서 만든 이미지 URI로 Image경로를 다시 넣어준다.
               attributes: resultTraits,
             };
-            const tokenUri = await ipfs.add(JSON.stringify(metadata));
-            const newTokenURI = `https://ipfs.io/ipfs/${tokenUri.path}`;
-            console.log("test", newTokenURI);
+            const tokenUri = await ipfs.add(JSON.stringify(metadata)); //ipfs에 만든 메타데이터를 다시 넣어 토큰uri를 만든다.
+            const newTokenURI = `https://ipfs.io/ipfs/${tokenUri.path}`; //만든 토큰 uri로 최종 토큰 uri를 만든다.
             let contract = await new web.eth.Contract(KiFT721abi, Kift_721_Contract_Address);
 
             await contract.methods
-              .mintNFT(newTokenURI)
+              .mintNFT(newTokenURI) //만든 최종 tokenURI로 NFT를 민팅한다.
               .send({
                 from: account[0],
                 gas: 500000,
@@ -256,7 +256,6 @@ function CreateNft({ isKaikas, setIsKaikas }) {
                   const tokenUri = await ipfs.add(JSON.stringify(metadata));
                   const newTokenURI = `https://ipfs.io/ipfs/${tokenUri.path}`;
                   console.log("test", newTokenURI);
-                  console.log(Kift_721_Klaytn_Contract_Address, "this is contract address we need!@#!#!@@#");
                   let contract = await new caver.klay.Contract(KiFTNFT721Klaytnabi, Kift_721_Klaytn_Contract_Address, {
                     from: account[0],
                     to: Kift_721_Klaytn_Contract_Address,

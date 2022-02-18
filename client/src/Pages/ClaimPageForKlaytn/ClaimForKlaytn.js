@@ -1,3 +1,4 @@
+//KIP-7 KFT 토큰 클레임
 import Web3 from "web3";
 import dotenv from "dotenv";
 import axios from "axios";
@@ -6,7 +7,6 @@ import "./Claim.css";
 import styled from "styled-components";
 import claimMountain from "./background2.jpeg";
 import Caver from "caver-js";
-
 dotenv.config();
 
 var KiFTTokenForKlaytnAbi = require("./KiftTokenForKlaytnAbi");
@@ -46,7 +46,6 @@ function ClaimForKlaytn(isLogin) {
               const caver = new Caver(window.klaytn);
               try {
                 await caver.klay.getAccounts().then(async (account) => {
-                  // console.log(account);
                   try {
                     setAccount(account[0].toLowerCase());
                     await axios

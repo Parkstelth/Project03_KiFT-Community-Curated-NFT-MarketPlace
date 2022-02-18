@@ -33,16 +33,9 @@ function App() {
   }
 
   const setAccountListner = (provider) => {
+    //계정 변경 감지 함수
     provider.on("accountsChanged", (_) => (window.location.href = "/"));
   };
-
-  // useEffect(async () => {
-  //   if (window.klay !== undefined) {
-  //     await window.klaytn.on("accountsChanged", () => {
-  //       console.log("jax");
-  //     });
-  //   }
-  // }, []);
 
   useEffect(() => {
     if (window.klaytn !== undefined && window.ethereum !== undefined) {
@@ -61,6 +54,7 @@ function App() {
                 params.append("address", account[0].toLowerCase());
                 await axios
                   .post("http://localhost:3001/klaytn/sign", params, {
+                    // 로그인된 상태에서 한번도 Sign 페이지를 통해 로그인 안한 계정으로 변경할 시 app단으로 이동시키는 로직을 통해 db에 계정을 저장시킴
                     headers,
                   })
                   .then((result) => {
@@ -104,6 +98,7 @@ function App() {
                       params.append("loginAddress", account[0].toLowerCase());
                       await axios
                         .post("http://localhost:3001/sign", params, {
+                          // 로그인된 상태에서 한번도 Sign 페이지를 통해 로그인 안한 계정으로 변경할 시 app단으로 이동시키는 로직을 통해 db에 계정을 저장시킴
                           headers,
                         })
                         .then((res) => {

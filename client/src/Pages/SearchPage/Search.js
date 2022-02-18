@@ -41,6 +41,7 @@ function Search() {
   async function fetchItem(searchQuery) {
     await axios
       .post("http://localhost:3001/searchItems", {
+        //서버로 해당조건에 맞는 NFT검색을 하는 요청을 날린다.
         nameOfItem: searchQuery,
       })
       .then((result) => {

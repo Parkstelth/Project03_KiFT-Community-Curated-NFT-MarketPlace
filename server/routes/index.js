@@ -40,6 +40,7 @@ router.post("/sign", async (req, res) => {
 });
 
 router.post("/findUser", async (req, res) => {
+  //Address와 일치하는 데이터를 찾아 응답한다.
   let reqAddress = req.body.address;
 
   User.findOne({
@@ -92,7 +93,7 @@ router.post("/NFT", async (req, res) => {
       traits: req.body.traits,
       $addToSet: {
         history: {
-          event: "minted",
+          event: "minted", //최초는 minted로 히스토리에 기록
           date: req.body.createdAt,
           price: " ",
           from: req.body.creator_address,
@@ -140,6 +141,7 @@ router.post("/searchNFT", (req, res) => {
 });
 
 router.post("/regdate", async (req, res) => {
+  //최초 Sign으로 접속한 계정의 date를 응답하기 위함
   User.findOne({
     address: req.body.address,
   }).then((result) => {
@@ -152,6 +154,7 @@ router.post("/regdate", async (req, res) => {
 });
 
 router.get("/fetchItemsOnSale", async (req, res) => {
+  //판매중인 nft를 응답해준다
   NFT.find({ isSale: true })
     .sort({ _id: -1 })
     .then(async (result) => {
@@ -162,7 +165,31 @@ router.get("/fetchItemsOnSale", async (req, res) => {
     });
 });
 
+router.post("/listItem", async (req, res) => {
+  //리스팅 되면 가격을 DB에 저장시킨다.
+  let reqOpenseaId = req.body.openseaId;
+  let reqPrice = req.body.price;
+  NFT.updateOne(
+    {
+      openseaId: reqOpenseaId,
+    },
+    {
+      price: reqPrice,
+    }
+  )
+    .then(async (result) => {
+      res.status(200).send({
+        message: "This Item Success!",
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(400).send(err);
+    });
+});
+
 router.post("/listItemOnbuy", async (req, res) => {
+  //히스토리에 구매기록을 남긴다.
   let reqOpenseaId = req.body.openseaId;
   let reqPrice = req.body.price;
   let reqIsSale = req.body.isSale;
@@ -201,6 +228,7 @@ router.post("/listItemOnbuy", async (req, res) => {
 });
 
 router.post("/listItemOnlist", async (req, res) => {
+  //히스토리에 리스팅 기록을 남긴다.
   let reqOpenseaId = req.body.openseaId;
   let reqPrice = req.body.price;
   let reqIsSale = req.body.isSale;
@@ -236,29 +264,8 @@ router.post("/listItemOnlist", async (req, res) => {
     });
 });
 
-router.post("/listItem", async (req, res) => {
-  let reqOpenseaId = req.body.openseaId;
-  let reqPrice = req.body.price;
-  NFT.updateOne(
-    {
-      openseaId: reqOpenseaId,
-    },
-    {
-      price: reqPrice,
-    }
-  )
-    .then(async (result) => {
-      res.status(200).send({
-        message: "This Item Success!",
-      });
-    })
-    .catch((err) => {
-      console.log(err);
-      res.status(400).send(err);
-    });
-});
-
 router.post("/listItemOnchange", async (req, res) => {
+  //가격변경을 히스토리에 남긴다.
   let reqOpenseaId = req.body.openseaId;
   let reqPrice = req.body.price;
   let changefrom = req.body.from;
@@ -291,6 +298,7 @@ router.post("/listItemOnchange", async (req, res) => {
 });
 
 router.post("/listItemOntransfer", async (req, res) => {
+  //전송기록을 히스토리에 남긴다.
   let reqOpenseaId = req.body.openseaId;
   let reqfrom = req.body.from;
   let reqto = req.body.to;
@@ -326,6 +334,7 @@ router.post("/listItemOntransfer", async (req, res) => {
 });
 
 router.post("/listItemOncancel", async (req, res) => {
+  //취소기록을 히스토리에 남긴다.
   let reqOpenseaId = req.body.openseaId;
   let reqPrice = req.body.price;
   let reqIsSale = req.body.isSale;
@@ -362,6 +371,7 @@ router.post("/listItemOncancel", async (req, res) => {
 });
 
 router.post("/cancleListings", async (req, res) => {
+  //DB에서 판매중인 NFT들을 판매중지로 바꾸어준다.
   let reqOpenseaId = req.body.openseaId;
 
   NFT.updateOne(
@@ -382,6 +392,7 @@ router.post("/cancleListings", async (req, res) => {
 });
 
 router.post("/toGiveContributePoint", async (req, res) => {
+  //기여도를 지급한다.
   let reqAddress = req.body.address;
   let reqSecondAddress = req.body.secondAddress;
   let reqPoint = req.body.point;
@@ -416,6 +427,7 @@ router.post("/toGiveContributePoint", async (req, res) => {
 });
 
 router.post("/initializePoints", async (req, res) => {
+  //기여도 초기화
   let reqAddress = req.body.address;
 
   User.findOneAndUpdate({ address: reqAddress }, { ContributionPoionts: 0 })
@@ -436,6 +448,7 @@ router.post("/initializePoints", async (req, res) => {
 });
 
 router.post("/searchItems", async (req, res) => {
+  //Search에서 아이템검색을 하여 응답한다.
   let reqNameOfItem = req.body.nameOfItem;
 
   NFT.find({ name: { $regex: reqNameOfItem, $options: "i" } })
@@ -453,6 +466,7 @@ router.post("/searchItems", async (req, res) => {
 });
 
 router.post("/changeOwnerAndOwnedNFTs", async (req, res) => {
+  //DB에 저장된 NFT 오너값을 변경한다.
   let reqBuyerAccount = req.body.address;
   let reqOpenseaId = req.body.openseaId;
 
