@@ -274,67 +274,70 @@ function StakingForKlaytn() {
     }
   };
 
-  useEffect(async () => {
-    if (window.klaytn) {
-      window.klaytn._kaikas.isUnlocked().then(async (result) => {
-        if (result === true) {
-          await window.klaytn._kaikas.isApproved().then(async (result) => {
-            if (result === true) {
-              const caver = new Caver(window.klaytn);
-              try {
-                await window.klaytn.enable();
-
-                caver.klay.getAccounts().then(async (account) => {
-                  console.log(account);
-                  let contract = new caver.klay.Contract(KiFTTokenabi, KiFTContract);
-                  contract.methods
-                    .balanceOf(account[0])
-                    .call()
-                    .then((amount) => {
-                      setBalance(caver.utils.fromWei(String(amount), "ether"));
-                    });
-                });
-              } catch (err) {
-                console.log(err);
-              }
-
-              try {
+  useEffect(() => {
+    async function logincall() {
+      if (window.klaytn) {
+        window.klaytn._kaikas.isUnlocked().then(async (result) => {
+          if (result === true) {
+            await window.klaytn._kaikas.isApproved().then(async (result) => {
+              if (result === true) {
                 const caver = new Caver(window.klaytn);
+                try {
+                  await window.klaytn.enable();
 
-                caver.klay.getAccounts().then(async (account) => {
-                  let stakeContract = new caver.klay.Contract(stakingAbi, stakingContract);
-                  console.log(stakingContract, "this is contract we want");
-                  stakeContract.methods
-                    .stakingValue(account[0])
-                    .call()
-                    .then((result) => {
-                      setStakingAmounts(caver.utils.fromWei(String(result), "ether"));
-                    });
-                  stakeContract.methods
-                    .totalSupply()
-                    .call()
-                    .then((result) => {
-                      setTotalSupply(caver.utils.fromWei(String(result), "ether"));
-                    });
+                  caver.klay.getAccounts().then(async (account) => {
+                    console.log(account);
+                    let contract = new caver.klay.Contract(KiFTTokenabi, KiFTContract);
+                    contract.methods
+                      .balanceOf(account[0])
+                      .call()
+                      .then((amount) => {
+                        setBalance(caver.utils.fromWei(String(amount), "ether"));
+                      });
+                  });
+                } catch (err) {
+                  console.log(err);
+                }
 
-                  stakeContract.methods
-                    .earned(account[0])
-                    .call()
-                    .then((result) => {
-                      setEarnedAmounts(caver.utils.fromWei(String(result), "ether"));
-                    });
-                });
-              } catch (err) {
-                console.log(err);
+                try {
+                  const caver = new Caver(window.klaytn);
+
+                  caver.klay.getAccounts().then(async (account) => {
+                    let stakeContract = new caver.klay.Contract(stakingAbi, stakingContract);
+                    console.log(stakingContract, "this is contract we want");
+                    stakeContract.methods
+                      .stakingValue(account[0])
+                      .call()
+                      .then((result) => {
+                        setStakingAmounts(caver.utils.fromWei(String(result), "ether"));
+                      });
+                    stakeContract.methods
+                      .totalSupply()
+                      .call()
+                      .then((result) => {
+                        setTotalSupply(caver.utils.fromWei(String(result), "ether"));
+                      });
+
+                    stakeContract.methods
+                      .earned(account[0])
+                      .call()
+                      .then((result) => {
+                        setEarnedAmounts(caver.utils.fromWei(String(result), "ether"));
+                      });
+                  });
+                } catch (err) {
+                  console.log(err);
+                }
               }
-            }
-          });
-        }
-      });
-    } else {
-      alert("there's no Kaikas");
-      setShowModal(false);
+            });
+          }
+        });
+      } else {
+        alert("there's no Kaikas");
+        setShowModal(false);
+      }
     }
+    logincall();
   }, []);
 
   return (

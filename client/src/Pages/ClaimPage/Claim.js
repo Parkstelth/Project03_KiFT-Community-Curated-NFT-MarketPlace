@@ -39,57 +39,60 @@ function Claim(isLogin) {
     return !isNaN(parseFloat(n)) && isFinite(n);
   }
 
-  useEffect(async () => {
-    console.log(window.ethereum);
-    if (window.ethereum === undefined) {
-      setStatus("Please download and Login Metamask!");
-    } else {
-      if (typeof window.ethereum.providers === "undefined") {
-        var metamaskProvider = window.ethereum;
+  useEffect(() => {
+    async function logincall() {
+      console.log(window.ethereum);
+      if (window.ethereum === undefined) {
+        setStatus("Please download and Login Metamask!");
       } else {
-        var metamaskProvider = window.ethereum.providers.find((provider) => provider.isMetaMask);
-      }
-      const web = new Web3(metamaskProvider);
+        if (typeof window.ethereum.providers === "undefined") {
+          var metamaskProvider = window.ethereum;
+        } else {
+          var metamaskProvider = window.ethereum.providers.find((provider) => provider.isMetaMask);
+        }
+        const web = new Web3(metamaskProvider);
 
-      try {
-        const accounts = await metamaskProvider.request({
-          method: "eth_requestAccounts",
-        });
-        setAccount(accounts[0].toLowerCase());
-        web.eth.getAccounts().then(async (account) => {
-          await axios
-            .post("http://localhost:3001/findUser", {
-              //지갑의 Account와 동일한 DB속 유저의 기여포인트를 가져옵니다.
-              address: account[0].toLowerCase(),
-            })
-            .then((result) => {
-              var token = parseInt(result.data.data.points) * 7;
-              setToken(parseInt(result.data.data.points));
-              setStatus("Wallet Connected: You are eligible for " + token + " tokens");
-            });
-        });
-      } catch (err) {
-        console.log("Error: ", err);
-      }
-
-      try {
-        const accounts = await metamaskProvider.request({
-          method: "eth_requestAccounts",
-        });
-        const acc = accounts[0].toLowerCase();
-
-        let contract = new web.eth.Contract(KiFTTokenabi, tokenAddress); //보유중인 KFT토큰 발란스를 가져옵니다.
-        contract.methods
-          .balanceOf(acc)
-          .call()
-          .then(function (bal) {
-            const final = web.utils.toWei(String(bal), "ether");
-            setCurrent(final);
+        try {
+          const accounts = await metamaskProvider.request({
+            method: "eth_requestAccounts",
           });
-      } catch (err) {
-        console.log("2nd try error: ", err);
+          setAccount(accounts[0].toLowerCase());
+          web.eth.getAccounts().then(async (account) => {
+            await axios
+              .post("http://localhost:3001/findUser", {
+                //지갑의 Account와 동일한 DB속 유저의 기여포인트를 가져옵니다.
+                address: account[0].toLowerCase(),
+              })
+              .then((result) => {
+                var token = parseInt(result.data.data.points) * 7;
+                setToken(parseInt(result.data.data.points));
+                setStatus("Wallet Connected: You are eligible for " + token + " tokens");
+              });
+          });
+        } catch (err) {
+          console.log("Error: ", err);
+        }
+
+        try {
+          const accounts = await metamaskProvider.request({
+            method: "eth_requestAccounts",
+          });
+          const acc = accounts[0].toLowerCase();
+
+          let contract = new web.eth.Contract(KiFTTokenabi, tokenAddress); //보유중인 KFT토큰 발란스를 가져옵니다.
+          contract.methods
+            .balanceOf(acc)
+            .call()
+            .then(function (bal) {
+              const final = web.utils.toWei(String(bal), "ether");
+              setCurrent(final);
+            });
+        } catch (err) {
+          console.log("2nd try error: ", err);
+        }
       }
     }
+    logincall();
   }, []);
 
   function claimKiFTToken() {

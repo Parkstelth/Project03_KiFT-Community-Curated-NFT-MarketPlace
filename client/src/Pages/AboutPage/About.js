@@ -119,22 +119,25 @@ function About({ loginAccount /* 로그인된 계정 */ }) {
     cancleMarketItem();
   }
 
-  useEffect(async () => {
-    window.klaytn._kaikas.isUnlocked().then(async (result) => {
-      if (result === true) {
-        await window.klaytn._kaikas.isApproved().then(async (result) => {
-          if (result === true) {
-            await setIsKaikas(true);
-            await loadSellItemOnKlay();
-          } else {
-            await loadSellItem();
-          }
-        });
-      } else {
-        await setIsKaikas(false);
-        await loadSellItem();
-      }
-    });
+  useEffect(() => {
+    async function logincall() {
+      window.klaytn._kaikas.isUnlocked().then(async (result) => {
+        if (result === true) {
+          await window.klaytn._kaikas.isApproved().then(async (result) => {
+            if (result === true) {
+              await setIsKaikas(true);
+              await loadSellItemOnKlay();
+            } else {
+              await loadSellItem();
+            }
+          });
+        } else {
+          await setIsKaikas(false);
+          await loadSellItem();
+        }
+      });
+    }
+    logincall();
   }, []);
 
   function runEtherscan(e) {

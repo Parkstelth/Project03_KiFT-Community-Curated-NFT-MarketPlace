@@ -65,7 +65,7 @@ function Search() {
       });
   }
 
-  useEffect(async () => {
+  useEffect(() => {
     const dataLoad = async () => {
       await axios
         .get(`https://api.opensea.io/api/v1/assets?order_direction=desc&limit=9`)
@@ -80,7 +80,7 @@ function Search() {
           setLoading(false);
         });
     };
-    await dataLoad();
+    dataLoad();
   }, []);
 
   return (

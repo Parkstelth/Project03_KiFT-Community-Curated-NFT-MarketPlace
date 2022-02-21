@@ -271,70 +271,73 @@ function Staking() {
     }
   };
 
-  useEffect(async () => {
-    if (typeof window.ethereum !== "undefined") {
-      if (typeof window.ethereum.providers === "undefined") {
-        var metamaskProvider = window.ethereum;
+  useEffect(() => {
+    async function logincall() {
+      if (typeof window.ethereum !== "undefined") {
+        if (typeof window.ethereum.providers === "undefined") {
+          var metamaskProvider = window.ethereum;
+        } else {
+          var metamaskProvider = window.ethereum.providers.find((provider) => provider.isMetaMask);
+        }
+        const web = new Web3(metamaskProvider);
+
+        //키프트 토큰의 발란스 체크
+        try {
+          const accounts = await metamaskProvider.request({
+            method: "eth_requestAccounts",
+          });
+          setAccount(accounts[0].toLowerCase());
+
+          web.eth.getAccounts().then((account) => {
+            let kiftContract = new web.eth.Contract(KiFTTokenabi, KiFTContract);
+            kiftContract.methods
+              .balanceOf(account[0].toLocaleLowerCase())
+              .call()
+              .then((amount) => {
+                setBalance(web.utils.fromWei(String(amount), "ether"));
+              });
+          });
+        } catch (err) {
+          console.log(err);
+        }
+
+        try {
+          web.eth.getAccounts().then((account) => {
+            if (account.length > 0) {
+              let stakeContract = new web.eth.Contract(stakingAbi, stakingContract.toLowerCase());
+              //본인이 스테이킹 한 양을 체크
+              stakeContract.methods
+                .stakingValue(account[0])
+                .call()
+                .then((result) => {
+                  setStakingAmounts(web.utils.fromWei(String(result), "ether"));
+                });
+
+              //전체 스테이킹 양 체크!!!!
+              stakeContract.methods
+                .totalSupply()
+                .call()
+                .then((result) => {
+                  setTotalSupply(web.utils.fromWei(String(result), "ether"));
+                });
+
+              //본인의 수익 체크 !!!!
+              stakeContract.methods
+                .earned(account[0])
+                .call()
+                .then((result) => {
+                  setEarnedAmounts(web.utils.fromWei(String(result), "ether"));
+                });
+            }
+          });
+        } catch (err) {
+          console.log(err);
+        }
       } else {
-        var metamaskProvider = window.ethereum.providers.find((provider) => provider.isMetaMask);
+        alert("Please download Metamask!");
       }
-      const web = new Web3(metamaskProvider);
-
-      //키프트 토큰의 발란스 체크
-      try {
-        const accounts = await metamaskProvider.request({
-          method: "eth_requestAccounts",
-        });
-        setAccount(accounts[0].toLowerCase());
-
-        web.eth.getAccounts().then((account) => {
-          let kiftContract = new web.eth.Contract(KiFTTokenabi, KiFTContract);
-          kiftContract.methods
-            .balanceOf(account[0].toLocaleLowerCase())
-            .call()
-            .then((amount) => {
-              setBalance(web.utils.fromWei(String(amount), "ether"));
-            });
-        });
-      } catch (err) {
-        console.log(err);
-      }
-
-      try {
-        web.eth.getAccounts().then((account) => {
-          if (account.length > 0) {
-            let stakeContract = new web.eth.Contract(stakingAbi, stakingContract.toLowerCase());
-            //본인이 스테이킹 한 양을 체크
-            stakeContract.methods
-              .stakingValue(account[0])
-              .call()
-              .then((result) => {
-                setStakingAmounts(web.utils.fromWei(String(result), "ether"));
-              });
-
-            //전체 스테이킹 양 체크!!!!
-            stakeContract.methods
-              .totalSupply()
-              .call()
-              .then((result) => {
-                setTotalSupply(web.utils.fromWei(String(result), "ether"));
-              });
-
-            //본인의 수익 체크 !!!!
-            stakeContract.methods
-              .earned(account[0])
-              .call()
-              .then((result) => {
-                setEarnedAmounts(web.utils.fromWei(String(result), "ether"));
-              });
-          }
-        });
-      } catch (err) {
-        console.log(err);
-      }
-    } else {
-      alert("Please download Metamask!");
     }
+    logincall();
   }, []);
 
   return (

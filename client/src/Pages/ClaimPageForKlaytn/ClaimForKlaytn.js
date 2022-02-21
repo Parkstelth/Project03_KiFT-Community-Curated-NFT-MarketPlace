@@ -36,58 +36,61 @@ function ClaimForKlaytn(isLogin) {
   const [token, setToken] = useState();
   const [current, setCurrent] = useState(0);
 
-  useEffect(async () => {
-    if (window.klaytn) {
-      window.klaytn._kaikas.isUnlocked().then(async (result) => {
-        if (result === true) {
-          await window.klaytn._kaikas.isApproved().then(async (result) => {
-            if (result === true) {
-              await window.klaytn.enable();
-              const caver = new Caver(window.klaytn);
-              try {
-                await caver.klay.getAccounts().then(async (account) => {
-                  try {
-                    setAccount(account[0].toLowerCase());
-                    await axios
-                      .post("http://localhost:3001/findUser", {
-                        address: account[0].toLowerCase(),
-                      })
-                      .then(async (result) => {
-                        let tokenPaid = parseInt(result.data.data.points) * 7;
-                        console.log(tokenPaid);
-                        setToken(result.data.data.points);
-                        setStatus("Wallet Connected: You are eligible for " + tokenPaid + " tokens");
-                      });
-                  } catch (err) {
-                    console.log(err);
-                  }
-
-                  try {
-                    await window.klaytn.enable();
-                    const caver = new Caver(window.klaytn);
-                    caver.klay.getAccounts().then(async (account) => {
-                      console.log(account[0].toLowerCase());
-                      let contract = new caver.klay.Contract(KiFTTokenForKlaytnAbi, tokenAddress);
-                      await contract.methods
-                        .balanceOf(account[0].toLowerCase())
-                        .call()
-                        .then((result) => {
-                          const final = caver.utils.fromWei(String(result), "ether");
-                          setCurrent(final);
+  useEffect(() => {
+    async function logincall() {
+      if (window.klaytn) {
+        window.klaytn._kaikas.isUnlocked().then(async (result) => {
+          if (result === true) {
+            await window.klaytn._kaikas.isApproved().then(async (result) => {
+              if (result === true) {
+                await window.klaytn.enable();
+                const caver = new Caver(window.klaytn);
+                try {
+                  await caver.klay.getAccounts().then(async (account) => {
+                    try {
+                      setAccount(account[0].toLowerCase());
+                      await axios
+                        .post("http://localhost:3001/findUser", {
+                          address: account[0].toLowerCase(),
+                        })
+                        .then(async (result) => {
+                          let tokenPaid = parseInt(result.data.data.points) * 7;
+                          console.log(tokenPaid);
+                          setToken(result.data.data.points);
+                          setStatus("Wallet Connected: You are eligible for " + tokenPaid + " tokens");
                         });
-                    });
-                  } catch (err) {
-                    console.log(err);
-                  }
-                });
-              } catch (err) {
-                console.log(err);
+                    } catch (err) {
+                      console.log(err);
+                    }
+
+                    try {
+                      await window.klaytn.enable();
+                      const caver = new Caver(window.klaytn);
+                      caver.klay.getAccounts().then(async (account) => {
+                        console.log(account[0].toLowerCase());
+                        let contract = new caver.klay.Contract(KiFTTokenForKlaytnAbi, tokenAddress);
+                        await contract.methods
+                          .balanceOf(account[0].toLowerCase())
+                          .call()
+                          .then((result) => {
+                            const final = caver.utils.fromWei(String(result), "ether");
+                            setCurrent(final);
+                          });
+                      });
+                    } catch (err) {
+                      console.log(err);
+                    }
+                  });
+                } catch (err) {
+                  console.log(err);
+                }
               }
-            }
-          });
-        }
-      });
+            });
+          }
+        });
+      }
     }
+    logincall();
   }, []);
 
   async function claimKiFTToken() {
