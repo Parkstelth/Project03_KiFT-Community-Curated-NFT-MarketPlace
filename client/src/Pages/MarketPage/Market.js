@@ -67,7 +67,7 @@ function Market({ setfooter }) {
                   setLoading(false);
                 });
             };
-            await dataLoad();
+            dataLoad();
           }
         });
       } else if (window.klaytn === undefined && window.ethereum !== undefined) {
@@ -97,7 +97,7 @@ function Market({ setfooter }) {
               setLoading(false);
             });
         };
-        await dataLoad();
+        dataLoad();
       } else if (window.klaytn === undefined && window.ethereum === undefined) {
         await axios
           .get(`https://api.opensea.io/api/v1/assets?order_direction=desc&limit=21`)
@@ -112,7 +112,7 @@ function Market({ setfooter }) {
             setLoading(false);
           });
       }
-      await setfooter(true);
+      setfooter(true);
     }
     logincall();
   }, []);

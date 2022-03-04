@@ -60,11 +60,11 @@ function MyPage({ setIsLogin, isKaikas, setIsKaikas }) {
     setInputbox(true);
 
     if (transTo !== "" && transTo.slice(0, 2) === "0x" && transTo.length === 42) {
-      await setTransloading(true);
-      await transferTo(item);
-      await setMessage(`Please wait until "Success!"`);
+      setTransloading(true);
+      transferTo(item);
+      setMessage(`Please wait until "Success!"`);
     } else {
-      await setMessage("");
+      setMessage("");
     }
   }
 
@@ -147,8 +147,8 @@ function MyPage({ setIsLogin, isKaikas, setIsKaikas }) {
   };
 
   async function transferTo(item) {
-    await setMessage("");
-    await setInputbox(true);
+    setMessage("");
+    setInputbox(true);
 
     if (isKaikas === false) {
       if (typeof window.ethereum !== "undefined") {
@@ -177,12 +177,12 @@ function MyPage({ setIsLogin, isKaikas, setIsKaikas }) {
                   gasPrice: "2450000000",
                 })
                 .then(async (result) => {
-                  await setMessage("Your NFT Item transfer Success!");
-                  await transferNFTOnTheMarket(result.from, transTo, item);
+                  setMessage("Your NFT Item transfer Success!");
+                  transferNFTOnTheMarket(result.from, transTo, item);
                   return result;
                 })
                 .then(async (result) => {
-                  await changeOwner(item);
+                  changeOwner(item);
                 })
                 .catch((err) => {
                   setTransloading(false);
@@ -220,12 +220,12 @@ function MyPage({ setIsLogin, isKaikas, setIsKaikas }) {
                         gasPrice: "25000000000",
                       })
                       .then(async (result) => {
-                        await setMessage("Your NFT Item transfer Success!");
-                        await transferNFTOnTheMarket(result.from, transTo, item); //해당 아이템 히스토리에 전송기록을 저장시키는 함수 작동
+                        setMessage("Your NFT Item transfer Success!");
+                        transferNFTOnTheMarket(result.from, transTo, item); //해당 아이템 히스토리에 전송기록을 저장시키는 함수 작동
                         return result;
                       })
                       .then(async (result) => {
-                        await changeOwner(item); //DB에 저장되어있는 NFT오너주인도 변경
+                        changeOwner(item); //DB에 저장되어있는 NFT오너주인도 변경
                       })
                       .catch((err) => {
                         setTransloading(false);
@@ -379,8 +379,8 @@ function MyPage({ setIsLogin, isKaikas, setIsKaikas }) {
                     };
                     await axios.post("http://localhost:3001/regdate", { address: account[0].toLowerCase() }, headers).then(async (result) => {
                       //최초 웹에 로그인한 지갑의 DATE를 불러와 state에 담는다.
-                      await setRegdate(result.data.createdAt.slice(0, 10));
-                      await setData([]);
+                      setRegdate(result.data.createdAt.slice(0, 10));
+                      setData([]);
                     });
                   } else {
                     console.log("test?", contracts);
@@ -394,8 +394,8 @@ function MyPage({ setIsLogin, isKaikas, setIsKaikas }) {
                         .post("http://localhost:3001/klaytn/fetchNFT", { ownerAddress: account[0].toLowerCase(), thisContract: contract }, headers) //
                         .then(async (result) => {
                           console.log("result??", result);
-                          await setRegdate(result.data.result.createdAt.slice(0, 10));
-                          await setData(result.data.result.ownedNFTs);
+                          setRegdate(result.data.result.createdAt.slice(0, 10));
+                          setData(result.data.result.ownedNFTs);
                         });
                     });
                   }

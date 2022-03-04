@@ -125,15 +125,15 @@ function About({ loginAccount /* 로그인된 계정 */ }) {
         if (result === true) {
           await window.klaytn._kaikas.isApproved().then(async (result) => {
             if (result === true) {
-              await setIsKaikas(true);
-              await loadSellItemOnKlay();
+              setIsKaikas(true);
+              loadSellItemOnKlay();
             } else {
-              await loadSellItem();
+              loadSellItem();
             }
           });
         } else {
-          await setIsKaikas(false);
-          await loadSellItem();
+           setIsKaikas(false);
+           loadSellItem();
         }
       });
     }
@@ -346,7 +346,7 @@ function About({ loginAccount /* 로그인된 계정 */ }) {
               console.log("now approve ===> ", result);
               if (result) {
                 //결과로 true일시 어프로브를 하지않고 블록체인에 올리는 과정 진행
-                await createItem(); // 블록체인에 아이템 등록
+                 createItem(); // 블록체인에 아이템 등록
               } else {
                 //결과로 false일시 어프로브 진행
                 let contract = await new web.eth.Contract(erc721abi, sellitem.contract_address);
@@ -374,7 +374,7 @@ function About({ loginAccount /* 로그인된 계정 */ }) {
                   })
                   .then(async (result) => {
                     if (result) {
-                      await createItem(); //블록체인에 아이템 등록
+                      createItem(); //블록체인에 아이템 등록
                     }
                   })
                   .catch((err) => {
@@ -419,7 +419,7 @@ function About({ loginAccount /* 로그인된 계정 */ }) {
                     console.log("now approve ===> ", result);
                     if (result) {
                       //결과로 true일시 어프로브를 하지않고 블록체인에 올리는 과정 진행
-                      await createItemKlaytn(); // 블록체인에 아이템 등록
+                       createItemKlaytn(); // 블록체인에 아이템 등록
                     } else {
                       //결과로 false일시 어프로브 진행
                       let contract = await new caver.klay.Contract(kip17abi, sellitem.contract_address);
@@ -447,7 +447,7 @@ function About({ loginAccount /* 로그인된 계정 */ }) {
                         })
                         .then(async (result) => {
                           if (result) {
-                            await createItemKlaytn(); //블록체인에 아이템 등록
+                           createItemKlaytn(); //블록체인에 아이템 등록
                           }
                         })
                         .catch((err) => {
@@ -505,8 +505,8 @@ function About({ loginAccount /* 로그인된 계정 */ }) {
             })
             .then(async (result) => {
               console.log("itemId", result.events.MarketItemCreated.returnValues.itemId);
-              await setMessage("upload blockChain to KiFT Success!");
-              await listNFTOnTheMarket(result); //기여도를 지급하는 함수
+             setMessage("upload blockChain to KiFT Success!");
+              listNFTOnTheMarket(result); //기여도를 지급하는 함수
             })
             .catch((err) => {
               console.log("this is whole error message", err);
@@ -540,8 +540,8 @@ function About({ loginAccount /* 로그인된 계정 */ }) {
                   })
                   .then(async (result) => {
                     console.log("test?", result);
-                    await setMessage("upload blockChain to KiFT Success!");
-                    await listNFTOnTheMarket(result); //기여도를 지급하는 함수
+                    setMessage("upload blockChain to KiFT Success!");
+                    listNFTOnTheMarket(result); //기여도를 지급하는 함수
                   })
                   .catch((err) => {
                     console.log("this is whole error message", err);
@@ -590,8 +590,8 @@ function About({ loginAccount /* 로그인된 계정 */ }) {
                 gasPrice: "2450000000",
               })
               .then(async (result) => {
-                await setMessage("Change your NFT Item Price Success!");
-                await ChangePriceNFTOnTheMarket(priceSellerPut, result);
+                 setMessage("Change your NFT Item Price Success!");
+                 ChangePriceNFTOnTheMarket(priceSellerPut, result);
               })
               .catch((err) => {
                 console.log("this is whole error message", err);
@@ -622,8 +622,8 @@ function About({ loginAccount /* 로그인된 계정 */ }) {
                       gasPrice: "25000000000",
                     })
                     .then(async (result) => {
-                      await setMessage("Change your NFT Item Price Success!");
-                      await ChangePriceNFTOnTheMarket(priceSellerPut, result);
+                       setMessage("Change your NFT Item Price Success!");
+                       ChangePriceNFTOnTheMarket(priceSellerPut, result);
                     })
                     .catch((err) => {
                       console.log("this is whole error message", err);
@@ -728,8 +728,8 @@ function About({ loginAccount /* 로그인된 계정 */ }) {
                 gasPrice: "2450000000",
               })
               .then(async (result) => {
-                await setMessage("Cancle your NFT Item Success!");
-                await CancleNFTOnTheMarket(result);
+                 setMessage("Cancle your NFT Item Success!");
+                 CancleNFTOnTheMarket(result);
                 // 블록체인에서 취소후 DB에도 취소 시작
               })
               .catch((err) => {
@@ -761,8 +761,8 @@ function About({ loginAccount /* 로그인된 계정 */ }) {
                       gasPrice: "25000000000",
                     })
                     .then(async (result) => {
-                      await setMessage("Cancle your NFT Item Success!");
-                      await CancleNFTOnTheMarket(result);
+                       setMessage("Cancle your NFT Item Success!");
+                       CancleNFTOnTheMarket(result);
                       // 블록체인에서 취소후 DB에도 취소 시작
                     })
                     .catch((err) => {
@@ -897,8 +897,8 @@ function About({ loginAccount /* 로그인된 계정 */ }) {
               value: web.utils.toWei(String(sellitem.price), "ether"),
             })
             .then(async (result) => {
-              await setMessage("Your purchase request Success!");
-              await soldoutNFTOnTheMarket(result.from, ownerAddress, sellitem.price);
+               setMessage("Your purchase request Success!");
+               soldoutNFTOnTheMarket(result.from, ownerAddress, sellitem.price);
               // NFT구매후 DB정보 수정 시작
               console.log("is there ownerAddress found???? =====>>>>>>", ownerAddress);
               console.log("Before changeownerandownedNFTS ==========================");
@@ -909,7 +909,7 @@ function About({ loginAccount /* 로그인된 계정 */ }) {
                   point: 10,
                 })
                 .then(async (result) => {
-                  await changeOwner(); //DB에 저장된 NFT소유 오너 변경
+                   changeOwner(); //DB에 저장된 NFT소유 오너 변경
                   document.location.href = `/mypage/${URLparam}`;
                   console.log("contribute points done!", result);
                 })
@@ -946,8 +946,8 @@ function About({ loginAccount /* 로그인된 계정 */ }) {
                       value: caver.utils.convertToPeb(String(sellitem.price), "KLAY"),
                     })
                     .then(async (result) => {
-                      await setMessage("Your purchase request Success!");
-                      await soldoutNFTOnTheMarket(result.from, ownerAddress, sellitem.price);
+                       setMessage("Your purchase request Success!");
+                       soldoutNFTOnTheMarket(result.from, ownerAddress, sellitem.price);
                       // NFT구매후 DB정보 수정 시작
                       console.log("is there ownerAddress found???? =====>>>>>>", ownerAddress);
                       console.log("Before changeownerandownedNFTS ==========================");
@@ -958,7 +958,7 @@ function About({ loginAccount /* 로그인된 계정 */ }) {
                           point: 10,
                         })
                         .then(async (result) => {
-                          await changeOwner(); //DB에 저장된 NFT소유 오너 변경
+                           changeOwner(); //DB에 저장된 NFT소유 오너 변경
                           document.location.href = `/mypage/${URLparam}`;
                           console.log("contribute points done!", result);
                         })

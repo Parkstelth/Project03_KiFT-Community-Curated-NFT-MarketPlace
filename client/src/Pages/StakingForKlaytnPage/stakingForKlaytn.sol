@@ -30,6 +30,7 @@ contract StakingRewards {
     }
     
     function earned(address account) public view returns (uint) {
+        // 현재 나의 이자 총액
         return
             ((_balances[account] *
                 (rewardPerToken() - userRewardPerTokenPaid[account])) / 1e18) +
@@ -42,6 +43,7 @@ contract StakingRewards {
     
     
     function totalSupply() public view returns (uint) {
+        // 컨트랙트에 총 스테이킹 중인 양
         return _totalSupply;
     }
 
@@ -55,18 +57,21 @@ contract StakingRewards {
     }
 
     function stake(uint _amount) external updateReward(msg.sender) {
+        // 스테이킹 시작
         _totalSupply += _amount;
         _balances[msg.sender] += _amount;
         stakingToken.transferFrom(msg.sender, address(this), _amount);
     }
 
     function withdraw(uint _amount) external updateReward(msg.sender) {
+        // 예치 중인 스테이킹 출금
         _totalSupply -= _amount;
         _balances[msg.sender] -= _amount;
         stakingToken.transfer(msg.sender, _amount);
     }
 
     function getReward() external updateReward(msg.sender) {
+        // 현재 이자 출금
         uint reward = rewards[msg.sender];
         rewards[msg.sender] = 0;
         rewardsToken.transfer(msg.sender, reward);

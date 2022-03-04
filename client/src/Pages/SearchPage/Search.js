@@ -25,7 +25,7 @@ function Search() {
 
       console.log(inputData);
       if (inputData !== "") {
-        await fetchItem(inputData);
+        fetchItem(inputData);
         setInputData("");
       }
     }

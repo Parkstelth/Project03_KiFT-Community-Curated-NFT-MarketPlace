@@ -214,7 +214,7 @@ function CreateNft({ isKaikas, setIsKaikas }) {
                 gasPrice: "2450000000",
               })
               .then(async () => {
-                await setMessage("Create your NFT Success!");
+                setMessage("Create your NFT Success!");
                 document.location.href = `/create`;
               })
               .catch((err) => {
@@ -274,7 +274,7 @@ function CreateNft({ isKaikas, setIsKaikas }) {
                       gasPrice: "25000000000",
                     })
                     .then(async () => {
-                      await setMessage("Create your NFT Success!");
+                      setMessage("Create your NFT Success!");
                       document.location.href = `/create`;
                     })
                     .catch((err) => {
