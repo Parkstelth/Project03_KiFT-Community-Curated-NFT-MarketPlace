@@ -1,5 +1,5 @@
 # KiFT : Community-Curated NFT MarketPlace
-![LOGO](https://cdn.discordapp.com/attachments/945643068755943447/945643140902187008/Screen_Shot_2022-01-28_at_11.25.47_AM.png)
+![LOGO](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FbiCd2p%2FbtrsnmXukch%2FNvtPusaN3XhSz2EUzE05Dk%2Fimg.png)
 KiFT는 디지털 NFT 마켓플레이스와 더불어 예술 큐레이션 및 인센티브 기반 토큰 배포 기능이 추가된 디지털 통합 환경입니다. 또한 사용자들은 NFT를 직접 만들어서 배포할 수 있는 기능도 포함되어 있습니다. 자신이 원하는 NFT를 사고 팔고, 그 활동의 대가로 커뮤니티 고유 토큰인 KFT 토큰을 받을 수 있는 환경입니다.
 
 ### 세부 기능 (02-01 이후 추가된 기능 제외)
